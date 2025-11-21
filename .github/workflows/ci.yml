@@ -23,6 +23,8 @@ jobs:
 
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "3.9.2"
 
       - name: Install lipo (macOS)
         if: matrix.os == 'macos-latest'
