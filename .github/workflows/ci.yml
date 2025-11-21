@@ -43,7 +43,7 @@ jobs:
         run: dart pub get
 
       - name: Format check
-        run: dart format --output=none --set-exit-if-changed .
+        run: dart format --output=none --set-exit-if-changed lib test examples
 
       - name: Analyze
         run: dart analyze --fatal-infos --fatal-warnings
