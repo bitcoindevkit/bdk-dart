@@ -58,10 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: _success ? Colors.green : Colors.grey,
             ),
             const SizedBox(height: 20),
-            const Text(
-              'BDK Network Type:',
-              style: TextStyle(fontSize: 20),
-            ),
+            const Text('BDK Network Type:', style: TextStyle(fontSize: 20)),
             Text(
               _networkName,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
