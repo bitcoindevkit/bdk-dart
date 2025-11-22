@@ -21,6 +21,11 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
@@ -42,11 +47,19 @@ jobs:
       - name: Pub get
         run: dart pub get
 
+      - name: Pub get (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter pub get
+
       - name: Format check
-        run: dart format --output=none --set-exit-if-changed lib test examples
+        run: dart format --output=none --set-exit-if-changed lib test examples bdk_demo/lib bdk_demo/test
 
       - name: Analyze
         run: dart analyze --fatal-infos --fatal-warnings lib test examples
+
+      - name: Analyze (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter analyze
 
       - name: Run tests
         run: |
