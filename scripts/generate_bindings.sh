@@ -51,4 +51,4 @@ echo "      when you run 'dart pub get' or 'flutter pub get'"
 # so that it can be included in the published package
 # and built by Native Assets hook/build.dart
 mkdir -p "$NATIVE_DIR"
-rsync -a --delete "$BDK_FFI_DIR/bdk-ffi/" "$NATIVE_DIR/"
+rsync -a --delete --exclude 'target' "$BDK_FFI_DIR/bdk-ffi/" "$NATIVE_DIR/"
