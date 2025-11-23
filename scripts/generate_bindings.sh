@@ -5,7 +5,7 @@ set -euo pipefail
 # paths independently of the current working directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BDK_DART_DIR="$SCRIPT_DIR/.."
-BDK_FFI_DIR="$BDK_DART_DIR/../bdk-ffi"
+BDK_FFI_DIR="$BDK_DART_DIR/bdk-ffi"
 NATIVE_DIR="$BDK_DART_DIR/native"
 
 OS=$(uname -s)
@@ -34,14 +34,14 @@ git submodule update --init --recursive
 cd "$BDK_FFI_DIR"
 git checkout master # Change 'master' to a specific tag before releasing
 
-# Navigate to bdk-ffi directory in the embedded bdk-ffi submodule
-cd "$BDK_FFI_DIR"
+# Navigate to bdk-ffi/bdk-ffi directory to build the crate
+cd "$BDK_FFI_DIR/bdk-ffi"
 echo "Building bdk-ffi..."
-cargo build --profile dev -p bdk-ffi
+cargo build --profile dev
 
 # Generate Dart bindings using local uniffi-bindgen wrapper
 cd "$BDK_DART_DIR"
-cargo run --profile dev --bin uniffi-bindgen -- generate --library --language dart --out-dir "$BDK_DART_DIR/lib/" target/debug/$LIBNAME
+cargo run --profile dev --bin uniffi-bindgen -- generate --library --language dart --out-dir "$BDK_DART_DIR/lib/" "$BDK_FFI_DIR/bdk-ffi/target/debug/$LIBNAME"
 
 echo "Bindings generated successfully!"
 echo "Note: Native library compilation is now handled automatically by Native Assets (hook/build.dart)"
