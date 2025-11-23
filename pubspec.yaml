@@ -12,3 +12,6 @@ dependencies:
 dev_dependencies:
   test: ^1.26.2
   http: ^1.4.0
+
+hooks:
+  build: hook/build.dart
