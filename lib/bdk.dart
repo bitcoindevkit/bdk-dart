@@ -1,4 +1,4 @@
-library uniffi;
+library bdk_dart;
 
 import "dart:async";
 import "dart:convert";
@@ -16830,9 +16830,7 @@ abstract class AddressInterface {
 }
 
 final _AddressFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_address(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_address(ptr, status));
 });
 
 class Address implements AddressInterface {
@@ -16842,24 +16840,22 @@ class Address implements AddressInterface {
   }
   Address.fromScript(Script script, Network network)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_address_from_script(
-              Script.lower(script),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_address_from_script(
+          Script.lower(script),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         fromScriptExceptionErrorHandler,
       ) {
     _AddressFinalizer.attach(this, _ptr, detach: this);
   }
   Address(String address, Network network)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_address_new(
-              FfiConverterString.lower(address),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_address_new(
+          FfiConverterString.lower(address),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         addressParseExceptionErrorHandler,
       ) {
     _AddressFinalizer.attach(this, _ptr, detach: this);
@@ -16872,10 +16868,7 @@ class Address implements AddressInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_address(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_address(_ptr, status));
   }
 
   static int allocationSize(Address value) {
@@ -16896,21 +16889,17 @@ class Address implements AddressInterface {
 
   void dispose() {
     _AddressFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_address(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_address(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_address_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_address_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -16926,7 +16915,7 @@ class Address implements AddressInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_address_uniffi_trait_eq_eq(
+        uniffi_bdk_ffi_fn_method_address_uniffi_trait_eq_eq(
           uniffiClonePointer(),
           Address.lower(other),
           status,
@@ -16939,12 +16928,11 @@ class Address implements AddressInterface {
   bool isValidForNetwork(Network network) {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_address_is_valid_for_network(
-              uniffiClonePointer(),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_address_is_valid_for_network(
+          uniffiClonePointer(),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
       ),
       null,
     );
@@ -16953,7 +16941,7 @@ class Address implements AddressInterface {
   Script scriptPubkey() {
     return rustCall(
       (status) => Script.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_address_script_pubkey(
+        uniffi_bdk_ffi_fn_method_address_script_pubkey(
           uniffiClonePointer(),
           status,
         ),
@@ -16965,7 +16953,7 @@ class Address implements AddressInterface {
   AddressData toAddressData() {
     return rustCall(
       (status) => FfiConverterAddressData.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_address_to_address_data(
+        uniffi_bdk_ffi_fn_method_address_to_address_data(
           uniffiClonePointer(),
           status,
         ),
@@ -16977,7 +16965,7 @@ class Address implements AddressInterface {
   String toQrUri() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_address_to_qr_uri(
+        uniffi_bdk_ffi_fn_method_address_to_qr_uri(
           uniffiClonePointer(),
           status,
         ),
@@ -16993,9 +16981,7 @@ abstract class AmountInterface {
 }
 
 final _AmountFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_amount(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_amount(ptr, status));
 });
 
 class Amount implements AmountInterface {
@@ -17005,19 +16991,17 @@ class Amount implements AmountInterface {
   }
   Amount.fromBtc(double btc)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_amount_from_btc(btc, status),
+        (status) => uniffi_bdk_ffi_fn_constructor_amount_from_btc(btc, status),
         parseAmountExceptionErrorHandler,
       ) {
     _AmountFinalizer.attach(this, _ptr, detach: this);
   }
   Amount.fromSat(int satoshi)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_amount_from_sat(
-              FfiConverterUInt64.lower(satoshi),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_amount_from_sat(
+          FfiConverterUInt64.lower(satoshi),
+          status,
+        ),
         null,
       ) {
     _AmountFinalizer.attach(this, _ptr, detach: this);
@@ -17030,10 +17014,7 @@ class Amount implements AmountInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_amount(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_amount(_ptr, status));
   }
 
   static int allocationSize(Amount value) {
@@ -17054,19 +17035,13 @@ class Amount implements AmountInterface {
 
   void dispose() {
     _AmountFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_amount(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_amount(_ptr, status));
   }
 
   double toBtc() {
     return rustCall(
       (status) => FfiConverterDouble64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_amount_to_btc(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_amount_to_btc(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -17075,10 +17050,7 @@ class Amount implements AmountInterface {
   int toSat() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_amount_to_sat(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_amount_to_sat(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -17090,10 +17062,7 @@ abstract class BlockHashInterface {
 }
 
 final _BlockHashFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_blockhash(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_blockhash(ptr, status));
 });
 
 class BlockHash implements BlockHashInterface {
@@ -17103,22 +17072,20 @@ class BlockHash implements BlockHashInterface {
   }
   BlockHash.fromBytes(Uint8List bytes)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_blockhash_from_bytes(
-              FfiConverterUint8List.lower(bytes),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_blockhash_from_bytes(
+          FfiConverterUint8List.lower(bytes),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _BlockHashFinalizer.attach(this, _ptr, detach: this);
   }
   BlockHash.fromString(String hex)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_blockhash_from_string(
-              FfiConverterString.lower(hex),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_blockhash_from_string(
+          FfiConverterString.lower(hex),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _BlockHashFinalizer.attach(this, _ptr, detach: this);
@@ -17132,8 +17099,7 @@ class BlockHash implements BlockHashInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_blockhash(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_blockhash(_ptr, status),
     );
   }
 
@@ -17155,21 +17121,17 @@ class BlockHash implements BlockHashInterface {
 
   void dispose() {
     _BlockHashFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_blockhash(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_blockhash(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_blockhash_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -17185,12 +17147,11 @@ class BlockHash implements BlockHashInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_blockhash_uniffi_trait_eq_eq(
-              uniffiClonePointer(),
-              BlockHash.lower(other),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_eq_eq(
+          uniffiClonePointer(),
+          BlockHash.lower(other),
+          status,
+        ),
       ),
       null,
     );
@@ -17200,7 +17161,7 @@ class BlockHash implements BlockHashInterface {
   int get hashCode {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_blockhash_uniffi_trait_hash(
+        uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_hash(
           uniffiClonePointer(),
           status,
         ),
@@ -17212,7 +17173,7 @@ class BlockHash implements BlockHashInterface {
   Uint8List serialize() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_blockhash_serialize(
+        uniffi_bdk_ffi_fn_method_blockhash_serialize(
           uniffiClonePointer(),
           status,
         ),
@@ -17232,10 +17193,7 @@ abstract class BumpFeeTxBuilderInterface {
 }
 
 final _BumpFeeTxBuilderFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_bumpfeetxbuilder(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_bumpfeetxbuilder(ptr, status));
 });
 
 class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
@@ -17245,12 +17203,11 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
   }
   BumpFeeTxBuilder(Txid txid, FeeRate feeRate)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_bumpfeetxbuilder_new(
-              Txid.lower(txid),
-              FeeRate.lower(feeRate),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_bumpfeetxbuilder_new(
+          Txid.lower(txid),
+          FeeRate.lower(feeRate),
+          status,
+        ),
         null,
       ) {
     _BumpFeeTxBuilderFinalizer.attach(this, _ptr, detach: this);
@@ -17264,10 +17221,7 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_bumpfeetxbuilder(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_clone_bumpfeetxbuilder(_ptr, status),
     );
   }
 
@@ -17289,18 +17243,13 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
 
   void dispose() {
     _BumpFeeTxBuilderFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_bumpfeetxbuilder(
-        _ptr,
-        status,
-      ),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_bumpfeetxbuilder(_ptr, status));
   }
 
   BumpFeeTxBuilder allowDust(bool allowDust) {
     return rustCall(
       (status) => BumpFeeTxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_bumpfeetxbuilder_allow_dust(
+        uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_allow_dust(
           uniffiClonePointer(),
           FfiConverterBool.lower(allowDust),
           status,
@@ -17313,12 +17262,11 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
   BumpFeeTxBuilder currentHeight(int height) {
     return rustCall(
       (status) => BumpFeeTxBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_bumpfeetxbuilder_current_height(
-              uniffiClonePointer(),
-              FfiConverterUInt32.lower(height),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_current_height(
+          uniffiClonePointer(),
+          FfiConverterUInt32.lower(height),
+          status,
+        ),
       ),
       null,
     );
@@ -17327,7 +17275,7 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
   Psbt finish(Wallet wallet) {
     return rustCall(
       (status) => Psbt.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_bumpfeetxbuilder_finish(
+        uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_finish(
           uniffiClonePointer(),
           Wallet.lower(wallet),
           status,
@@ -17340,7 +17288,7 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
   BumpFeeTxBuilder nlocktime(LockTime locktime) {
     return rustCall(
       (status) => BumpFeeTxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_bumpfeetxbuilder_nlocktime(
+        uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_nlocktime(
           uniffiClonePointer(),
           FfiConverterLockTime.lower(locktime),
           status,
@@ -17353,12 +17301,11 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
   BumpFeeTxBuilder setExactSequence(int nsequence) {
     return rustCall(
       (status) => BumpFeeTxBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_bumpfeetxbuilder_set_exact_sequence(
-              uniffiClonePointer(),
-              FfiConverterUInt32.lower(nsequence),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_set_exact_sequence(
+          uniffiClonePointer(),
+          FfiConverterUInt32.lower(nsequence),
+          status,
+        ),
       ),
       null,
     );
@@ -17367,7 +17314,7 @@ class BumpFeeTxBuilder implements BumpFeeTxBuilderInterface {
   BumpFeeTxBuilder version(int version) {
     return rustCall(
       (status) => BumpFeeTxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_bumpfeetxbuilder_version(
+        uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_version(
           uniffiClonePointer(),
           FfiConverterInt32.lower(version),
           status,
@@ -17389,10 +17336,7 @@ abstract class CbfBuilderInterface {
 }
 
 final _CbfBuilderFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_cbfbuilder(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_cbfbuilder(ptr, status));
 });
 
 class CbfBuilder implements CbfBuilderInterface {
@@ -17402,8 +17346,7 @@ class CbfBuilder implements CbfBuilderInterface {
   }
   CbfBuilder()
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_cbfbuilder_new(status),
+        (status) => uniffi_bdk_ffi_fn_constructor_cbfbuilder_new(status),
         null,
       ) {
     _CbfBuilderFinalizer.attach(this, _ptr, detach: this);
@@ -17417,8 +17360,7 @@ class CbfBuilder implements CbfBuilderInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_cbfbuilder(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_cbfbuilder(_ptr, status),
     );
   }
 
@@ -17440,16 +17382,13 @@ class CbfBuilder implements CbfBuilderInterface {
 
   void dispose() {
     _CbfBuilderFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_cbfbuilder(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_cbfbuilder(_ptr, status));
   }
 
   CbfComponents build(Wallet wallet) {
     return rustCall(
       (status) => FfiConverterCbfComponents.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfbuilder_build(
+        uniffi_bdk_ffi_fn_method_cbfbuilder_build(
           uniffiClonePointer(),
           Wallet.lower(wallet),
           status,
@@ -17462,13 +17401,12 @@ class CbfBuilder implements CbfBuilderInterface {
   CbfBuilder configureTimeoutMillis(int handshake, int response) {
     return rustCall(
       (status) => CbfBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_cbfbuilder_configure_timeout_millis(
-              uniffiClonePointer(),
-              FfiConverterUInt64.lower(handshake),
-              FfiConverterUInt64.lower(response),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_cbfbuilder_configure_timeout_millis(
+          uniffiClonePointer(),
+          FfiConverterUInt64.lower(handshake),
+          FfiConverterUInt64.lower(response),
+          status,
+        ),
       ),
       null,
     );
@@ -17477,7 +17415,7 @@ class CbfBuilder implements CbfBuilderInterface {
   CbfBuilder connections(int connections) {
     return rustCall(
       (status) => CbfBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfbuilder_connections(
+        uniffi_bdk_ffi_fn_method_cbfbuilder_connections(
           uniffiClonePointer(),
           FfiConverterUInt8.lower(connections),
           status,
@@ -17490,7 +17428,7 @@ class CbfBuilder implements CbfBuilderInterface {
   CbfBuilder dataDir(String dataDir) {
     return rustCall(
       (status) => CbfBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfbuilder_data_dir(
+        uniffi_bdk_ffi_fn_method_cbfbuilder_data_dir(
           uniffiClonePointer(),
           FfiConverterString.lower(dataDir),
           status,
@@ -17503,7 +17441,7 @@ class CbfBuilder implements CbfBuilderInterface {
   CbfBuilder peers(List<Peer> peers) {
     return rustCall(
       (status) => CbfBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfbuilder_peers(
+        uniffi_bdk_ffi_fn_method_cbfbuilder_peers(
           uniffiClonePointer(),
           FfiConverterSequencePeer.lower(peers),
           status,
@@ -17516,7 +17454,7 @@ class CbfBuilder implements CbfBuilderInterface {
   CbfBuilder scanType(ScanType scanType) {
     return rustCall(
       (status) => CbfBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfbuilder_scan_type(
+        uniffi_bdk_ffi_fn_method_cbfbuilder_scan_type(
           uniffiClonePointer(),
           FfiConverterScanType.lower(scanType),
           status,
@@ -17529,7 +17467,7 @@ class CbfBuilder implements CbfBuilderInterface {
   CbfBuilder socks5Proxy(Socks5Proxy proxy) {
     return rustCall(
       (status) => CbfBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfbuilder_socks5_proxy(
+        uniffi_bdk_ffi_fn_method_cbfbuilder_socks5_proxy(
           uniffiClonePointer(),
           FfiConverterSocks5Proxy.lower(proxy),
           status,
@@ -17554,10 +17492,7 @@ abstract class CbfClientInterface {
 }
 
 final _CbfClientFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_cbfclient(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_cbfclient(ptr, status));
 });
 
 class CbfClient implements CbfClientInterface {
@@ -17574,8 +17509,7 @@ class CbfClient implements CbfClientInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_cbfclient(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_cbfclient(_ptr, status),
     );
   }
 
@@ -17597,22 +17531,18 @@ class CbfClient implements CbfClientInterface {
 
   void dispose() {
     _CbfClientFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_cbfclient(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_cbfclient(_ptr, status));
   }
 
   Future<FeeRate> averageFeeRate(BlockHash blockhash) {
     return uniffiRustCallAsync(
-      () => _UniffiLib.instance
-          .uniffi_bdkffi_fn_method_cbfclient_average_fee_rate(
-            uniffiClonePointer(),
-            BlockHash.lower(blockhash),
-          ),
-      _UniffiLib.instance.ffi_bdkffi_rust_future_poll_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_complete_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_free_u64,
+      () => uniffi_bdk_ffi_fn_method_cbfclient_average_fee_rate(
+        uniffiClonePointer(),
+        BlockHash.lower(blockhash),
+      ),
+      ffi_bdk_ffi_rust_future_poll_u64,
+      ffi_bdk_ffi_rust_future_complete_u64,
+      ffi_bdk_ffi_rust_future_free_u64,
       (ptr) => FeeRate.lift(Pointer<Void>.fromAddress(ptr)),
       cbfExceptionErrorHandler,
     );
@@ -17620,13 +17550,13 @@ class CbfClient implements CbfClientInterface {
 
   Future<Wtxid> broadcast(Transaction transaction) {
     return uniffiRustCallAsync(
-      () => _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_broadcast(
+      () => uniffi_bdk_ffi_fn_method_cbfclient_broadcast(
         uniffiClonePointer(),
         Transaction.lower(transaction),
       ),
-      _UniffiLib.instance.ffi_bdkffi_rust_future_poll_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_complete_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_free_u64,
+      ffi_bdk_ffi_rust_future_poll_u64,
+      ffi_bdk_ffi_rust_future_complete_u64,
+      ffi_bdk_ffi_rust_future_free_u64,
       (ptr) => Wtxid.lift(Pointer<Void>.fromAddress(ptr)),
       cbfExceptionErrorHandler,
     );
@@ -17634,7 +17564,7 @@ class CbfClient implements CbfClientInterface {
 
   void connect(Peer peer) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_connect(
+      uniffi_bdk_ffi_fn_method_cbfclient_connect(
         uniffiClonePointer(),
         FfiConverterPeer.lower(peer),
         status,
@@ -17645,7 +17575,7 @@ class CbfClient implements CbfClientInterface {
   bool isRunning() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_is_running(
+        uniffi_bdk_ffi_fn_method_cbfclient_is_running(
           uniffiClonePointer(),
           status,
         ),
@@ -17657,7 +17587,7 @@ class CbfClient implements CbfClientInterface {
   List<IpAddress> lookupHost(String hostname) {
     return rustCall(
       (status) => FfiConverterSequenceIpAddress.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_lookup_host(
+        uniffi_bdk_ffi_fn_method_cbfclient_lookup_host(
           uniffiClonePointer(),
           FfiConverterString.lower(hostname),
           status,
@@ -17669,13 +17599,12 @@ class CbfClient implements CbfClientInterface {
 
   Future<FeeRate> minBroadcastFeerate() {
     return uniffiRustCallAsync(
-      () => _UniffiLib.instance
-          .uniffi_bdkffi_fn_method_cbfclient_min_broadcast_feerate(
-            uniffiClonePointer(),
-          ),
-      _UniffiLib.instance.ffi_bdkffi_rust_future_poll_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_complete_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_free_u64,
+      () => uniffi_bdk_ffi_fn_method_cbfclient_min_broadcast_feerate(
+        uniffiClonePointer(),
+      ),
+      ffi_bdk_ffi_rust_future_poll_u64,
+      ffi_bdk_ffi_rust_future_complete_u64,
+      ffi_bdk_ffi_rust_future_free_u64,
       (ptr) => FeeRate.lift(Pointer<Void>.fromAddress(ptr)),
       cbfExceptionErrorHandler,
     );
@@ -17683,12 +17612,10 @@ class CbfClient implements CbfClientInterface {
 
   Future<Info> nextInfo() {
     return uniffiRustCallAsync(
-      () => _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_next_info(
-        uniffiClonePointer(),
-      ),
-      _UniffiLib.instance.ffi_bdkffi_rust_future_poll_rust_buffer,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_complete_rust_buffer,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_free_rust_buffer,
+      () => uniffi_bdk_ffi_fn_method_cbfclient_next_info(uniffiClonePointer()),
+      ffi_bdk_ffi_rust_future_poll_rust_buffer,
+      ffi_bdk_ffi_rust_future_complete_rust_buffer,
+      ffi_bdk_ffi_rust_future_free_rust_buffer,
       FfiConverterInfo.lift,
       cbfExceptionErrorHandler,
     );
@@ -17696,12 +17623,11 @@ class CbfClient implements CbfClientInterface {
 
   Future<Warning> nextWarning() {
     return uniffiRustCallAsync(
-      () => _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_next_warning(
-        uniffiClonePointer(),
-      ),
-      _UniffiLib.instance.ffi_bdkffi_rust_future_poll_rust_buffer,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_complete_rust_buffer,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_free_rust_buffer,
+      () =>
+          uniffi_bdk_ffi_fn_method_cbfclient_next_warning(uniffiClonePointer()),
+      ffi_bdk_ffi_rust_future_poll_rust_buffer,
+      ffi_bdk_ffi_rust_future_complete_rust_buffer,
+      ffi_bdk_ffi_rust_future_free_rust_buffer,
       FfiConverterWarning.lift,
       cbfExceptionErrorHandler,
     );
@@ -17709,21 +17635,16 @@ class CbfClient implements CbfClientInterface {
 
   void shutdown() {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_shutdown(
-        uniffiClonePointer(),
-        status,
-      );
+      uniffi_bdk_ffi_fn_method_cbfclient_shutdown(uniffiClonePointer(), status);
     }, cbfExceptionErrorHandler);
   }
 
   Future<Update> update() {
     return uniffiRustCallAsync(
-      () => _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfclient_update(
-        uniffiClonePointer(),
-      ),
-      _UniffiLib.instance.ffi_bdkffi_rust_future_poll_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_complete_u64,
-      _UniffiLib.instance.ffi_bdkffi_rust_future_free_u64,
+      () => uniffi_bdk_ffi_fn_method_cbfclient_update(uniffiClonePointer()),
+      ffi_bdk_ffi_rust_future_poll_u64,
+      ffi_bdk_ffi_rust_future_complete_u64,
+      ffi_bdk_ffi_rust_future_free_u64,
       (ptr) => Update.lift(Pointer<Void>.fromAddress(ptr)),
       cbfExceptionErrorHandler,
     );
@@ -17735,9 +17656,7 @@ abstract class CbfNodeInterface {
 }
 
 final _CbfNodeFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_cbfnode(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_cbfnode(ptr, status));
 });
 
 class CbfNode implements CbfNodeInterface {
@@ -17753,10 +17672,7 @@ class CbfNode implements CbfNodeInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_cbfnode(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_cbfnode(_ptr, status));
   }
 
   static int allocationSize(CbfNode value) {
@@ -17777,18 +17693,12 @@ class CbfNode implements CbfNodeInterface {
 
   void dispose() {
     _CbfNodeFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_cbfnode(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_cbfnode(_ptr, status));
   }
 
   void run() {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_cbfnode_run(
-        uniffiClonePointer(),
-        status,
-      );
+      uniffi_bdk_ffi_fn_method_cbfnode_run(uniffiClonePointer(), status);
     }, null);
   }
 }
@@ -17803,10 +17713,7 @@ abstract class ChangeSetInterface {
 }
 
 final _ChangeSetFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_changeset(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_changeset(ptr, status));
 });
 
 class ChangeSet implements ChangeSetInterface {
@@ -17822,16 +17729,15 @@ class ChangeSet implements ChangeSetInterface {
     TxGraphChangeSet txGraph,
     IndexerChangeSet indexer,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_changeset_from_aggregate(
-              FfiConverterOptionalDescriptor.lower(descriptor),
-              FfiConverterOptionalDescriptor.lower(changeDescriptor),
-              FfiConverterOptionalNetwork.lower(network),
-              FfiConverterLocalChainChangeSet.lower(localChain),
-              FfiConverterTxGraphChangeSet.lower(txGraph),
-              FfiConverterIndexerChangeSet.lower(indexer),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_changeset_from_aggregate(
+          FfiConverterOptionalDescriptor.lower(descriptor),
+          FfiConverterOptionalDescriptor.lower(changeDescriptor),
+          FfiConverterOptionalNetwork.lower(network),
+          FfiConverterLocalChainChangeSet.lower(localChain),
+          FfiConverterTxGraphChangeSet.lower(txGraph),
+          FfiConverterIndexerChangeSet.lower(indexer),
+          status,
+        ),
         null,
       ) {
     _ChangeSetFinalizer.attach(this, _ptr, detach: this);
@@ -17841,8 +17747,8 @@ class ChangeSet implements ChangeSetInterface {
     Descriptor? changeDescriptor,
     Network? network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_changeset_from_descriptor_and_network(
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_changeset_from_descriptor_and_network(
               FfiConverterOptionalDescriptor.lower(descriptor),
               FfiConverterOptionalDescriptor.lower(changeDescriptor),
               FfiConverterOptionalNetwork.lower(network),
@@ -17854,8 +17760,8 @@ class ChangeSet implements ChangeSetInterface {
   }
   ChangeSet.fromIndexerChangeset(IndexerChangeSet indexerChanges)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_changeset_from_indexer_changeset(
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_changeset_from_indexer_changeset(
               FfiConverterIndexerChangeSet.lower(indexerChanges),
               status,
             ),
@@ -17865,8 +17771,8 @@ class ChangeSet implements ChangeSetInterface {
   }
   ChangeSet.fromLocalChainChanges(LocalChainChangeSet localChainChanges)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_changeset_from_local_chain_changes(
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_changeset_from_local_chain_changes(
               FfiConverterLocalChainChangeSet.lower(localChainChanges),
               status,
             ),
@@ -17876,20 +17782,19 @@ class ChangeSet implements ChangeSetInterface {
   }
   ChangeSet.fromMerge(ChangeSet left, ChangeSet right)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_changeset_from_merge(
-              ChangeSet.lower(left),
-              ChangeSet.lower(right),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_changeset_from_merge(
+          ChangeSet.lower(left),
+          ChangeSet.lower(right),
+          status,
+        ),
         null,
       ) {
     _ChangeSetFinalizer.attach(this, _ptr, detach: this);
   }
   ChangeSet.fromTxGraphChangeset(TxGraphChangeSet txGraphChangeset)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_changeset_from_tx_graph_changeset(
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_changeset_from_tx_graph_changeset(
               FfiConverterTxGraphChangeSet.lower(txGraphChangeset),
               status,
             ),
@@ -17899,8 +17804,7 @@ class ChangeSet implements ChangeSetInterface {
   }
   ChangeSet()
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_changeset_new(status),
+        (status) => uniffi_bdk_ffi_fn_constructor_changeset_new(status),
         null,
       ) {
     _ChangeSetFinalizer.attach(this, _ptr, detach: this);
@@ -17914,8 +17818,7 @@ class ChangeSet implements ChangeSetInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_changeset(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_changeset(_ptr, status),
     );
   }
 
@@ -17937,16 +17840,13 @@ class ChangeSet implements ChangeSetInterface {
 
   void dispose() {
     _ChangeSetFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_changeset(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_changeset(_ptr, status));
   }
 
   Descriptor? changeDescriptor() {
     return rustCall(
       (status) => FfiConverterOptionalDescriptor.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_changeset_change_descriptor(
+        uniffi_bdk_ffi_fn_method_changeset_change_descriptor(
           uniffiClonePointer(),
           status,
         ),
@@ -17958,7 +17858,7 @@ class ChangeSet implements ChangeSetInterface {
   Descriptor? descriptor() {
     return rustCall(
       (status) => FfiConverterOptionalDescriptor.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_changeset_descriptor(
+        uniffi_bdk_ffi_fn_method_changeset_descriptor(
           uniffiClonePointer(),
           status,
         ),
@@ -17970,7 +17870,7 @@ class ChangeSet implements ChangeSetInterface {
   IndexerChangeSet indexerChangeset() {
     return rustCall(
       (status) => FfiConverterIndexerChangeSet.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_changeset_indexer_changeset(
+        uniffi_bdk_ffi_fn_method_changeset_indexer_changeset(
           uniffiClonePointer(),
           status,
         ),
@@ -17982,11 +17882,10 @@ class ChangeSet implements ChangeSetInterface {
   LocalChainChangeSet localchainChangeset() {
     return rustCall(
       (status) => FfiConverterLocalChainChangeSet.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_changeset_localchain_changeset(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_changeset_localchain_changeset(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -17995,7 +17894,7 @@ class ChangeSet implements ChangeSetInterface {
   Network? network() {
     return rustCall(
       (status) => FfiConverterOptionalNetwork.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_changeset_network(
+        uniffi_bdk_ffi_fn_method_changeset_network(
           uniffiClonePointer(),
           status,
         ),
@@ -18007,11 +17906,10 @@ class ChangeSet implements ChangeSetInterface {
   TxGraphChangeSet txGraphChangeset() {
     return rustCall(
       (status) => FfiConverterTxGraphChangeSet.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_changeset_tx_graph_changeset(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_changeset_tx_graph_changeset(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18025,10 +17923,7 @@ abstract class DerivationPathInterface {
 }
 
 final _DerivationPathFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_derivationpath(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_derivationpath(ptr, status));
 });
 
 class DerivationPath implements DerivationPathInterface {
@@ -18038,19 +17933,17 @@ class DerivationPath implements DerivationPathInterface {
   }
   DerivationPath.master()
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_derivationpath_master(status),
+        (status) => uniffi_bdk_ffi_fn_constructor_derivationpath_master(status),
         null,
       ) {
     _DerivationPathFinalizer.attach(this, _ptr, detach: this);
   }
   DerivationPath(String path)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_derivationpath_new(
-              FfiConverterString.lower(path),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_derivationpath_new(
+          FfiConverterString.lower(path),
+          status,
+        ),
         bip32ExceptionErrorHandler,
       ) {
     _DerivationPathFinalizer.attach(this, _ptr, detach: this);
@@ -18064,10 +17957,7 @@ class DerivationPath implements DerivationPathInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_derivationpath(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_clone_derivationpath(_ptr, status),
     );
   }
 
@@ -18089,23 +17979,17 @@ class DerivationPath implements DerivationPathInterface {
 
   void dispose() {
     _DerivationPathFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_derivationpath(
-        _ptr,
-        status,
-      ),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_derivationpath(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_derivationpath_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_derivationpath_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18114,7 +17998,7 @@ class DerivationPath implements DerivationPathInterface {
   bool isEmpty() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_derivationpath_is_empty(
+        uniffi_bdk_ffi_fn_method_derivationpath_is_empty(
           uniffiClonePointer(),
           status,
         ),
@@ -18126,7 +18010,7 @@ class DerivationPath implements DerivationPathInterface {
   bool isMaster() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_derivationpath_is_master(
+        uniffi_bdk_ffi_fn_method_derivationpath_is_master(
           uniffiClonePointer(),
           status,
         ),
@@ -18138,7 +18022,7 @@ class DerivationPath implements DerivationPathInterface {
   int len() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_derivationpath_len(
+        uniffi_bdk_ffi_fn_method_derivationpath_len(
           uniffiClonePointer(),
           status,
         ),
@@ -18158,10 +18042,7 @@ abstract class DescriptorInterface {
 }
 
 final _DescriptorFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptor(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_descriptor(ptr, status));
 });
 
 class Descriptor implements DescriptorInterface {
@@ -18171,12 +18052,11 @@ class Descriptor implements DescriptorInterface {
   }
   Descriptor(String descriptor, Network network)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_descriptor_new(
-              FfiConverterString.lower(descriptor),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new(
+          FfiConverterString.lower(descriptor),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         descriptorExceptionErrorHandler,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18186,13 +18066,12 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip44(
-              DescriptorSecretKey.lower(secretKey),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip44(
+          DescriptorSecretKey.lower(secretKey),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         null,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18203,14 +18082,13 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip44_public(
-              DescriptorPublicKey.lower(publicKey),
-              FfiConverterString.lower(fingerprint),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip44_public(
+          DescriptorPublicKey.lower(publicKey),
+          FfiConverterString.lower(fingerprint),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         descriptorExceptionErrorHandler,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18220,13 +18098,12 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip49(
-              DescriptorSecretKey.lower(secretKey),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip49(
+          DescriptorSecretKey.lower(secretKey),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         null,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18237,14 +18114,13 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip49_public(
-              DescriptorPublicKey.lower(publicKey),
-              FfiConverterString.lower(fingerprint),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip49_public(
+          DescriptorPublicKey.lower(publicKey),
+          FfiConverterString.lower(fingerprint),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         descriptorExceptionErrorHandler,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18254,13 +18130,12 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip84(
-              DescriptorSecretKey.lower(secretKey),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip84(
+          DescriptorSecretKey.lower(secretKey),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         null,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18271,14 +18146,13 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip84_public(
-              DescriptorPublicKey.lower(publicKey),
-              FfiConverterString.lower(fingerprint),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip84_public(
+          DescriptorPublicKey.lower(publicKey),
+          FfiConverterString.lower(fingerprint),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         descriptorExceptionErrorHandler,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18288,13 +18162,12 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip86(
-              DescriptorSecretKey.lower(secretKey),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip86(
+          DescriptorSecretKey.lower(secretKey),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         null,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18305,14 +18178,13 @@ class Descriptor implements DescriptorInterface {
     KeychainKind keychainKind,
     Network network,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptor_new_bip86_public(
-              DescriptorPublicKey.lower(publicKey),
-              FfiConverterString.lower(fingerprint),
-              FfiConverterKeychainKind.lower(keychainKind),
-              FfiConverterNetwork.lower(network),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptor_new_bip86_public(
+          DescriptorPublicKey.lower(publicKey),
+          FfiConverterString.lower(fingerprint),
+          FfiConverterKeychainKind.lower(keychainKind),
+          FfiConverterNetwork.lower(network),
+          status,
+        ),
         descriptorExceptionErrorHandler,
       ) {
     _DescriptorFinalizer.attach(this, _ptr, detach: this);
@@ -18326,8 +18198,7 @@ class Descriptor implements DescriptorInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_descriptor(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_descriptor(_ptr, status),
     );
   }
 
@@ -18349,20 +18220,16 @@ class Descriptor implements DescriptorInterface {
 
   void dispose() {
     _DescriptorFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptor(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_descriptor(_ptr, status));
   }
 
   String debugString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptor_uniffi_trait_debug(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptor_uniffi_trait_debug(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18372,11 +18239,10 @@ class Descriptor implements DescriptorInterface {
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptor_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptor_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18385,7 +18251,7 @@ class Descriptor implements DescriptorInterface {
   DescriptorType descType() {
     return rustCall(
       (status) => FfiConverterDescriptorType.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptor_desc_type(
+        uniffi_bdk_ffi_fn_method_descriptor_desc_type(
           uniffiClonePointer(),
           status,
         ),
@@ -18397,7 +18263,7 @@ class Descriptor implements DescriptorInterface {
   DescriptorId descriptorId() {
     return rustCall(
       (status) => DescriptorId.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptor_descriptor_id(
+        uniffi_bdk_ffi_fn_method_descriptor_descriptor_id(
           uniffiClonePointer(),
           status,
         ),
@@ -18409,7 +18275,7 @@ class Descriptor implements DescriptorInterface {
   bool isMultipath() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptor_is_multipath(
+        uniffi_bdk_ffi_fn_method_descriptor_is_multipath(
           uniffiClonePointer(),
           status,
         ),
@@ -18421,11 +18287,10 @@ class Descriptor implements DescriptorInterface {
   int maxWeightToSatisfy() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptor_max_weight_to_satisfy(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptor_max_weight_to_satisfy(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       descriptorExceptionErrorHandler,
     );
@@ -18434,11 +18299,10 @@ class Descriptor implements DescriptorInterface {
   List<Descriptor> toSingleDescriptors() {
     return rustCall(
       (status) => FfiConverterSequenceDescriptor.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptor_to_single_descriptors(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptor_to_single_descriptors(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       miniscriptExceptionErrorHandler,
     );
@@ -18447,11 +18311,10 @@ class Descriptor implements DescriptorInterface {
   String toStringWithSecret() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptor_to_string_with_secret(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptor_to_string_with_secret(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18463,10 +18326,7 @@ abstract class DescriptorIdInterface {
 }
 
 final _DescriptorIdFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptorid(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_descriptorid(ptr, status));
 });
 
 class DescriptorId implements DescriptorIdInterface {
@@ -18476,22 +18336,20 @@ class DescriptorId implements DescriptorIdInterface {
   }
   DescriptorId.fromBytes(Uint8List bytes)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptorid_from_bytes(
-              FfiConverterUint8List.lower(bytes),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptorid_from_bytes(
+          FfiConverterUint8List.lower(bytes),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _DescriptorIdFinalizer.attach(this, _ptr, detach: this);
   }
   DescriptorId.fromString(String hex)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptorid_from_string(
-              FfiConverterString.lower(hex),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptorid_from_string(
+          FfiConverterString.lower(hex),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _DescriptorIdFinalizer.attach(this, _ptr, detach: this);
@@ -18505,8 +18363,7 @@ class DescriptorId implements DescriptorIdInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_descriptorid(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_descriptorid(_ptr, status),
     );
   }
 
@@ -18528,21 +18385,17 @@ class DescriptorId implements DescriptorIdInterface {
 
   void dispose() {
     _DescriptorIdFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptorid(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_descriptorid(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18558,12 +18411,11 @@ class DescriptorId implements DescriptorIdInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_eq_eq(
-              uniffiClonePointer(),
-              DescriptorId.lower(other),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_eq_eq(
+          uniffiClonePointer(),
+          DescriptorId.lower(other),
+          status,
+        ),
       ),
       null,
     );
@@ -18573,11 +18425,10 @@ class DescriptorId implements DescriptorIdInterface {
   int get hashCode {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_hash(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_hash(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18586,7 +18437,7 @@ class DescriptorId implements DescriptorIdInterface {
   Uint8List serialize() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptorid_serialize(
+        uniffi_bdk_ffi_fn_method_descriptorid_serialize(
           uniffiClonePointer(),
           status,
         ),
@@ -18604,12 +18455,7 @@ abstract class DescriptorPublicKeyInterface {
 }
 
 final _DescriptorPublicKeyFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptorpublickey(
-      ptr,
-      status,
-    ),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_descriptorpublickey(ptr, status));
 });
 
 class DescriptorPublicKey implements DescriptorPublicKeyInterface {
@@ -18619,8 +18465,8 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
   }
   DescriptorPublicKey.fromString(String publicKey)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptorpublickey_from_string(
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_descriptorpublickey_from_string(
               FfiConverterString.lower(publicKey),
               status,
             ),
@@ -18637,8 +18483,7 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance
-          .uniffi_bdkffi_fn_clone_descriptorpublickey(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_descriptorpublickey(_ptr, status),
     );
   }
 
@@ -18661,21 +18506,17 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
   void dispose() {
     _DescriptorPublicKeyFinalizer.detach(this);
     rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptorpublickey(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_free_descriptorpublickey(_ptr, status),
     );
   }
 
   String debugString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorpublickey_uniffi_trait_debug(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorpublickey_uniffi_trait_debug(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18685,11 +18526,10 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorpublickey_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorpublickey_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18698,7 +18538,7 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
   DescriptorPublicKey derive(DerivationPath path) {
     return rustCall(
       (status) => DescriptorPublicKey.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptorpublickey_derive(
+        uniffi_bdk_ffi_fn_method_descriptorpublickey_derive(
           uniffiClonePointer(),
           DerivationPath.lower(path),
           status,
@@ -18711,7 +18551,7 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
   DescriptorPublicKey extend(DerivationPath path) {
     return rustCall(
       (status) => DescriptorPublicKey.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptorpublickey_extend(
+        uniffi_bdk_ffi_fn_method_descriptorpublickey_extend(
           uniffiClonePointer(),
           DerivationPath.lower(path),
           status,
@@ -18724,11 +18564,10 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
   bool isMultipath() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorpublickey_is_multipath(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorpublickey_is_multipath(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18737,11 +18576,10 @@ class DescriptorPublicKey implements DescriptorPublicKeyInterface {
   String masterFingerprint() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorpublickey_master_fingerprint(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorpublickey_master_fingerprint(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18756,12 +18594,7 @@ abstract class DescriptorSecretKeyInterface {
 }
 
 final _DescriptorSecretKeyFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptorsecretkey(
-      ptr,
-      status,
-    ),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_descriptorsecretkey(ptr, status));
 });
 
 class DescriptorSecretKey implements DescriptorSecretKeyInterface {
@@ -18771,8 +18604,8 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   }
   DescriptorSecretKey.fromString(String privateKey)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptorsecretkey_from_string(
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_descriptorsecretkey_from_string(
               FfiConverterString.lower(privateKey),
               status,
             ),
@@ -18782,13 +18615,12 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   }
   DescriptorSecretKey(Network network, Mnemonic mnemonic, String? password)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_descriptorsecretkey_new(
-              FfiConverterNetwork.lower(network),
-              Mnemonic.lower(mnemonic),
-              FfiConverterOptionalString.lower(password),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_descriptorsecretkey_new(
+          FfiConverterNetwork.lower(network),
+          Mnemonic.lower(mnemonic),
+          FfiConverterOptionalString.lower(password),
+          status,
+        ),
         null,
       ) {
     _DescriptorSecretKeyFinalizer.attach(this, _ptr, detach: this);
@@ -18802,8 +18634,7 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance
-          .uniffi_bdkffi_fn_clone_descriptorsecretkey(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_descriptorsecretkey(_ptr, status),
     );
   }
 
@@ -18826,21 +18657,17 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   void dispose() {
     _DescriptorSecretKeyFinalizer.detach(this);
     rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_descriptorsecretkey(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_free_descriptorsecretkey(_ptr, status),
     );
   }
 
   String debugString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorsecretkey_uniffi_trait_debug(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorsecretkey_uniffi_trait_debug(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18850,11 +18677,10 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorsecretkey_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorsecretkey_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18863,11 +18689,10 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   DescriptorPublicKey asPublic() {
     return rustCall(
       (status) => DescriptorPublicKey.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorsecretkey_as_public(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorsecretkey_as_public(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18876,7 +18701,7 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   DescriptorSecretKey derive(DerivationPath path) {
     return rustCall(
       (status) => DescriptorSecretKey.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptorsecretkey_derive(
+        uniffi_bdk_ffi_fn_method_descriptorsecretkey_derive(
           uniffiClonePointer(),
           DerivationPath.lower(path),
           status,
@@ -18889,7 +18714,7 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   DescriptorSecretKey extend(DerivationPath path) {
     return rustCall(
       (status) => DescriptorSecretKey.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_descriptorsecretkey_extend(
+        uniffi_bdk_ffi_fn_method_descriptorsecretkey_extend(
           uniffiClonePointer(),
           DerivationPath.lower(path),
           status,
@@ -18902,11 +18727,10 @@ class DescriptorSecretKey implements DescriptorSecretKeyInterface {
   Uint8List secretBytes() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_descriptorsecretkey_secret_bytes(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_descriptorsecretkey_secret_bytes(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -18929,10 +18753,7 @@ abstract class ElectrumClientInterface {
 }
 
 final _ElectrumClientFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_electrumclient(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_electrumclient(ptr, status));
 });
 
 class ElectrumClient implements ElectrumClientInterface {
@@ -18942,12 +18763,11 @@ class ElectrumClient implements ElectrumClientInterface {
   }
   ElectrumClient(String url, String? socks5)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_electrumclient_new(
-              FfiConverterString.lower(url),
-              FfiConverterOptionalString.lower(socks5),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_electrumclient_new(
+          FfiConverterString.lower(url),
+          FfiConverterOptionalString.lower(socks5),
+          status,
+        ),
         electrumExceptionErrorHandler,
       ) {
     _ElectrumClientFinalizer.attach(this, _ptr, detach: this);
@@ -18961,10 +18781,7 @@ class ElectrumClient implements ElectrumClientInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_electrumclient(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_clone_electrumclient(_ptr, status),
     );
   }
 
@@ -18986,22 +18803,16 @@ class ElectrumClient implements ElectrumClientInterface {
 
   void dispose() {
     _ElectrumClientFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_electrumclient(
-        _ptr,
-        status,
-      ),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_electrumclient(_ptr, status));
   }
 
   HeaderNotification blockHeadersSubscribe() {
     return rustCall(
       (status) => FfiConverterHeaderNotification.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_electrumclient_block_headers_subscribe(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_electrumclient_block_headers_subscribe(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       electrumExceptionErrorHandler,
     );
@@ -19010,7 +18821,7 @@ class ElectrumClient implements ElectrumClientInterface {
   double estimateFee(int number) {
     return rustCall(
       (status) => FfiConverterDouble64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_electrumclient_estimate_fee(
+        uniffi_bdk_ffi_fn_method_electrumclient_estimate_fee(
           uniffiClonePointer(),
           FfiConverterUInt64.lower(number),
           status,
@@ -19028,7 +18839,7 @@ class ElectrumClient implements ElectrumClientInterface {
   ) {
     return rustCall(
       (status) => Update.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_electrumclient_full_scan(
+        uniffi_bdk_ffi_fn_method_electrumclient_full_scan(
           uniffiClonePointer(),
           FullScanRequest.lower(request),
           FfiConverterUInt64.lower(stopGap),
@@ -19043,7 +18854,7 @@ class ElectrumClient implements ElectrumClientInterface {
 
   void ping() {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_electrumclient_ping(
+      uniffi_bdk_ffi_fn_method_electrumclient_ping(
         uniffiClonePointer(),
         status,
       );
@@ -19053,11 +18864,10 @@ class ElectrumClient implements ElectrumClientInterface {
   ServerFeaturesRes serverFeatures() {
     return rustCall(
       (status) => FfiConverterServerFeaturesRes.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_electrumclient_server_features(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_electrumclient_server_features(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       electrumExceptionErrorHandler,
     );
@@ -19066,7 +18876,7 @@ class ElectrumClient implements ElectrumClientInterface {
   Update sync_(SyncRequest request, int batchSize, bool fetchPrevTxouts) {
     return rustCall(
       (status) => Update.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_electrumclient_sync(
+        uniffi_bdk_ffi_fn_method_electrumclient_sync(
           uniffiClonePointer(),
           SyncRequest.lower(request),
           FfiConverterUInt64.lower(batchSize),
@@ -19081,12 +18891,11 @@ class ElectrumClient implements ElectrumClientInterface {
   Txid transactionBroadcast(Transaction tx) {
     return rustCall(
       (status) => Txid.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_electrumclient_transaction_broadcast(
-              uniffiClonePointer(),
-              Transaction.lower(tx),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_electrumclient_transaction_broadcast(
+          uniffiClonePointer(),
+          Transaction.lower(tx),
+          status,
+        ),
       ),
       electrumExceptionErrorHandler,
     );
@@ -19106,10 +18915,7 @@ abstract class EsploraClientInterface {
 }
 
 final _EsploraClientFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_esploraclient(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_esploraclient(ptr, status));
 });
 
 class EsploraClient implements EsploraClientInterface {
@@ -19119,12 +18925,11 @@ class EsploraClient implements EsploraClientInterface {
   }
   EsploraClient(String url, String? proxy)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_esploraclient_new(
-              FfiConverterString.lower(url),
-              FfiConverterOptionalString.lower(proxy),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_esploraclient_new(
+          FfiConverterString.lower(url),
+          FfiConverterOptionalString.lower(proxy),
+          status,
+        ),
         null,
       ) {
     _EsploraClientFinalizer.attach(this, _ptr, detach: this);
@@ -19138,10 +18943,7 @@ class EsploraClient implements EsploraClientInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_esploraclient(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_clone_esploraclient(_ptr, status),
     );
   }
 
@@ -19163,15 +18965,12 @@ class EsploraClient implements EsploraClientInterface {
 
   void dispose() {
     _EsploraClientFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_esploraclient(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_esploraclient(_ptr, status));
   }
 
   void broadcast(Transaction transaction) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_esploraclient_broadcast(
+      uniffi_bdk_ffi_fn_method_esploraclient_broadcast(
         uniffiClonePointer(),
         Transaction.lower(transaction),
         status,
@@ -19182,7 +18981,7 @@ class EsploraClient implements EsploraClientInterface {
   Update fullScan(FullScanRequest request, int stopGap, int parallelRequests) {
     return rustCall(
       (status) => Update.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_esploraclient_full_scan(
+        uniffi_bdk_ffi_fn_method_esploraclient_full_scan(
           uniffiClonePointer(),
           FullScanRequest.lower(request),
           FfiConverterUInt64.lower(stopGap),
@@ -19197,12 +18996,11 @@ class EsploraClient implements EsploraClientInterface {
   BlockHash getBlockHash(int blockHeight) {
     return rustCall(
       (status) => BlockHash.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_esploraclient_get_block_hash(
-              uniffiClonePointer(),
-              FfiConverterUInt32.lower(blockHeight),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_esploraclient_get_block_hash(
+          uniffiClonePointer(),
+          FfiConverterUInt32.lower(blockHeight),
+          status,
+        ),
       ),
       esploraExceptionErrorHandler,
     );
@@ -19211,11 +19009,10 @@ class EsploraClient implements EsploraClientInterface {
   Map<int, double> getFeeEstimates() {
     return rustCall(
       (status) => FfiConverterMapUInt16ToDouble64.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_esploraclient_get_fee_estimates(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_esploraclient_get_fee_estimates(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       esploraExceptionErrorHandler,
     );
@@ -19224,7 +19021,7 @@ class EsploraClient implements EsploraClientInterface {
   int getHeight() {
     return rustCall(
       (status) => FfiConverterUInt32.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_esploraclient_get_height(
+        uniffi_bdk_ffi_fn_method_esploraclient_get_height(
           uniffiClonePointer(),
           status,
         ),
@@ -19236,7 +19033,7 @@ class EsploraClient implements EsploraClientInterface {
   Transaction? getTx(Txid txid) {
     return rustCall(
       (status) => FfiConverterOptionalTransaction.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_esploraclient_get_tx(
+        uniffi_bdk_ffi_fn_method_esploraclient_get_tx(
           uniffiClonePointer(),
           Txid.lower(txid),
           status,
@@ -19249,7 +19046,7 @@ class EsploraClient implements EsploraClientInterface {
   Tx? getTxInfo(Txid txid) {
     return rustCall(
       (status) => FfiConverterOptionalTx.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_esploraclient_get_tx_info(
+        uniffi_bdk_ffi_fn_method_esploraclient_get_tx_info(
           uniffiClonePointer(),
           Txid.lower(txid),
           status,
@@ -19262,7 +19059,7 @@ class EsploraClient implements EsploraClientInterface {
   TxStatus getTxStatus(Txid txid) {
     return rustCall(
       (status) => FfiConverterTxStatus.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_esploraclient_get_tx_status(
+        uniffi_bdk_ffi_fn_method_esploraclient_get_tx_status(
           uniffiClonePointer(),
           Txid.lower(txid),
           status,
@@ -19275,7 +19072,7 @@ class EsploraClient implements EsploraClientInterface {
   Update sync_(SyncRequest request, int parallelRequests) {
     return rustCall(
       (status) => Update.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_esploraclient_sync(
+        uniffi_bdk_ffi_fn_method_esploraclient_sync(
           uniffiClonePointer(),
           SyncRequest.lower(request),
           FfiConverterUInt64.lower(parallelRequests),
@@ -19296,9 +19093,7 @@ abstract class FeeRateInterface {
 }
 
 final _FeeRateFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_feerate(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_feerate(ptr, status));
 });
 
 class FeeRate implements FeeRateInterface {
@@ -19308,22 +19103,20 @@ class FeeRate implements FeeRateInterface {
   }
   FeeRate.fromSatPerKwu(int satKwu)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_feerate_from_sat_per_kwu(
-              FfiConverterUInt64.lower(satKwu),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_feerate_from_sat_per_kwu(
+          FfiConverterUInt64.lower(satKwu),
+          status,
+        ),
         null,
       ) {
     _FeeRateFinalizer.attach(this, _ptr, detach: this);
   }
   FeeRate.fromSatPerVb(int satVb)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_feerate_from_sat_per_vb(
-              FfiConverterUInt64.lower(satVb),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_feerate_from_sat_per_vb(
+          FfiConverterUInt64.lower(satVb),
+          status,
+        ),
         feeRateExceptionErrorHandler,
       ) {
     _FeeRateFinalizer.attach(this, _ptr, detach: this);
@@ -19336,10 +19129,7 @@ class FeeRate implements FeeRateInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_feerate(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_feerate(_ptr, status));
   }
 
   static int allocationSize(FeeRate value) {
@@ -19360,21 +19150,17 @@ class FeeRate implements FeeRateInterface {
 
   void dispose() {
     _FeeRateFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_feerate(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_feerate(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_feerate_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_feerate_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -19383,7 +19169,7 @@ class FeeRate implements FeeRateInterface {
   Amount? feeVb(int vb) {
     return rustCall(
       (status) => FfiConverterOptionalAmount.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_feerate_fee_vb(
+        uniffi_bdk_ffi_fn_method_feerate_fee_vb(
           uniffiClonePointer(),
           FfiConverterUInt64.lower(vb),
           status,
@@ -19396,7 +19182,7 @@ class FeeRate implements FeeRateInterface {
   Amount? feeWu(int wu) {
     return rustCall(
       (status) => FfiConverterOptionalAmount.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_feerate_fee_wu(
+        uniffi_bdk_ffi_fn_method_feerate_fee_wu(
           uniffiClonePointer(),
           FfiConverterUInt64.lower(wu),
           status,
@@ -19409,7 +19195,7 @@ class FeeRate implements FeeRateInterface {
   int toSatPerKwu() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_feerate_to_sat_per_kwu(
+        uniffi_bdk_ffi_fn_method_feerate_to_sat_per_kwu(
           uniffiClonePointer(),
           status,
         ),
@@ -19421,7 +19207,7 @@ class FeeRate implements FeeRateInterface {
   int toSatPerVbCeil() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_feerate_to_sat_per_vb_ceil(
+        uniffi_bdk_ffi_fn_method_feerate_to_sat_per_vb_ceil(
           uniffiClonePointer(),
           status,
         ),
@@ -19433,7 +19219,7 @@ class FeeRate implements FeeRateInterface {
   int toSatPerVbFloor() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_feerate_to_sat_per_vb_floor(
+        uniffi_bdk_ffi_fn_method_feerate_to_sat_per_vb_floor(
           uniffiClonePointer(),
           status,
         ),
@@ -19446,10 +19232,7 @@ class FeeRate implements FeeRateInterface {
 abstract class FullScanRequestInterface {}
 
 final _FullScanRequestFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_fullscanrequest(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_fullscanrequest(ptr, status));
 });
 
 class FullScanRequest implements FullScanRequestInterface {
@@ -19466,10 +19249,7 @@ class FullScanRequest implements FullScanRequestInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_fullscanrequest(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_clone_fullscanrequest(_ptr, status),
     );
   }
 
@@ -19491,12 +19271,7 @@ class FullScanRequest implements FullScanRequestInterface {
 
   void dispose() {
     _FullScanRequestFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_fullscanrequest(
-        _ptr,
-        status,
-      ),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_fullscanrequest(_ptr, status));
   }
 }
 
@@ -19509,8 +19284,7 @@ abstract class FullScanRequestBuilderInterface {
 
 final _FullScanRequestBuilderFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall(
-    (status) => _UniffiLib.instance
-        .uniffi_bdkffi_fn_free_fullscanrequestbuilder(ptr, status),
+    (status) => uniffi_bdk_ffi_fn_free_fullscanrequestbuilder(ptr, status),
   );
 });
 
@@ -19528,8 +19302,7 @@ class FullScanRequestBuilder implements FullScanRequestBuilderInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance
-          .uniffi_bdkffi_fn_clone_fullscanrequestbuilder(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_fullscanrequestbuilder(_ptr, status),
     );
   }
 
@@ -19552,19 +19325,17 @@ class FullScanRequestBuilder implements FullScanRequestBuilderInterface {
   void dispose() {
     _FullScanRequestBuilderFinalizer.detach(this);
     rustCall(
-      (status) => _UniffiLib.instance
-          .uniffi_bdkffi_fn_free_fullscanrequestbuilder(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_free_fullscanrequestbuilder(_ptr, status),
     );
   }
 
   FullScanRequest build() {
     return rustCall(
       (status) => FullScanRequest.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_fullscanrequestbuilder_build(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_fullscanrequestbuilder_build(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       requestBuilderExceptionErrorHandler,
     );
@@ -19575,14 +19346,11 @@ class FullScanRequestBuilder implements FullScanRequestBuilderInterface {
   ) {
     return rustCall(
       (status) => FullScanRequestBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_fullscanrequestbuilder_inspect_spks_for_all_keychains(
-              uniffiClonePointer(),
-              FfiConverterCallbackInterfaceFullScanScriptInspector.lower(
-                inspector,
-              ),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_fullscanrequestbuilder_inspect_spks_for_all_keychains(
+          uniffiClonePointer(),
+          FfiConverterCallbackInterfaceFullScanScriptInspector.lower(inspector),
+          status,
+        ),
       ),
       requestBuilderExceptionErrorHandler,
     );
@@ -19725,10 +19493,9 @@ void initFullScanScriptInspectorVTable() {
   fullScanScriptInspectorVTable.ref.uniffiFree =
       fullScanScriptInspectorFreePointer;
   rustCall((status) {
-    _UniffiLib.instance
-        .uniffi_bdkffi_fn_init_callback_vtable_fullscanscriptinspector(
-          fullScanScriptInspectorVTable,
-        );
+    uniffi_bdk_ffi_fn_init_callback_vtable_fullscanscriptinspector(
+      fullScanScriptInspectorVTable,
+    );
     checkCallStatus(NullRustCallStatusErrorHandler(), status);
   });
   FfiConverterCallbackInterfaceFullScanScriptInspector._vtableInitialized =
@@ -19740,10 +19507,7 @@ abstract class HashableOutPointInterface {
 }
 
 final _HashableOutPointFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_hashableoutpoint(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_hashableoutpoint(ptr, status));
 });
 
 class HashableOutPoint implements HashableOutPointInterface {
@@ -19753,11 +19517,10 @@ class HashableOutPoint implements HashableOutPointInterface {
   }
   HashableOutPoint(OutPoint outpoint)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_hashableoutpoint_new(
-              FfiConverterOutPoint.lower(outpoint),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_hashableoutpoint_new(
+          FfiConverterOutPoint.lower(outpoint),
+          status,
+        ),
         null,
       ) {
     _HashableOutPointFinalizer.attach(this, _ptr, detach: this);
@@ -19771,10 +19534,7 @@ class HashableOutPoint implements HashableOutPointInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_hashableoutpoint(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_clone_hashableoutpoint(_ptr, status),
     );
   }
 
@@ -19796,22 +19556,16 @@ class HashableOutPoint implements HashableOutPointInterface {
 
   void dispose() {
     _HashableOutPointFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_hashableoutpoint(
-        _ptr,
-        status,
-      ),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_hashableoutpoint(_ptr, status));
   }
 
   String debugString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_debug(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_hashableoutpoint_uniffi_trait_debug(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -19827,12 +19581,11 @@ class HashableOutPoint implements HashableOutPointInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_eq_eq(
-              uniffiClonePointer(),
-              HashableOutPoint.lower(other),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_hashableoutpoint_uniffi_trait_eq_eq(
+          uniffiClonePointer(),
+          HashableOutPoint.lower(other),
+          status,
+        ),
       ),
       null,
     );
@@ -19842,11 +19595,10 @@ class HashableOutPoint implements HashableOutPointInterface {
   int get hashCode {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_hash(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_hashableoutpoint_uniffi_trait_hash(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -19855,7 +19607,7 @@ class HashableOutPoint implements HashableOutPointInterface {
   OutPoint outpoint() {
     return rustCall(
       (status) => FfiConverterOutPoint.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_hashableoutpoint_outpoint(
+        uniffi_bdk_ffi_fn_method_hashableoutpoint_outpoint(
           uniffiClonePointer(),
           status,
         ),
@@ -19868,10 +19620,7 @@ class HashableOutPoint implements HashableOutPointInterface {
 abstract class IpAddressInterface {}
 
 final _IpAddressFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_ipaddress(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_ipaddress(ptr, status));
 });
 
 class IpAddress implements IpAddressInterface {
@@ -19881,32 +19630,30 @@ class IpAddress implements IpAddressInterface {
   }
   IpAddress.fromIpv4(int q1, int q2, int q3, int q4)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_ipaddress_from_ipv4(
-              FfiConverterUInt8.lower(q1),
-              FfiConverterUInt8.lower(q2),
-              FfiConverterUInt8.lower(q3),
-              FfiConverterUInt8.lower(q4),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_ipaddress_from_ipv4(
+          FfiConverterUInt8.lower(q1),
+          FfiConverterUInt8.lower(q2),
+          FfiConverterUInt8.lower(q3),
+          FfiConverterUInt8.lower(q4),
+          status,
+        ),
         null,
       ) {
     _IpAddressFinalizer.attach(this, _ptr, detach: this);
   }
   IpAddress.fromIpv6(int a, int b, int c, int d, int e, int f, int g, int h)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_ipaddress_from_ipv6(
-              FfiConverterUInt16.lower(a),
-              FfiConverterUInt16.lower(b),
-              FfiConverterUInt16.lower(c),
-              FfiConverterUInt16.lower(d),
-              FfiConverterUInt16.lower(e),
-              FfiConverterUInt16.lower(f),
-              FfiConverterUInt16.lower(g),
-              FfiConverterUInt16.lower(h),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_ipaddress_from_ipv6(
+          FfiConverterUInt16.lower(a),
+          FfiConverterUInt16.lower(b),
+          FfiConverterUInt16.lower(c),
+          FfiConverterUInt16.lower(d),
+          FfiConverterUInt16.lower(e),
+          FfiConverterUInt16.lower(f),
+          FfiConverterUInt16.lower(g),
+          FfiConverterUInt16.lower(h),
+          status,
+        ),
         null,
       ) {
     _IpAddressFinalizer.attach(this, _ptr, detach: this);
@@ -19920,8 +19667,7 @@ class IpAddress implements IpAddressInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_ipaddress(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_ipaddress(_ptr, status),
     );
   }
 
@@ -19943,10 +19689,7 @@ class IpAddress implements IpAddressInterface {
 
   void dispose() {
     _IpAddressFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_ipaddress(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_ipaddress(_ptr, status));
   }
 }
 
@@ -19960,9 +19703,7 @@ abstract class LeafNodeInterface {
 }
 
 final _LeafNodeFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_leafnode(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_leafnode(ptr, status));
 });
 
 class LeafNode implements LeafNodeInterface {
@@ -19978,10 +19719,7 @@ class LeafNode implements LeafNodeInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_leafnode(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_leafnode(_ptr, status));
   }
 
   static int allocationSize(LeafNode value) {
@@ -20002,30 +19740,14 @@ class LeafNode implements LeafNodeInterface {
 
   void dispose() {
     _LeafNodeFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_leafnode(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_leafnode(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_leafnode_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
-      ),
-      null,
-    );
-  }
-
-  int depth() {
-    return rustCall(
-      (status) => FfiConverterUInt8.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_leafnode_depth(
+        uniffi_bdk_ffi_fn_method_leafnode_uniffi_trait_display(
           uniffiClonePointer(),
           status,
         ),
@@ -20034,10 +19756,19 @@ class LeafNode implements LeafNodeInterface {
     );
   }
 
+  int depth() {
+    return rustCall(
+      (status) => FfiConverterUInt8.lift(
+        uniffi_bdk_ffi_fn_method_leafnode_depth(uniffiClonePointer(), status),
+      ),
+      null,
+    );
+  }
+
   String? leafHash() {
     return rustCall(
       (status) => FfiConverterOptionalString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_leafnode_leaf_hash(
+        uniffi_bdk_ffi_fn_method_leafnode_leaf_hash(
           uniffiClonePointer(),
           status,
         ),
@@ -20049,7 +19780,7 @@ class LeafNode implements LeafNodeInterface {
   int? leafVersion() {
     return rustCall(
       (status) => FfiConverterOptionalUInt8.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_leafnode_leaf_version(
+        uniffi_bdk_ffi_fn_method_leafnode_leaf_version(
           uniffiClonePointer(),
           status,
         ),
@@ -20061,7 +19792,7 @@ class LeafNode implements LeafNodeInterface {
   List<String> merkleBranch() {
     return rustCall(
       (status) => FfiConverterSequenceString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_leafnode_merkle_branch(
+        uniffi_bdk_ffi_fn_method_leafnode_merkle_branch(
           uniffiClonePointer(),
           status,
         ),
@@ -20073,7 +19804,7 @@ class LeafNode implements LeafNodeInterface {
   String nodeHash() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_leafnode_node_hash(
+        uniffi_bdk_ffi_fn_method_leafnode_node_hash(
           uniffiClonePointer(),
           status,
         ),
@@ -20085,10 +19816,7 @@ class LeafNode implements LeafNodeInterface {
   Script? script() {
     return rustCall(
       (status) => FfiConverterOptionalScript.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_leafnode_script(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_leafnode_script(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20098,9 +19826,7 @@ class LeafNode implements LeafNodeInterface {
 abstract class MnemonicInterface {}
 
 final _MnemonicFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_mnemonic(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_mnemonic(ptr, status));
 });
 
 class Mnemonic implements MnemonicInterface {
@@ -20110,33 +19836,30 @@ class Mnemonic implements MnemonicInterface {
   }
   Mnemonic.fromEntropy(Uint8List entropy)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_mnemonic_from_entropy(
-              FfiConverterUint8List.lower(entropy),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_mnemonic_from_entropy(
+          FfiConverterUint8List.lower(entropy),
+          status,
+        ),
         bip39ExceptionErrorHandler,
       ) {
     _MnemonicFinalizer.attach(this, _ptr, detach: this);
   }
   Mnemonic.fromString(String mnemonic)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_mnemonic_from_string(
-              FfiConverterString.lower(mnemonic),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_mnemonic_from_string(
+          FfiConverterString.lower(mnemonic),
+          status,
+        ),
         bip39ExceptionErrorHandler,
       ) {
     _MnemonicFinalizer.attach(this, _ptr, detach: this);
   }
   Mnemonic(WordCount wordCount)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_mnemonic_new(
-              FfiConverterWordCount.lower(wordCount),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_mnemonic_new(
+          FfiConverterWordCount.lower(wordCount),
+          status,
+        ),
         null,
       ) {
     _MnemonicFinalizer.attach(this, _ptr, detach: this);
@@ -20149,10 +19872,7 @@ class Mnemonic implements MnemonicInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_mnemonic(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_mnemonic(_ptr, status));
   }
 
   static int allocationSize(Mnemonic value) {
@@ -20173,21 +19893,17 @@ class Mnemonic implements MnemonicInterface {
 
   void dispose() {
     _MnemonicFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_mnemonic(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_mnemonic(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_mnemonic_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_mnemonic_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -20200,9 +19916,7 @@ abstract class NodeInfoInterface {
 }
 
 final _NodeInfoFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_nodeinfo(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_nodeinfo(ptr, status));
 });
 
 class NodeInfo implements NodeInfoInterface {
@@ -20218,10 +19932,7 @@ class NodeInfo implements NodeInfoInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_nodeinfo(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_nodeinfo(_ptr, status));
   }
 
   static int allocationSize(NodeInfo value) {
@@ -20242,21 +19953,17 @@ class NodeInfo implements NodeInfoInterface {
 
   void dispose() {
     _NodeInfoFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_nodeinfo(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_nodeinfo(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_nodeinfo_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_nodeinfo_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -20265,7 +19972,7 @@ class NodeInfo implements NodeInfoInterface {
   List<LeafNode> leafNodes() {
     return rustCall(
       (status) => FfiConverterSequenceLeafNode.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_nodeinfo_leaf_nodes(
+        uniffi_bdk_ffi_fn_method_nodeinfo_leaf_nodes(
           uniffiClonePointer(),
           status,
         ),
@@ -20277,7 +19984,7 @@ class NodeInfo implements NodeInfoInterface {
   String nodeHash() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_nodeinfo_node_hash(
+        uniffi_bdk_ffi_fn_method_nodeinfo_node_hash(
           uniffiClonePointer(),
           status,
         ),
@@ -20423,9 +20130,7 @@ void initPersistenceVTable() {
   persistenceVTable.ref.persist = persistencePersistPointer;
   persistenceVTable.ref.uniffiFree = persistenceFreePointer;
   rustCall((status) {
-    _UniffiLib.instance.uniffi_bdkffi_fn_init_callback_vtable_persistence(
-      persistenceVTable,
-    );
+    uniffi_bdk_ffi_fn_init_callback_vtable_persistence(persistenceVTable);
     checkCallStatus(NullRustCallStatusErrorHandler(), status);
   });
   FfiConverterCallbackInterfacePersistence._vtableInitialized = true;
@@ -20434,10 +20139,7 @@ void initPersistenceVTable() {
 abstract class PersisterInterface {}
 
 final _PersisterFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_persister(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_persister(ptr, status));
 });
 
 class Persister implements PersisterInterface {
@@ -20447,30 +20149,28 @@ class Persister implements PersisterInterface {
   }
   Persister.custom(Persistence persistence)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_persister_custom(
-              FfiConverterCallbackInterfacePersistence.lower(persistence),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_persister_custom(
+          FfiConverterCallbackInterfacePersistence.lower(persistence),
+          status,
+        ),
         null,
       ) {
     _PersisterFinalizer.attach(this, _ptr, detach: this);
   }
   Persister.newInMemory()
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_persister_new_in_memory(status),
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_persister_new_in_memory(status),
         persistenceExceptionErrorHandler,
       ) {
     _PersisterFinalizer.attach(this, _ptr, detach: this);
   }
   Persister.newSqlite(String path)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_persister_new_sqlite(
-              FfiConverterString.lower(path),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_persister_new_sqlite(
+          FfiConverterString.lower(path),
+          status,
+        ),
         persistenceExceptionErrorHandler,
       ) {
     _PersisterFinalizer.attach(this, _ptr, detach: this);
@@ -20484,8 +20184,7 @@ class Persister implements PersisterInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_persister(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_persister(_ptr, status),
     );
   }
 
@@ -20507,10 +20206,7 @@ class Persister implements PersisterInterface {
 
   void dispose() {
     _PersisterFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_persister(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_persister(_ptr, status));
   }
 }
 
@@ -20524,9 +20220,7 @@ abstract class PolicyInterface {
 }
 
 final _PolicyFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_policy(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_policy(ptr, status));
 });
 
 class Policy implements PolicyInterface {
@@ -20542,10 +20236,7 @@ class Policy implements PolicyInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_policy(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_policy(_ptr, status));
   }
 
   static int allocationSize(Policy value) {
@@ -20566,19 +20257,13 @@ class Policy implements PolicyInterface {
 
   void dispose() {
     _PolicyFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_policy(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_policy(_ptr, status));
   }
 
   String asString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_policy_as_string(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_policy_as_string(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20587,7 +20272,7 @@ class Policy implements PolicyInterface {
   Satisfaction contribution() {
     return rustCall(
       (status) => FfiConverterSatisfaction.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_policy_contribution(
+        uniffi_bdk_ffi_fn_method_policy_contribution(
           uniffiClonePointer(),
           status,
         ),
@@ -20599,10 +20284,7 @@ class Policy implements PolicyInterface {
   String id() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_policy_id(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_policy_id(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20611,10 +20293,7 @@ class Policy implements PolicyInterface {
   SatisfiableItem item() {
     return rustCall(
       (status) => FfiConverterSatisfiableItem.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_policy_item(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_policy_item(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20623,7 +20302,7 @@ class Policy implements PolicyInterface {
   bool requiresPath() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_policy_requires_path(
+        uniffi_bdk_ffi_fn_method_policy_requires_path(
           uniffiClonePointer(),
           status,
         ),
@@ -20635,7 +20314,7 @@ class Policy implements PolicyInterface {
   Satisfaction satisfaction() {
     return rustCall(
       (status) => FfiConverterSatisfaction.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_policy_satisfaction(
+        uniffi_bdk_ffi_fn_method_policy_satisfaction(
           uniffiClonePointer(),
           status,
         ),
@@ -20659,9 +20338,7 @@ abstract class PsbtInterface {
 }
 
 final _PsbtFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_psbt(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_psbt(ptr, status));
 });
 
 class Psbt implements PsbtInterface {
@@ -20671,29 +20348,27 @@ class Psbt implements PsbtInterface {
   }
   Psbt.fromFile(String path)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_psbt_from_file(
-              FfiConverterString.lower(path),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_psbt_from_file(
+          FfiConverterString.lower(path),
+          status,
+        ),
         psbtExceptionErrorHandler,
       ) {
     _PsbtFinalizer.attach(this, _ptr, detach: this);
   }
   Psbt.fromUnsignedTx(Transaction tx)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_psbt_from_unsigned_tx(
-              Transaction.lower(tx),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_psbt_from_unsigned_tx(
+          Transaction.lower(tx),
+          status,
+        ),
         psbtExceptionErrorHandler,
       ) {
     _PsbtFinalizer.attach(this, _ptr, detach: this);
   }
   Psbt(String psbtBase64)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance.uniffi_bdkffi_fn_constructor_psbt_new(
+        (status) => uniffi_bdk_ffi_fn_constructor_psbt_new(
           FfiConverterString.lower(psbtBase64),
           status,
         ),
@@ -20709,9 +20384,7 @@ class Psbt implements PsbtInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_psbt(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_psbt(_ptr, status));
   }
 
   static int allocationSize(Psbt value) {
@@ -20732,15 +20405,13 @@ class Psbt implements PsbtInterface {
 
   void dispose() {
     _PsbtFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_psbt(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_psbt(_ptr, status));
   }
 
   Psbt combine(Psbt other) {
     return rustCall(
       (status) => Psbt.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_combine(
+        uniffi_bdk_ffi_fn_method_psbt_combine(
           uniffiClonePointer(),
           Psbt.lower(other),
           status,
@@ -20753,10 +20424,7 @@ class Psbt implements PsbtInterface {
   Transaction extractTx() {
     return rustCall(
       (status) => Transaction.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_extract_tx(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_psbt_extract_tx(uniffiClonePointer(), status),
       ),
       extractTxExceptionErrorHandler,
     );
@@ -20765,10 +20433,7 @@ class Psbt implements PsbtInterface {
   int fee() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_fee(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_psbt_fee(uniffiClonePointer(), status),
       ),
       psbtExceptionErrorHandler,
     );
@@ -20777,10 +20442,7 @@ class Psbt implements PsbtInterface {
   FinalizedPsbtResult finalize() {
     return rustCall(
       (status) => FfiConverterFinalizedPsbtResult.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_finalize(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_psbt_finalize(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20789,10 +20451,7 @@ class Psbt implements PsbtInterface {
   List<Input> input() {
     return rustCall(
       (status) => FfiConverterSequenceInput.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_input(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_psbt_input(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20801,7 +20460,7 @@ class Psbt implements PsbtInterface {
   String jsonSerialize() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_json_serialize(
+        uniffi_bdk_ffi_fn_method_psbt_json_serialize(
           uniffiClonePointer(),
           status,
         ),
@@ -20813,10 +20472,7 @@ class Psbt implements PsbtInterface {
   List<Output> output() {
     return rustCall(
       (status) => FfiConverterSequenceOutput.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_output(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_psbt_output(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20825,10 +20481,7 @@ class Psbt implements PsbtInterface {
   String serialize() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_serialize(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_psbt_serialize(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20837,7 +20490,7 @@ class Psbt implements PsbtInterface {
   String spendUtxo(int inputIndex) {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_spend_utxo(
+        uniffi_bdk_ffi_fn_method_psbt_spend_utxo(
           uniffiClonePointer(),
           FfiConverterUInt64.lower(inputIndex),
           status,
@@ -20849,7 +20502,7 @@ class Psbt implements PsbtInterface {
 
   void writeToFile(String path) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_psbt_write_to_file(
+      uniffi_bdk_ffi_fn_method_psbt_write_to_file(
         uniffiClonePointer(),
         FfiConverterString.lower(path),
         status,
@@ -20863,9 +20516,7 @@ abstract class ScriptInterface {
 }
 
 final _ScriptFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_script(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_script(ptr, status));
 });
 
 class Script implements ScriptInterface {
@@ -20875,7 +20526,7 @@ class Script implements ScriptInterface {
   }
   Script(Uint8List rawOutputScript)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance.uniffi_bdkffi_fn_constructor_script_new(
+        (status) => uniffi_bdk_ffi_fn_constructor_script_new(
           FfiConverterUint8List.lower(rawOutputScript),
           status,
         ),
@@ -20891,10 +20542,7 @@ class Script implements ScriptInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_script(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_script(_ptr, status));
   }
 
   static int allocationSize(Script value) {
@@ -20915,17 +20563,14 @@ class Script implements ScriptInterface {
 
   void dispose() {
     _ScriptFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_script(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_script(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_script_uniffi_trait_display(
+        uniffi_bdk_ffi_fn_method_script_uniffi_trait_display(
           uniffiClonePointer(),
           status,
         ),
@@ -20937,10 +20582,7 @@ class Script implements ScriptInterface {
   Uint8List toBytes() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_script_to_bytes(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_script_to_bytes(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -20950,10 +20592,7 @@ class Script implements ScriptInterface {
 abstract class SyncRequestInterface {}
 
 final _SyncRequestFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_syncrequest(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_syncrequest(ptr, status));
 });
 
 class SyncRequest implements SyncRequestInterface {
@@ -20970,8 +20609,7 @@ class SyncRequest implements SyncRequestInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_syncrequest(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_syncrequest(_ptr, status),
     );
   }
 
@@ -20993,10 +20631,7 @@ class SyncRequest implements SyncRequestInterface {
 
   void dispose() {
     _SyncRequestFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_syncrequest(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_syncrequest(_ptr, status));
   }
 }
 
@@ -21006,12 +20641,7 @@ abstract class SyncRequestBuilderInterface {
 }
 
 final _SyncRequestBuilderFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_syncrequestbuilder(
-      ptr,
-      status,
-    ),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_syncrequestbuilder(ptr, status));
 });
 
 class SyncRequestBuilder implements SyncRequestBuilderInterface {
@@ -21028,10 +20658,7 @@ class SyncRequestBuilder implements SyncRequestBuilderInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_syncrequestbuilder(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_clone_syncrequestbuilder(_ptr, status),
     );
   }
 
@@ -21054,17 +20681,14 @@ class SyncRequestBuilder implements SyncRequestBuilderInterface {
   void dispose() {
     _SyncRequestBuilderFinalizer.detach(this);
     rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_syncrequestbuilder(
-        _ptr,
-        status,
-      ),
+      (status) => uniffi_bdk_ffi_fn_free_syncrequestbuilder(_ptr, status),
     );
   }
 
   SyncRequest build() {
     return rustCall(
       (status) => SyncRequest.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_syncrequestbuilder_build(
+        uniffi_bdk_ffi_fn_method_syncrequestbuilder_build(
           uniffiClonePointer(),
           status,
         ),
@@ -21076,12 +20700,11 @@ class SyncRequestBuilder implements SyncRequestBuilderInterface {
   SyncRequestBuilder inspectSpks(SyncScriptInspector inspector) {
     return rustCall(
       (status) => SyncRequestBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_syncrequestbuilder_inspect_spks(
-              uniffiClonePointer(),
-              FfiConverterCallbackInterfaceSyncScriptInspector.lower(inspector),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_syncrequestbuilder_inspect_spks(
+          uniffiClonePointer(),
+          FfiConverterCallbackInterfaceSyncScriptInspector.lower(inspector),
+          status,
+        ),
       ),
       requestBuilderExceptionErrorHandler,
     );
@@ -21208,10 +20831,9 @@ void initSyncScriptInspectorVTable() {
   syncScriptInspectorVTable.ref.inspect = syncScriptInspectorInspectPointer;
   syncScriptInspectorVTable.ref.uniffiFree = syncScriptInspectorFreePointer;
   rustCall((status) {
-    _UniffiLib.instance
-        .uniffi_bdkffi_fn_init_callback_vtable_syncscriptinspector(
-          syncScriptInspectorVTable,
-        );
+    uniffi_bdk_ffi_fn_init_callback_vtable_syncscriptinspector(
+      syncScriptInspectorVTable,
+    );
     checkCallStatus(NullRustCallStatusErrorHandler(), status);
   });
   FfiConverterCallbackInterfaceSyncScriptInspector._vtableInitialized = true;
@@ -21223,9 +20845,7 @@ abstract class TapTreeInterface {
 }
 
 final _TapTreeFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_taptree(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_taptree(ptr, status));
 });
 
 class TapTree implements TapTreeInterface {
@@ -21241,10 +20861,7 @@ class TapTree implements TapTreeInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_taptree(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_taptree(_ptr, status));
   }
 
   static int allocationSize(TapTree value) {
@@ -21265,21 +20882,17 @@ class TapTree implements TapTreeInterface {
 
   void dispose() {
     _TapTreeFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_taptree(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_taptree(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_taptree_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_taptree_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -21288,7 +20901,7 @@ class TapTree implements TapTreeInterface {
   NodeInfo nodeInfo() {
     return rustCall(
       (status) => NodeInfo.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_taptree_node_info(
+        uniffi_bdk_ffi_fn_method_taptree_node_info(
           uniffiClonePointer(),
           status,
         ),
@@ -21300,7 +20913,7 @@ class TapTree implements TapTreeInterface {
   String rootHash() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_taptree_root_hash(
+        uniffi_bdk_ffi_fn_method_taptree_root_hash(
           uniffiClonePointer(),
           status,
         ),
@@ -21327,10 +20940,7 @@ abstract class TransactionInterface {
 }
 
 final _TransactionFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_transaction(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_transaction(ptr, status));
 });
 
 class Transaction implements TransactionInterface {
@@ -21340,11 +20950,10 @@ class Transaction implements TransactionInterface {
   }
   Transaction(Uint8List transactionBytes)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_transaction_new(
-              FfiConverterUint8List.lower(transactionBytes),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_transaction_new(
+          FfiConverterUint8List.lower(transactionBytes),
+          status,
+        ),
         transactionExceptionErrorHandler,
       ) {
     _TransactionFinalizer.attach(this, _ptr, detach: this);
@@ -21358,8 +20967,7 @@ class Transaction implements TransactionInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_transaction(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_transaction(_ptr, status),
     );
   }
 
@@ -21381,21 +20989,17 @@ class Transaction implements TransactionInterface {
 
   void dispose() {
     _TransactionFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_transaction(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_transaction(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_transaction_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_transaction_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -21411,12 +21015,11 @@ class Transaction implements TransactionInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_transaction_uniffi_trait_eq_eq(
-              uniffiClonePointer(),
-              Transaction.lower(other),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_transaction_uniffi_trait_eq_eq(
+          uniffiClonePointer(),
+          Transaction.lower(other),
+          status,
+        ),
       ),
       null,
     );
@@ -21425,7 +21028,7 @@ class Transaction implements TransactionInterface {
   Txid computeTxid() {
     return rustCall(
       (status) => Txid.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_compute_txid(
+        uniffi_bdk_ffi_fn_method_transaction_compute_txid(
           uniffiClonePointer(),
           status,
         ),
@@ -21437,7 +21040,7 @@ class Transaction implements TransactionInterface {
   Wtxid computeWtxid() {
     return rustCall(
       (status) => Wtxid.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_compute_wtxid(
+        uniffi_bdk_ffi_fn_method_transaction_compute_wtxid(
           uniffiClonePointer(),
           status,
         ),
@@ -21449,7 +21052,7 @@ class Transaction implements TransactionInterface {
   List<TxIn> input() {
     return rustCall(
       (status) => FfiConverterSequenceTxIn.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_input(
+        uniffi_bdk_ffi_fn_method_transaction_input(
           uniffiClonePointer(),
           status,
         ),
@@ -21461,7 +21064,7 @@ class Transaction implements TransactionInterface {
   bool isCoinbase() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_is_coinbase(
+        uniffi_bdk_ffi_fn_method_transaction_is_coinbase(
           uniffiClonePointer(),
           status,
         ),
@@ -21473,11 +21076,10 @@ class Transaction implements TransactionInterface {
   bool isExplicitlyRbf() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_transaction_is_explicitly_rbf(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_transaction_is_explicitly_rbf(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -21486,11 +21088,10 @@ class Transaction implements TransactionInterface {
   bool isLockTimeEnabled() {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_transaction_is_lock_time_enabled(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_transaction_is_lock_time_enabled(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -21499,7 +21100,7 @@ class Transaction implements TransactionInterface {
   int lockTime() {
     return rustCall(
       (status) => FfiConverterUInt32.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_lock_time(
+        uniffi_bdk_ffi_fn_method_transaction_lock_time(
           uniffiClonePointer(),
           status,
         ),
@@ -21511,7 +21112,7 @@ class Transaction implements TransactionInterface {
   List<TxOut> output() {
     return rustCall(
       (status) => FfiConverterSequenceTxOut.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_output(
+        uniffi_bdk_ffi_fn_method_transaction_output(
           uniffiClonePointer(),
           status,
         ),
@@ -21523,7 +21124,7 @@ class Transaction implements TransactionInterface {
   Uint8List serialize() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_serialize(
+        uniffi_bdk_ffi_fn_method_transaction_serialize(
           uniffiClonePointer(),
           status,
         ),
@@ -21535,7 +21136,7 @@ class Transaction implements TransactionInterface {
   int totalSize() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_total_size(
+        uniffi_bdk_ffi_fn_method_transaction_total_size(
           uniffiClonePointer(),
           status,
         ),
@@ -21547,7 +21148,7 @@ class Transaction implements TransactionInterface {
   int version() {
     return rustCall(
       (status) => FfiConverterInt32.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_version(
+        uniffi_bdk_ffi_fn_method_transaction_version(
           uniffiClonePointer(),
           status,
         ),
@@ -21559,7 +21160,7 @@ class Transaction implements TransactionInterface {
   int vsize() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_vsize(
+        uniffi_bdk_ffi_fn_method_transaction_vsize(
           uniffiClonePointer(),
           status,
         ),
@@ -21571,7 +21172,7 @@ class Transaction implements TransactionInterface {
   int weight() {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_transaction_weight(
+        uniffi_bdk_ffi_fn_method_transaction_weight(
           uniffiClonePointer(),
           status,
         ),
@@ -21613,10 +21214,7 @@ abstract class TxBuilderInterface {
 }
 
 final _TxBuilderFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_txbuilder(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_txbuilder(ptr, status));
 });
 
 class TxBuilder implements TxBuilderInterface {
@@ -21626,8 +21224,7 @@ class TxBuilder implements TxBuilderInterface {
   }
   TxBuilder()
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_txbuilder_new(status),
+        (status) => uniffi_bdk_ffi_fn_constructor_txbuilder_new(status),
         null,
       ) {
     _TxBuilderFinalizer.attach(this, _ptr, detach: this);
@@ -21641,8 +21238,7 @@ class TxBuilder implements TxBuilderInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_txbuilder(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_txbuilder(_ptr, status),
     );
   }
 
@@ -21664,16 +21260,13 @@ class TxBuilder implements TxBuilderInterface {
 
   void dispose() {
     _TxBuilderFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_txbuilder(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_txbuilder(_ptr, status));
   }
 
   TxBuilder addData(Uint8List data) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_add_data(
+        uniffi_bdk_ffi_fn_method_txbuilder_add_data(
           uniffiClonePointer(),
           FfiConverterUint8List.lower(data),
           status,
@@ -21686,7 +21279,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder addGlobalXpubs() {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_add_global_xpubs(
+        uniffi_bdk_ffi_fn_method_txbuilder_add_global_xpubs(
           uniffiClonePointer(),
           status,
         ),
@@ -21698,7 +21291,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder addRecipient(Script script, Amount amount) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_add_recipient(
+        uniffi_bdk_ffi_fn_method_txbuilder_add_recipient(
           uniffiClonePointer(),
           Script.lower(script),
           Amount.lower(amount),
@@ -21712,7 +21305,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder addUnspendable(OutPoint unspendable) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_add_unspendable(
+        uniffi_bdk_ffi_fn_method_txbuilder_add_unspendable(
           uniffiClonePointer(),
           FfiConverterOutPoint.lower(unspendable),
           status,
@@ -21725,7 +21318,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder addUtxo(OutPoint outpoint) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_add_utxo(
+        uniffi_bdk_ffi_fn_method_txbuilder_add_utxo(
           uniffiClonePointer(),
           FfiConverterOutPoint.lower(outpoint),
           status,
@@ -21738,7 +21331,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder addUtxos(List<OutPoint> outpoints) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_add_utxos(
+        uniffi_bdk_ffi_fn_method_txbuilder_add_utxos(
           uniffiClonePointer(),
           FfiConverterSequenceOutPoint.lower(outpoints),
           status,
@@ -21751,7 +21344,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder allowDust(bool allowDust) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_allow_dust(
+        uniffi_bdk_ffi_fn_method_txbuilder_allow_dust(
           uniffiClonePointer(),
           FfiConverterBool.lower(allowDust),
           status,
@@ -21764,7 +21357,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder changePolicy(ChangeSpendPolicy changePolicy) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_change_policy(
+        uniffi_bdk_ffi_fn_method_txbuilder_change_policy(
           uniffiClonePointer(),
           FfiConverterChangeSpendPolicy.lower(changePolicy),
           status,
@@ -21777,7 +21370,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder currentHeight(int height) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_current_height(
+        uniffi_bdk_ffi_fn_method_txbuilder_current_height(
           uniffiClonePointer(),
           FfiConverterUInt32.lower(height),
           status,
@@ -21790,11 +21383,10 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder doNotSpendChange() {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txbuilder_do_not_spend_change(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txbuilder_do_not_spend_change(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -21803,7 +21395,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder drainTo(Script script) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_drain_to(
+        uniffi_bdk_ffi_fn_method_txbuilder_drain_to(
           uniffiClonePointer(),
           Script.lower(script),
           status,
@@ -21816,7 +21408,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder drainWallet() {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_drain_wallet(
+        uniffi_bdk_ffi_fn_method_txbuilder_drain_wallet(
           uniffiClonePointer(),
           status,
         ),
@@ -21828,12 +21420,11 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder excludeBelowConfirmations(int minConfirms) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txbuilder_exclude_below_confirmations(
-              uniffiClonePointer(),
-              FfiConverterUInt32.lower(minConfirms),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txbuilder_exclude_below_confirmations(
+          uniffiClonePointer(),
+          FfiConverterUInt32.lower(minConfirms),
+          status,
+        ),
       ),
       null,
     );
@@ -21842,11 +21433,10 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder excludeUnconfirmed() {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txbuilder_exclude_unconfirmed(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txbuilder_exclude_unconfirmed(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -21855,7 +21445,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder feeAbsolute(Amount feeAmount) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_fee_absolute(
+        uniffi_bdk_ffi_fn_method_txbuilder_fee_absolute(
           uniffiClonePointer(),
           Amount.lower(feeAmount),
           status,
@@ -21868,7 +21458,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder feeRate(FeeRate feeRate) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_fee_rate(
+        uniffi_bdk_ffi_fn_method_txbuilder_fee_rate(
           uniffiClonePointer(),
           FeeRate.lower(feeRate),
           status,
@@ -21881,7 +21471,7 @@ class TxBuilder implements TxBuilderInterface {
   Psbt finish(Wallet wallet) {
     return rustCall(
       (status) => Psbt.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_finish(
+        uniffi_bdk_ffi_fn_method_txbuilder_finish(
           uniffiClonePointer(),
           Wallet.lower(wallet),
           status,
@@ -21894,11 +21484,10 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder manuallySelectedOnly() {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txbuilder_manually_selected_only(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txbuilder_manually_selected_only(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -21907,7 +21496,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder nlocktime(LockTime locktime) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_nlocktime(
+        uniffi_bdk_ffi_fn_method_txbuilder_nlocktime(
           uniffiClonePointer(),
           FfiConverterLockTime.lower(locktime),
           status,
@@ -21920,7 +21509,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder onlySpendChange() {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_only_spend_change(
+        uniffi_bdk_ffi_fn_method_txbuilder_only_spend_change(
           uniffiClonePointer(),
           status,
         ),
@@ -21935,7 +21524,7 @@ class TxBuilder implements TxBuilderInterface {
   ) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_policy_path(
+        uniffi_bdk_ffi_fn_method_txbuilder_policy_path(
           uniffiClonePointer(),
           FfiConverterMapStringToSequenceUInt64.lower(policyPath),
           FfiConverterKeychainKind.lower(keychain),
@@ -21949,12 +21538,11 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder setExactSequence(int nsequence) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txbuilder_set_exact_sequence(
-              uniffiClonePointer(),
-              FfiConverterUInt32.lower(nsequence),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txbuilder_set_exact_sequence(
+          uniffiClonePointer(),
+          FfiConverterUInt32.lower(nsequence),
+          status,
+        ),
       ),
       null,
     );
@@ -21963,7 +21551,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder setRecipients(List<ScriptAmount> recipients) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_set_recipients(
+        uniffi_bdk_ffi_fn_method_txbuilder_set_recipients(
           uniffiClonePointer(),
           FfiConverterSequenceScriptAmount.lower(recipients),
           status,
@@ -21976,7 +21564,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder unspendable(List<OutPoint> unspendable) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_unspendable(
+        uniffi_bdk_ffi_fn_method_txbuilder_unspendable(
           uniffiClonePointer(),
           FfiConverterSequenceOutPoint.lower(unspendable),
           status,
@@ -21989,7 +21577,7 @@ class TxBuilder implements TxBuilderInterface {
   TxBuilder version(int version) {
     return rustCall(
       (status) => TxBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txbuilder_version(
+        uniffi_bdk_ffi_fn_method_txbuilder_version(
           uniffiClonePointer(),
           FfiConverterInt32.lower(version),
           status,
@@ -22005,10 +21593,7 @@ abstract class TxMerkleNodeInterface {
 }
 
 final _TxMerkleNodeFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) =>
-        _UniffiLib.instance.uniffi_bdkffi_fn_free_txmerklenode(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_txmerklenode(ptr, status));
 });
 
 class TxMerkleNode implements TxMerkleNodeInterface {
@@ -22018,22 +21603,20 @@ class TxMerkleNode implements TxMerkleNodeInterface {
   }
   TxMerkleNode.fromBytes(Uint8List bytes)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_txmerklenode_from_bytes(
-              FfiConverterUint8List.lower(bytes),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_txmerklenode_from_bytes(
+          FfiConverterUint8List.lower(bytes),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _TxMerkleNodeFinalizer.attach(this, _ptr, detach: this);
   }
   TxMerkleNode.fromString(String hex)
     : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_txmerklenode_from_string(
-              FfiConverterString.lower(hex),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_txmerklenode_from_string(
+          FfiConverterString.lower(hex),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _TxMerkleNodeFinalizer.attach(this, _ptr, detach: this);
@@ -22047,8 +21630,7 @@ class TxMerkleNode implements TxMerkleNodeInterface {
 
   Pointer<Void> uniffiClonePointer() {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_txmerklenode(_ptr, status),
+      (status) => uniffi_bdk_ffi_fn_clone_txmerklenode(_ptr, status),
     );
   }
 
@@ -22070,21 +21652,17 @@ class TxMerkleNode implements TxMerkleNodeInterface {
 
   void dispose() {
     _TxMerkleNodeFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_txmerklenode(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_txmerklenode(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_display(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_display(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -22100,12 +21678,11 @@ class TxMerkleNode implements TxMerkleNodeInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_eq_eq(
-              uniffiClonePointer(),
-              TxMerkleNode.lower(other),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_eq_eq(
+          uniffiClonePointer(),
+          TxMerkleNode.lower(other),
+          status,
+        ),
       ),
       null,
     );
@@ -22115,11 +21692,10 @@ class TxMerkleNode implements TxMerkleNodeInterface {
   int get hashCode {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_hash(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_hash(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -22128,7 +21704,7 @@ class TxMerkleNode implements TxMerkleNodeInterface {
   Uint8List serialize() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txmerklenode_serialize(
+        uniffi_bdk_ffi_fn_method_txmerklenode_serialize(
           uniffiClonePointer(),
           status,
         ),
@@ -22143,9 +21719,7 @@ abstract class TxidInterface {
 }
 
 final _TxidFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_txid(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_txid(ptr, status));
 });
 
 class Txid implements TxidInterface {
@@ -22155,22 +21729,20 @@ class Txid implements TxidInterface {
   }
   Txid.fromBytes(Uint8List bytes)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_txid_from_bytes(
-              FfiConverterUint8List.lower(bytes),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_txid_from_bytes(
+          FfiConverterUint8List.lower(bytes),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _TxidFinalizer.attach(this, _ptr, detach: this);
   }
   Txid.fromString(String hex)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_txid_from_string(
-              FfiConverterString.lower(hex),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_txid_from_string(
+          FfiConverterString.lower(hex),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _TxidFinalizer.attach(this, _ptr, detach: this);
@@ -22183,9 +21755,7 @@ class Txid implements TxidInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_clone_txid(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_txid(_ptr, status));
   }
 
   static int allocationSize(Txid value) {
@@ -22206,16 +21776,14 @@ class Txid implements TxidInterface {
 
   void dispose() {
     _TxidFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_txid(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_txid(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txid_uniffi_trait_display(
+        uniffi_bdk_ffi_fn_method_txid_uniffi_trait_display(
           uniffiClonePointer(),
           status,
         ),
@@ -22234,7 +21802,7 @@ class Txid implements TxidInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txid_uniffi_trait_eq_eq(
+        uniffi_bdk_ffi_fn_method_txid_uniffi_trait_eq_eq(
           uniffiClonePointer(),
           Txid.lower(other),
           status,
@@ -22248,7 +21816,7 @@ class Txid implements TxidInterface {
   int get hashCode {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txid_uniffi_trait_hash(
+        uniffi_bdk_ffi_fn_method_txid_uniffi_trait_hash(
           uniffiClonePointer(),
           status,
         ),
@@ -22260,10 +21828,7 @@ class Txid implements TxidInterface {
   Uint8List serialize() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_txid_serialize(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_txid_serialize(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -22273,9 +21838,7 @@ class Txid implements TxidInterface {
 abstract class UpdateInterface {}
 
 final _UpdateFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_update(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_update(ptr, status));
 });
 
 class Update implements UpdateInterface {
@@ -22291,10 +21854,7 @@ class Update implements UpdateInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_update(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_update(_ptr, status));
   }
 
   static int allocationSize(Update value) {
@@ -22315,10 +21875,7 @@ class Update implements UpdateInterface {
 
   void dispose() {
     _UpdateFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_update(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_update(_ptr, status));
   }
 }
 
@@ -22365,9 +21922,7 @@ abstract class WalletInterface {
 }
 
 final _WalletFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_wallet(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_wallet(ptr, status));
 });
 
 class Wallet implements WalletInterface {
@@ -22381,8 +21936,8 @@ class Wallet implements WalletInterface {
     Persister persister,
     int lookahead,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_wallet_create_from_two_path_descriptor(
+        (status) =>
+            uniffi_bdk_ffi_fn_constructor_wallet_create_from_two_path_descriptor(
               Descriptor.lower(twoPathDescriptor),
               FfiConverterNetwork.lower(network),
               Persister.lower(persister),
@@ -22399,14 +21954,13 @@ class Wallet implements WalletInterface {
     Persister persister,
     int lookahead,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance
-            .uniffi_bdkffi_fn_constructor_wallet_create_single(
-              Descriptor.lower(descriptor),
-              FfiConverterNetwork.lower(network),
-              Persister.lower(persister),
-              FfiConverterUInt32.lower(lookahead),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_wallet_create_single(
+          Descriptor.lower(descriptor),
+          FfiConverterNetwork.lower(network),
+          Persister.lower(persister),
+          FfiConverterUInt32.lower(lookahead),
+          status,
+        ),
         createWithPersistExceptionErrorHandler,
       ) {
     _WalletFinalizer.attach(this, _ptr, detach: this);
@@ -22417,27 +21971,25 @@ class Wallet implements WalletInterface {
     Persister persister,
     int lookahead,
   ) : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_wallet_load(
-              Descriptor.lower(descriptor),
-              Descriptor.lower(changeDescriptor),
-              Persister.lower(persister),
-              FfiConverterUInt32.lower(lookahead),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_wallet_load(
+          Descriptor.lower(descriptor),
+          Descriptor.lower(changeDescriptor),
+          Persister.lower(persister),
+          FfiConverterUInt32.lower(lookahead),
+          status,
+        ),
         loadWithPersistExceptionErrorHandler,
       ) {
     _WalletFinalizer.attach(this, _ptr, detach: this);
   }
   Wallet.loadSingle(Descriptor descriptor, Persister persister, int lookahead)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_wallet_load_single(
-              Descriptor.lower(descriptor),
-              Persister.lower(persister),
-              FfiConverterUInt32.lower(lookahead),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_wallet_load_single(
+          Descriptor.lower(descriptor),
+          Persister.lower(persister),
+          FfiConverterUInt32.lower(lookahead),
+          status,
+        ),
         loadWithPersistExceptionErrorHandler,
       ) {
     _WalletFinalizer.attach(this, _ptr, detach: this);
@@ -22449,7 +22001,7 @@ class Wallet implements WalletInterface {
     Persister persister,
     int lookahead,
   ) : _ptr = rustCall(
-        (status) => _UniffiLib.instance.uniffi_bdkffi_fn_constructor_wallet_new(
+        (status) => uniffi_bdk_ffi_fn_constructor_wallet_new(
           Descriptor.lower(descriptor),
           Descriptor.lower(changeDescriptor),
           FfiConverterNetwork.lower(network),
@@ -22469,10 +22021,7 @@ class Wallet implements WalletInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_wallet(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_wallet(_ptr, status));
   }
 
   static int allocationSize(Wallet value) {
@@ -22493,15 +22042,12 @@ class Wallet implements WalletInterface {
 
   void dispose() {
     _WalletFinalizer.detach(this);
-    rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_free_wallet(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_wallet(_ptr, status));
   }
 
   void applyEvictedTxs(List<EvictedTx> evictedTxs) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_apply_evicted_txs(
+      uniffi_bdk_ffi_fn_method_wallet_apply_evicted_txs(
         uniffiClonePointer(),
         FfiConverterSequenceEvictedTx.lower(evictedTxs),
         status,
@@ -22511,7 +22057,7 @@ class Wallet implements WalletInterface {
 
   void applyUnconfirmedTxs(List<UnconfirmedTx> unconfirmedTxs) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_apply_unconfirmed_txs(
+      uniffi_bdk_ffi_fn_method_wallet_apply_unconfirmed_txs(
         uniffiClonePointer(),
         FfiConverterSequenceUnconfirmedTx.lower(unconfirmedTxs),
         status,
@@ -22521,7 +22067,7 @@ class Wallet implements WalletInterface {
 
   void applyUpdate(Update update) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_apply_update(
+      uniffi_bdk_ffi_fn_method_wallet_apply_update(
         uniffiClonePointer(),
         Update.lower(update),
         status,
@@ -22532,7 +22078,7 @@ class Wallet implements WalletInterface {
   List<WalletEvent> applyUpdateEvents(Update update) {
     return rustCall(
       (status) => FfiConverterSequenceWalletEvent.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_apply_update_events(
+        uniffi_bdk_ffi_fn_method_wallet_apply_update_events(
           uniffiClonePointer(),
           Update.lower(update),
           status,
@@ -22545,10 +22091,7 @@ class Wallet implements WalletInterface {
   Balance balance() {
     return rustCall(
       (status) => FfiConverterBalance.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_balance(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_wallet_balance(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -22557,7 +22100,7 @@ class Wallet implements WalletInterface {
   Amount calculateFee(Transaction tx) {
     return rustCall(
       (status) => Amount.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_calculate_fee(
+        uniffi_bdk_ffi_fn_method_wallet_calculate_fee(
           uniffiClonePointer(),
           Transaction.lower(tx),
           status,
@@ -22570,7 +22113,7 @@ class Wallet implements WalletInterface {
   FeeRate calculateFeeRate(Transaction tx) {
     return rustCall(
       (status) => FeeRate.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_calculate_fee_rate(
+        uniffi_bdk_ffi_fn_method_wallet_calculate_fee_rate(
           uniffiClonePointer(),
           Transaction.lower(tx),
           status,
@@ -22582,7 +22125,7 @@ class Wallet implements WalletInterface {
 
   void cancelTx(Transaction tx) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_cancel_tx(
+      uniffi_bdk_ffi_fn_method_wallet_cancel_tx(
         uniffiClonePointer(),
         Transaction.lower(tx),
         status,
@@ -22593,7 +22136,7 @@ class Wallet implements WalletInterface {
   int? derivationIndex(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterOptionalUInt32.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_derivation_index(
+        uniffi_bdk_ffi_fn_method_wallet_derivation_index(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           status,
@@ -22606,7 +22149,7 @@ class Wallet implements WalletInterface {
   KeychainAndIndex? derivationOfSpk(Script spk) {
     return rustCall(
       (status) => FfiConverterOptionalKeychainAndIndex.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_derivation_of_spk(
+        uniffi_bdk_ffi_fn_method_wallet_derivation_of_spk(
           uniffiClonePointer(),
           Script.lower(spk),
           status,
@@ -22619,7 +22162,7 @@ class Wallet implements WalletInterface {
   String descriptorChecksum(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_descriptor_checksum(
+        uniffi_bdk_ffi_fn_method_wallet_descriptor_checksum(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           status,
@@ -22632,7 +22175,7 @@ class Wallet implements WalletInterface {
   bool finalizePsbt(Psbt psbt, SignOptions? signOptions) {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_finalize_psbt(
+        uniffi_bdk_ffi_fn_method_wallet_finalize_psbt(
           uniffiClonePointer(),
           Psbt.lower(psbt),
           FfiConverterOptionalSignOptions.lower(signOptions),
@@ -22646,7 +22189,7 @@ class Wallet implements WalletInterface {
   CanonicalTx? getTx(Txid txid) {
     return rustCall(
       (status) => FfiConverterOptionalCanonicalTx.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_get_tx(
+        uniffi_bdk_ffi_fn_method_wallet_get_tx(
           uniffiClonePointer(),
           Txid.lower(txid),
           status,
@@ -22659,7 +22202,7 @@ class Wallet implements WalletInterface {
   LocalOutput? getUtxo(OutPoint op) {
     return rustCall(
       (status) => FfiConverterOptionalLocalOutput.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_get_utxo(
+        uniffi_bdk_ffi_fn_method_wallet_get_utxo(
           uniffiClonePointer(),
           FfiConverterOutPoint.lower(op),
           status,
@@ -22671,7 +22214,7 @@ class Wallet implements WalletInterface {
 
   void insertTxout(OutPoint outpoint, TxOut txout) {
     return rustCall((status) {
-      _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_insert_txout(
+      uniffi_bdk_ffi_fn_method_wallet_insert_txout(
         uniffiClonePointer(),
         FfiConverterOutPoint.lower(outpoint),
         FfiConverterTxOut.lower(txout),
@@ -22683,7 +22226,7 @@ class Wallet implements WalletInterface {
   bool isMine(Script script) {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_is_mine(
+        uniffi_bdk_ffi_fn_method_wallet_is_mine(
           uniffiClonePointer(),
           Script.lower(script),
           status,
@@ -22696,7 +22239,7 @@ class Wallet implements WalletInterface {
   BlockId latestCheckpoint() {
     return rustCall(
       (status) => FfiConverterBlockId.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_latest_checkpoint(
+        uniffi_bdk_ffi_fn_method_wallet_latest_checkpoint(
           uniffiClonePointer(),
           status,
         ),
@@ -22708,7 +22251,7 @@ class Wallet implements WalletInterface {
   List<LocalOutput> listOutput() {
     return rustCall(
       (status) => FfiConverterSequenceLocalOutput.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_list_output(
+        uniffi_bdk_ffi_fn_method_wallet_list_output(
           uniffiClonePointer(),
           status,
         ),
@@ -22720,7 +22263,7 @@ class Wallet implements WalletInterface {
   List<LocalOutput> listUnspent() {
     return rustCall(
       (status) => FfiConverterSequenceLocalOutput.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_list_unspent(
+        uniffi_bdk_ffi_fn_method_wallet_list_unspent(
           uniffiClonePointer(),
           status,
         ),
@@ -22732,12 +22275,11 @@ class Wallet implements WalletInterface {
   List<AddressInfo> listUnusedAddresses(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterSequenceAddressInfo.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_wallet_list_unused_addresses(
-              uniffiClonePointer(),
-              FfiConverterKeychainKind.lower(keychain),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_wallet_list_unused_addresses(
+          uniffiClonePointer(),
+          FfiConverterKeychainKind.lower(keychain),
+          status,
+        ),
       ),
       null,
     );
@@ -22746,7 +22288,7 @@ class Wallet implements WalletInterface {
   bool markUsed(KeychainKind keychain, int index) {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_mark_used(
+        uniffi_bdk_ffi_fn_method_wallet_mark_used(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           FfiConverterUInt32.lower(index),
@@ -22760,10 +22302,7 @@ class Wallet implements WalletInterface {
   Network network() {
     return rustCall(
       (status) => FfiConverterNetwork.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_network(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_wallet_network(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -22772,12 +22311,11 @@ class Wallet implements WalletInterface {
   int nextDerivationIndex(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterUInt32.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_wallet_next_derivation_index(
-              uniffiClonePointer(),
-              FfiConverterKeychainKind.lower(keychain),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_wallet_next_derivation_index(
+          uniffiClonePointer(),
+          FfiConverterKeychainKind.lower(keychain),
+          status,
+        ),
       ),
       null,
     );
@@ -22786,7 +22324,7 @@ class Wallet implements WalletInterface {
   AddressInfo nextUnusedAddress(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterAddressInfo.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_next_unused_address(
+        uniffi_bdk_ffi_fn_method_wallet_next_unused_address(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           status,
@@ -22799,7 +22337,7 @@ class Wallet implements WalletInterface {
   AddressInfo peekAddress(KeychainKind keychain, int index) {
     return rustCall(
       (status) => FfiConverterAddressInfo.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_peek_address(
+        uniffi_bdk_ffi_fn_method_wallet_peek_address(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           FfiConverterUInt32.lower(index),
@@ -22813,7 +22351,7 @@ class Wallet implements WalletInterface {
   bool persist(Persister persister) {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_persist(
+        uniffi_bdk_ffi_fn_method_wallet_persist(
           uniffiClonePointer(),
           Persister.lower(persister),
           status,
@@ -22826,7 +22364,7 @@ class Wallet implements WalletInterface {
   Policy? policies(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterOptionalPolicy.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_policies(
+        uniffi_bdk_ffi_fn_method_wallet_policies(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           status,
@@ -22839,7 +22377,7 @@ class Wallet implements WalletInterface {
   String publicDescriptor(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_public_descriptor(
+        uniffi_bdk_ffi_fn_method_wallet_public_descriptor(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           status,
@@ -22852,7 +22390,7 @@ class Wallet implements WalletInterface {
   List<AddressInfo> revealAddressesTo(KeychainKind keychain, int index) {
     return rustCall(
       (status) => FfiConverterSequenceAddressInfo.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_reveal_addresses_to(
+        uniffi_bdk_ffi_fn_method_wallet_reveal_addresses_to(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           FfiConverterUInt32.lower(index),
@@ -22866,7 +22404,7 @@ class Wallet implements WalletInterface {
   AddressInfo revealNextAddress(KeychainKind keychain) {
     return rustCall(
       (status) => FfiConverterAddressInfo.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_reveal_next_address(
+        uniffi_bdk_ffi_fn_method_wallet_reveal_next_address(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           status,
@@ -22879,7 +22417,7 @@ class Wallet implements WalletInterface {
   SentAndReceivedValues sentAndReceived(Transaction tx) {
     return rustCall(
       (status) => FfiConverterSentAndReceivedValues.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_sent_and_received(
+        uniffi_bdk_ffi_fn_method_wallet_sent_and_received(
           uniffiClonePointer(),
           Transaction.lower(tx),
           status,
@@ -22892,7 +22430,7 @@ class Wallet implements WalletInterface {
   bool sign(Psbt psbt, SignOptions? signOptions) {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_sign(
+        uniffi_bdk_ffi_fn_method_wallet_sign(
           uniffiClonePointer(),
           Psbt.lower(psbt),
           FfiConverterOptionalSignOptions.lower(signOptions),
@@ -22906,10 +22444,7 @@ class Wallet implements WalletInterface {
   ChangeSet? staged() {
     return rustCall(
       (status) => FfiConverterOptionalChangeSet.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_staged(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_wallet_staged(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -22918,7 +22453,7 @@ class Wallet implements WalletInterface {
   FullScanRequestBuilder startFullScan() {
     return rustCall(
       (status) => FullScanRequestBuilder.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_start_full_scan(
+        uniffi_bdk_ffi_fn_method_wallet_start_full_scan(
           uniffiClonePointer(),
           status,
         ),
@@ -22930,11 +22465,10 @@ class Wallet implements WalletInterface {
   SyncRequestBuilder startSyncWithRevealedSpks() {
     return rustCall(
       (status) => SyncRequestBuilder.lift(
-        _UniffiLib.instance
-            .uniffi_bdkffi_fn_method_wallet_start_sync_with_revealed_spks(
-              uniffiClonePointer(),
-              status,
-            ),
+        uniffi_bdk_ffi_fn_method_wallet_start_sync_with_revealed_spks(
+          uniffiClonePointer(),
+          status,
+        ),
       ),
       null,
     );
@@ -22943,7 +22477,7 @@ class Wallet implements WalletInterface {
   ChangeSet? takeStaged() {
     return rustCall(
       (status) => FfiConverterOptionalChangeSet.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_take_staged(
+        uniffi_bdk_ffi_fn_method_wallet_take_staged(
           uniffiClonePointer(),
           status,
         ),
@@ -22955,7 +22489,7 @@ class Wallet implements WalletInterface {
   List<CanonicalTx> transactions() {
     return rustCall(
       (status) => FfiConverterSequenceCanonicalTx.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_transactions(
+        uniffi_bdk_ffi_fn_method_wallet_transactions(
           uniffiClonePointer(),
           status,
         ),
@@ -22967,7 +22501,7 @@ class Wallet implements WalletInterface {
   TxDetails? txDetails(Txid txid) {
     return rustCall(
       (status) => FfiConverterOptionalTxDetails.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_tx_details(
+        uniffi_bdk_ffi_fn_method_wallet_tx_details(
           uniffiClonePointer(),
           Txid.lower(txid),
           status,
@@ -22980,7 +22514,7 @@ class Wallet implements WalletInterface {
   bool unmarkUsed(KeychainKind keychain, int index) {
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wallet_unmark_used(
+        uniffi_bdk_ffi_fn_method_wallet_unmark_used(
           uniffiClonePointer(),
           FfiConverterKeychainKind.lower(keychain),
           FfiConverterUInt32.lower(index),
@@ -22997,9 +22531,7 @@ abstract class WtxidInterface {
 }
 
 final _WtxidFinalizer = Finalizer<Pointer<Void>>((ptr) {
-  rustCall(
-    (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_wtxid(ptr, status),
-  );
+  rustCall((status) => uniffi_bdk_ffi_fn_free_wtxid(ptr, status));
 });
 
 class Wtxid implements WtxidInterface {
@@ -23009,22 +22541,20 @@ class Wtxid implements WtxidInterface {
   }
   Wtxid.fromBytes(Uint8List bytes)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_wtxid_from_bytes(
-              FfiConverterUint8List.lower(bytes),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_wtxid_from_bytes(
+          FfiConverterUint8List.lower(bytes),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _WtxidFinalizer.attach(this, _ptr, detach: this);
   }
   Wtxid.fromString(String hex)
     : _ptr = rustCall(
-        (status) =>
-            _UniffiLib.instance.uniffi_bdkffi_fn_constructor_wtxid_from_string(
-              FfiConverterString.lower(hex),
-              status,
-            ),
+        (status) => uniffi_bdk_ffi_fn_constructor_wtxid_from_string(
+          FfiConverterString.lower(hex),
+          status,
+        ),
         hashParseExceptionErrorHandler,
       ) {
     _WtxidFinalizer.attach(this, _ptr, detach: this);
@@ -23037,10 +22567,7 @@ class Wtxid implements WtxidInterface {
   }
 
   Pointer<Void> uniffiClonePointer() {
-    return rustCall(
-      (status) =>
-          _UniffiLib.instance.uniffi_bdkffi_fn_clone_wtxid(_ptr, status),
-    );
+    return rustCall((status) => uniffi_bdk_ffi_fn_clone_wtxid(_ptr, status));
   }
 
   static int allocationSize(Wtxid value) {
@@ -23061,16 +22588,14 @@ class Wtxid implements WtxidInterface {
 
   void dispose() {
     _WtxidFinalizer.detach(this);
-    rustCall(
-      (status) => _UniffiLib.instance.uniffi_bdkffi_fn_free_wtxid(_ptr, status),
-    );
+    rustCall((status) => uniffi_bdk_ffi_fn_free_wtxid(_ptr, status));
   }
 
   @override
   String toString() {
     return rustCall(
       (status) => FfiConverterString.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wtxid_uniffi_trait_display(
+        uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_display(
           uniffiClonePointer(),
           status,
         ),
@@ -23089,7 +22614,7 @@ class Wtxid implements WtxidInterface {
     }
     return rustCall(
       (status) => FfiConverterBool.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wtxid_uniffi_trait_eq_eq(
+        uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_eq_eq(
           uniffiClonePointer(),
           Wtxid.lower(other),
           status,
@@ -23103,7 +22628,7 @@ class Wtxid implements WtxidInterface {
   int get hashCode {
     return rustCall(
       (status) => FfiConverterUInt64.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wtxid_uniffi_trait_hash(
+        uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_hash(
           uniffiClonePointer(),
           status,
         ),
@@ -23115,10 +22640,7 @@ class Wtxid implements WtxidInterface {
   Uint8List serialize() {
     return rustCall(
       (status) => FfiConverterUint8List.lift(
-        _UniffiLib.instance.uniffi_bdkffi_fn_method_wtxid_serialize(
-          uniffiClonePointer(),
-          status,
-        ),
+        uniffi_bdk_ffi_fn_method_wtxid_serialize(uniffiClonePointer(), status),
       ),
       null,
     );
@@ -23235,31 +22757,23 @@ final class RustBuffer extends Struct {
   external int len;
   external Pointer<Uint8> data;
   static RustBuffer alloc(int size) {
-    return rustCall(
-      (status) => _UniffiLib.instance.ffi_bdkffi_rustbuffer_alloc(size, status),
-    );
+    return rustCall((status) => ffi_bdk_ffi_rustbuffer_alloc(size, status));
   }
 
   static RustBuffer fromBytes(ForeignBytes bytes) {
     return rustCall(
-      (status) =>
-          _UniffiLib.instance.ffi_bdkffi_rustbuffer_from_bytes(bytes, status),
+      (status) => ffi_bdk_ffi_rustbuffer_from_bytes(bytes, status),
     );
   }
 
   void free() {
-    rustCall(
-      (status) => _UniffiLib.instance.ffi_bdkffi_rustbuffer_free(this, status),
-    );
+    rustCall((status) => ffi_bdk_ffi_rustbuffer_free(this, status));
   }
 
   RustBuffer reserve(int additionalCapacity) {
     return rustCall(
-      (status) => _UniffiLib.instance.ffi_bdkffi_rustbuffer_reserve(
-        this,
-        additionalCapacity,
-        status,
-      ),
+      (status) =>
+          ffi_bdk_ffi_rustbuffer_reserve(this, additionalCapacity, status),
     );
   }
 
@@ -23332,17 +22846,110 @@ Uint8List createUint8ListFromInt(int value) {
   return uint8List;
 }
 
-class FfiConverterSequenceUint8List {
-  static List<Uint8List> lift(RustBuffer buf) {
-    return FfiConverterSequenceUint8List.read(buf.asUint8List()).value;
+class FfiConverterSequenceOutPoint {
+  static List<OutPoint> lift(RustBuffer buf) {
+    return FfiConverterSequenceOutPoint.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<List<Uint8List>> read(Uint8List buf) {
-    List<Uint8List> res = [];
+  static LiftRetVal<List<OutPoint>> read(Uint8List buf) {
+    List<OutPoint> res = [];
     final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < length; i++) {
-      final ret = FfiConverterUint8List.read(
+      final ret = FfiConverterOutPoint.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<OutPoint> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterOutPoint.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<OutPoint> value) {
+    return value
+            .map((l) => FfiConverterOutPoint.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<OutPoint> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalString {
+  static String? lift(RustBuffer buf) {
+    return FfiConverterOptionalString.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<String?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterString.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<String?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([String? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterString.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(String? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalString.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalString.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(String? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterString.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterSequenceUnconfirmedTx {
+  static List<UnconfirmedTx> lift(RustBuffer buf) {
+    return FfiConverterSequenceUnconfirmedTx.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<UnconfirmedTx>> read(Uint8List buf) {
+    List<UnconfirmedTx> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterUnconfirmedTx.read(
         Uint8List.view(buf.buffer, offset),
       );
       offset += ret.bytesRead;
@@ -23351,11 +22958,11 @@ class FfiConverterSequenceUint8List {
     return LiftRetVal(res, offset - buf.offsetInBytes);
   }
 
-  static int write(List<Uint8List> value, Uint8List buf) {
+  static int write(List<UnconfirmedTx> value, Uint8List buf) {
     buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterUint8List.write(
+      offset += FfiConverterUnconfirmedTx.write(
         value[i],
         Uint8List.view(buf.buffer, offset),
       );
@@ -23363,72 +22970,57 @@ class FfiConverterSequenceUint8List {
     return offset - buf.offsetInBytes;
   }
 
-  static int allocationSize(List<Uint8List> value) {
+  static int allocationSize(List<UnconfirmedTx> value) {
     return value
-            .map((l) => FfiConverterUint8List.allocationSize(l))
+            .map((l) => FfiConverterUnconfirmedTx.allocationSize(l))
             .fold(0, (a, b) => a + b) +
         4;
   }
 
-  static RustBuffer lower(List<Uint8List> value) {
+  static RustBuffer lower(List<UnconfirmedTx> value) {
     final buf = Uint8List(allocationSize(value));
     write(value, buf);
     return toRustBuffer(buf);
   }
 }
 
-class FfiConverterMapControlBlockToTapScriptEntry {
-  static Map<ControlBlock, TapScriptEntry> lift(RustBuffer buf) {
-    return FfiConverterMapControlBlockToTapScriptEntry.read(
-      buf.asUint8List(),
-    ).value;
+class FfiConverterSequenceAnchor {
+  static List<Anchor> lift(RustBuffer buf) {
+    return FfiConverterSequenceAnchor.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<Map<ControlBlock, TapScriptEntry>> read(Uint8List buf) {
-    final map = <ControlBlock, TapScriptEntry>{};
+  static LiftRetVal<List<Anchor>> read(Uint8List buf) {
+    List<Anchor> res = [];
     final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < length; i++) {
-      final k = FfiConverterControlBlock.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += k.bytesRead;
-      final v = FfiConverterTapScriptEntry.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += v.bytesRead;
-      map[k.value] = v.value;
+      final ret = FfiConverterAnchor.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
     }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
+    return LiftRetVal(res, offset - buf.offsetInBytes);
   }
 
-  static int write(Map<ControlBlock, TapScriptEntry> value, Uint8List buf) {
+  static int write(List<Anchor> value, Uint8List buf) {
     buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
     int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += FfiConverterControlBlock.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterTapScriptEntry.write(
-        entry.value,
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterAnchor.write(
+        value[i],
         Uint8List.view(buf.buffer, offset),
       );
     }
     return offset - buf.offsetInBytes;
   }
 
-  static int allocationSize(Map<ControlBlock, TapScriptEntry> value) {
-    return value.entries
-        .map(
-          (e) =>
-              FfiConverterControlBlock.allocationSize(e.key) +
-              FfiConverterTapScriptEntry.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
+  static int allocationSize(List<Anchor> value) {
+    return value
+            .map((l) => FfiConverterAnchor.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
   }
 
-  static RustBuffer lower(Map<ControlBlock, TapScriptEntry> value) {
+  static RustBuffer lower(List<Anchor> value) {
     final buf = Uint8List(allocationSize(value));
     write(value, buf);
     return toRustBuffer(buf);
@@ -23484,109 +23076,19 @@ class FfiConverterMapTxidToUInt64 {
   }
 }
 
-class FfiConverterSequenceOutPoint {
-  static List<OutPoint> lift(RustBuffer buf) {
-    return FfiConverterSequenceOutPoint.read(buf.asUint8List()).value;
+class FfiConverterMapStringToTapKeyOrigin {
+  static Map<String, TapKeyOrigin> lift(RustBuffer buf) {
+    return FfiConverterMapStringToTapKeyOrigin.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<List<OutPoint>> read(Uint8List buf) {
-    List<OutPoint> res = [];
+  static LiftRetVal<Map<String, TapKeyOrigin>> read(Uint8List buf) {
+    final map = <String, TapKeyOrigin>{};
     final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < length; i++) {
-      final ret = FfiConverterOutPoint.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<OutPoint> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterOutPoint.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<OutPoint> value) {
-    return value
-            .map((l) => FfiConverterOutPoint.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<OutPoint> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceUInt64 {
-  static List<int> lift(RustBuffer buf) {
-    return FfiConverterSequenceUInt64.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<int>> read(Uint8List buf) {
-    List<int> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterUInt64.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<int> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterUInt64.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<int> value) {
-    return value
-            .map((l) => FfiConverterUInt64.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<int> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterMapSequenceUInt32ToSequenceCondition {
-  static Map<List<int>, List<Condition>> lift(RustBuffer buf) {
-    return FfiConverterMapSequenceUInt32ToSequenceCondition.read(
-      buf.asUint8List(),
-    ).value;
-  }
-
-  static LiftRetVal<Map<List<int>, List<Condition>>> read(Uint8List buf) {
-    final map = <List<int>, List<Condition>>{};
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final k = FfiConverterSequenceUInt32.read(
-        Uint8List.view(buf.buffer, offset),
-      );
+      final k = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
       offset += k.bytesRead;
-      final v = FfiConverterSequenceCondition.read(
+      final v = FfiConverterTapKeyOrigin.read(
         Uint8List.view(buf.buffer, offset),
       );
       offset += v.bytesRead;
@@ -23595,15 +23097,15 @@ class FfiConverterMapSequenceUInt32ToSequenceCondition {
     return LiftRetVal(map, offset - buf.offsetInBytes);
   }
 
-  static int write(Map<List<int>, List<Condition>> value, Uint8List buf) {
+  static int write(Map<String, TapKeyOrigin> value, Uint8List buf) {
     buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
     int offset = buf.offsetInBytes + 4;
     for (final entry in value.entries) {
-      offset += FfiConverterSequenceUInt32.write(
+      offset += FfiConverterString.write(
         entry.key,
         Uint8List.view(buf.buffer, offset),
       );
-      offset += FfiConverterSequenceCondition.write(
+      offset += FfiConverterTapKeyOrigin.write(
         entry.value,
         Uint8List.view(buf.buffer, offset),
       );
@@ -23611,33 +23113,782 @@ class FfiConverterMapSequenceUInt32ToSequenceCondition {
     return offset - buf.offsetInBytes;
   }
 
-  static int allocationSize(Map<List<int>, List<Condition>> value) {
+  static int allocationSize(Map<String, TapKeyOrigin> value) {
     return value.entries
         .map(
           (e) =>
-              FfiConverterSequenceUInt32.allocationSize(e.key) +
-              FfiConverterSequenceCondition.allocationSize(e.value),
+              FfiConverterString.allocationSize(e.key) +
+              FfiConverterTapKeyOrigin.allocationSize(e.value),
         )
         .fold(4, (a, b) => a + b);
   }
 
-  static RustBuffer lower(Map<List<int>, List<Condition>> value) {
+  static RustBuffer lower(Map<String, TapKeyOrigin> value) {
     final buf = Uint8List(allocationSize(value));
     write(value, buf);
     return toRustBuffer(buf);
   }
 }
 
-class FfiConverterOptionalInt64 {
+class FfiConverterOptionalDouble32 {
+  static double? lift(RustBuffer buf) {
+    return FfiConverterOptionalDouble32.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<double?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterDouble32.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<double?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([double? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterDouble32.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(double? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalDouble32.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalDouble32.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(double? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterDouble32.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterMapHashableOutPointToTxOut {
+  static Map<HashableOutPoint, TxOut> lift(RustBuffer buf) {
+    return FfiConverterMapHashableOutPointToTxOut.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Map<HashableOutPoint, TxOut>> read(Uint8List buf) {
+    final map = <HashableOutPoint, TxOut>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = HashableOutPoint.read(Uint8List.view(buf.buffer, offset));
+      offset += k.bytesRead;
+      final v = FfiConverterTxOut.read(Uint8List.view(buf.buffer, offset));
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<HashableOutPoint, TxOut> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += HashableOutPoint.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterTxOut.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<HashableOutPoint, TxOut> value) {
+    return value.entries
+        .map(
+          (e) =>
+              HashableOutPoint.allocationSize(e.key) +
+              FfiConverterTxOut.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<HashableOutPoint, TxOut> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequenceIpAddress {
+  static List<IpAddress> lift(RustBuffer buf) {
+    return FfiConverterSequenceIpAddress.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<IpAddress>> read(Uint8List buf) {
+    List<IpAddress> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = IpAddress.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<IpAddress> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += IpAddress.write(value[i], Uint8List.view(buf.buffer, offset));
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<IpAddress> value) {
+    return value
+            .map((l) => IpAddress.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<IpAddress> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalTransaction {
+  static Transaction? lift(RustBuffer buf) {
+    return FfiConverterOptionalTransaction.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Transaction?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = Transaction.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<Transaction?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([Transaction? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return Transaction.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(Transaction? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalTransaction.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalTransaction.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(Transaction? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return Transaction.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterMapKeyToUint8List {
+  static Map<Key, Uint8List> lift(RustBuffer buf) {
+    return FfiConverterMapKeyToUint8List.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Map<Key, Uint8List>> read(Uint8List buf) {
+    final map = <Key, Uint8List>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = FfiConverterKey.read(Uint8List.view(buf.buffer, offset));
+      offset += k.bytesRead;
+      final v = FfiConverterUint8List.read(Uint8List.view(buf.buffer, offset));
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<Key, Uint8List> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += FfiConverterKey.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterUint8List.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<Key, Uint8List> value) {
+    return value.entries
+        .map(
+          (e) =>
+              FfiConverterKey.allocationSize(e.key) +
+              FfiConverterUint8List.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<Key, Uint8List> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterMapStringToUint8List {
+  static Map<String, Uint8List> lift(RustBuffer buf) {
+    return FfiConverterMapStringToUint8List.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Map<String, Uint8List>> read(Uint8List buf) {
+    final map = <String, Uint8List>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
+      offset += k.bytesRead;
+      final v = FfiConverterUint8List.read(Uint8List.view(buf.buffer, offset));
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<String, Uint8List> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += FfiConverterString.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterUint8List.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<String, Uint8List> value) {
+    return value.entries
+        .map(
+          (e) =>
+              FfiConverterString.allocationSize(e.key) +
+              FfiConverterUint8List.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<String, Uint8List> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterInt64 {
+  static int lift(int value) => value;
+  static LiftRetVal<int> read(Uint8List buf) {
+    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getInt64(0), 8);
+  }
+
+  static int lower(int value) {
+    if (value < -9223372036854775808 || value > 9223372036854775807) {
+      throw ArgumentError("Value out of range for i64: " + value.toString());
+    }
+    return value;
+  }
+
+  static int allocationSize([int value = 0]) {
+    return 8;
+  }
+
+  static int write(int value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt64(0, lower(value));
+    return 8;
+  }
+}
+
+class FfiConverterSequenceDescriptor {
+  static List<Descriptor> lift(RustBuffer buf) {
+    return FfiConverterSequenceDescriptor.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Descriptor>> read(Uint8List buf) {
+    List<Descriptor> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = Descriptor.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Descriptor> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += Descriptor.write(value[i], Uint8List.view(buf.buffer, offset));
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Descriptor> value) {
+    return value
+            .map((l) => Descriptor.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Descriptor> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterMapUInt16ToDouble64 {
+  static Map<int, double> lift(RustBuffer buf) {
+    return FfiConverterMapUInt16ToDouble64.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Map<int, double>> read(Uint8List buf) {
+    final map = <int, double>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = FfiConverterUInt16.read(Uint8List.view(buf.buffer, offset));
+      offset += k.bytesRead;
+      final v = FfiConverterDouble64.read(Uint8List.view(buf.buffer, offset));
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<int, double> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += FfiConverterUInt16.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterDouble64.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<int, double> value) {
+    return value.entries
+        .map(
+          (e) =>
+              FfiConverterUInt16.allocationSize(e.key) +
+              FfiConverterDouble64.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<int, double> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequenceCondition {
+  static List<Condition> lift(RustBuffer buf) {
+    return FfiConverterSequenceCondition.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Condition>> read(Uint8List buf) {
+    List<Condition> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterCondition.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Condition> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterCondition.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Condition> value) {
+    return value
+            .map((l) => FfiConverterCondition.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Condition> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalKeychainAndIndex {
+  static KeychainAndIndex? lift(RustBuffer buf) {
+    return FfiConverterOptionalKeychainAndIndex.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<KeychainAndIndex?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterKeychainAndIndex.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<KeychainAndIndex?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([KeychainAndIndex? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterKeychainAndIndex.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(KeychainAndIndex? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalKeychainAndIndex.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalKeychainAndIndex.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(KeychainAndIndex? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterKeychainAndIndex.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalTx {
+  static Tx? lift(RustBuffer buf) {
+    return FfiConverterOptionalTx.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Tx?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterTx.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<Tx?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([Tx? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterTx.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(Tx? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalTx.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalTx.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(Tx? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterTx.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalSequenceUint8List {
+  static List<Uint8List>? lift(RustBuffer buf) {
+    return FfiConverterOptionalSequenceUint8List.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Uint8List>?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterSequenceUint8List.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<List<Uint8List>?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([List<Uint8List>? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterSequenceUint8List.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(List<Uint8List>? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalSequenceUint8List.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalSequenceUint8List.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(List<Uint8List>? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterSequenceUint8List.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalCanonicalTx {
+  static CanonicalTx? lift(RustBuffer buf) {
+    return FfiConverterOptionalCanonicalTx.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<CanonicalTx?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterCanonicalTx.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<CanonicalTx?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([CanonicalTx? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterCanonicalTx.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(CanonicalTx? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalCanonicalTx.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalCanonicalTx.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(CanonicalTx? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterCanonicalTx.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalChangeSet {
+  static ChangeSet? lift(RustBuffer buf) {
+    return FfiConverterOptionalChangeSet.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<ChangeSet?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = ChangeSet.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<ChangeSet?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([ChangeSet? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return ChangeSet.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(ChangeSet? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalChangeSet.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalChangeSet.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(ChangeSet? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return ChangeSet.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterSequencePkOrF {
+  static List<PkOrF> lift(RustBuffer buf) {
+    return FfiConverterSequencePkOrF.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<PkOrF>> read(Uint8List buf) {
+    List<PkOrF> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterPkOrF.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<PkOrF> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterPkOrF.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<PkOrF> value) {
+    return value
+            .map((l) => FfiConverterPkOrF.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<PkOrF> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalUInt8 {
   static int? lift(RustBuffer buf) {
-    return FfiConverterOptionalInt64.read(buf.asUint8List()).value;
+    return FfiConverterOptionalUInt8.read(buf.asUint8List()).value;
   }
 
   static LiftRetVal<int?> read(Uint8List buf) {
     if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
       return LiftRetVal(null, 1);
     }
-    final result = FfiConverterInt64.read(
+    final result = FfiConverterUInt8.read(
       Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
     );
     return LiftRetVal<int?>(result.value, result.bytesRead + 1);
@@ -23647,17 +23898,17 @@ class FfiConverterOptionalInt64 {
     if (value == null) {
       return 1;
     }
-    return FfiConverterInt64.allocationSize(value) + 1;
+    return FfiConverterUInt8.allocationSize(value) + 1;
   }
 
   static RustBuffer lower(int? value) {
     if (value == null) {
       return toRustBuffer(Uint8List.fromList([0]));
     }
-    final length = FfiConverterOptionalInt64.allocationSize(value);
+    final length = FfiConverterOptionalUInt8.allocationSize(value);
     final Pointer<Uint8> frameData = calloc<Uint8>(length);
     final buf = frameData.asTypedList(length);
-    FfiConverterOptionalInt64.write(value, buf);
+    FfiConverterOptionalUInt8.write(value, buf);
     final bytes = calloc<ForeignBytes>();
     bytes.ref.len = length;
     bytes.ref.data = frameData;
@@ -23670,7 +23921,7 @@ class FfiConverterOptionalInt64 {
       return 1;
     }
     buf[0] = 1;
-    return FfiConverterInt64.write(
+    return FfiConverterUInt8.write(
           value,
           Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
         ) +
@@ -23678,53 +23929,739 @@ class FfiConverterOptionalInt64 {
   }
 }
 
-class FfiConverterOptionalNetwork {
-  static Network? lift(RustBuffer buf) {
-    return FfiConverterOptionalNetwork.read(buf.asUint8List()).value;
+class FfiConverterOptionalDescriptor {
+  static Descriptor? lift(RustBuffer buf) {
+    return FfiConverterOptionalDescriptor.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<Network?> read(Uint8List buf) {
+  static LiftRetVal<Descriptor?> read(Uint8List buf) {
     if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
       return LiftRetVal(null, 1);
     }
-    final result = FfiConverterNetwork.read(
+    final result = Descriptor.read(
       Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
     );
-    return LiftRetVal<Network?>(result.value, result.bytesRead + 1);
+    return LiftRetVal<Descriptor?>(result.value, result.bytesRead + 1);
   }
 
-  static int allocationSize([Network? value]) {
+  static int allocationSize([Descriptor? value]) {
     if (value == null) {
       return 1;
     }
-    return FfiConverterNetwork.allocationSize(value) + 1;
+    return Descriptor.allocationSize(value) + 1;
   }
 
-  static RustBuffer lower(Network? value) {
+  static RustBuffer lower(Descriptor? value) {
     if (value == null) {
       return toRustBuffer(Uint8List.fromList([0]));
     }
-    final length = FfiConverterOptionalNetwork.allocationSize(value);
+    final length = FfiConverterOptionalDescriptor.allocationSize(value);
     final Pointer<Uint8> frameData = calloc<Uint8>(length);
     final buf = frameData.asTypedList(length);
-    FfiConverterOptionalNetwork.write(value, buf);
+    FfiConverterOptionalDescriptor.write(value, buf);
     final bytes = calloc<ForeignBytes>();
     bytes.ref.len = length;
     bytes.ref.data = frameData;
     return RustBuffer.fromBytes(bytes.ref);
   }
 
-  static int write(Network? value, Uint8List buf) {
+  static int write(Descriptor? value, Uint8List buf) {
     if (value == null) {
       buf[0] = 0;
       return 1;
     }
     buf[0] = 1;
-    return FfiConverterNetwork.write(
+    return Descriptor.write(
           value,
           Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
         ) +
         1;
+  }
+}
+
+class FfiConverterSequenceOutput {
+  static List<Output> lift(RustBuffer buf) {
+    return FfiConverterSequenceOutput.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Output>> read(Uint8List buf) {
+    List<Output> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterOutput.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Output> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterOutput.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Output> value) {
+    return value
+            .map((l) => FfiConverterOutput.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Output> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequenceChainChange {
+  static List<ChainChange> lift(RustBuffer buf) {
+    return FfiConverterSequenceChainChange.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<ChainChange>> read(Uint8List buf) {
+    List<ChainChange> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterChainChange.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<ChainChange> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterChainChange.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<ChainChange> value) {
+    return value
+            .map((l) => FfiConverterChainChange.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<ChainChange> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalLockTime {
+  static LockTime? lift(RustBuffer buf) {
+    return FfiConverterOptionalLockTime.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<LockTime?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterLockTime.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<LockTime?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([LockTime? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterLockTime.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(LockTime? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalLockTime.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalLockTime.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(LockTime? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterLockTime.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalScript {
+  static Script? lift(RustBuffer buf) {
+    return FfiConverterOptionalScript.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Script?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = Script.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<Script?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([Script? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return Script.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(Script? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalScript.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalScript.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(Script? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return Script.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalBlockHash {
+  static BlockHash? lift(RustBuffer buf) {
+    return FfiConverterOptionalBlockHash.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<BlockHash?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = BlockHash.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<BlockHash?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([BlockHash? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return BlockHash.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(BlockHash? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalBlockHash.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalBlockHash.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(BlockHash? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return BlockHash.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterMapUInt32ToSequenceCondition {
+  static Map<int, List<Condition>> lift(RustBuffer buf) {
+    return FfiConverterMapUInt32ToSequenceCondition.read(
+      buf.asUint8List(),
+    ).value;
+  }
+
+  static LiftRetVal<Map<int, List<Condition>>> read(Uint8List buf) {
+    final map = <int, List<Condition>>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = FfiConverterUInt32.read(Uint8List.view(buf.buffer, offset));
+      offset += k.bytesRead;
+      final v = FfiConverterSequenceCondition.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<int, List<Condition>> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += FfiConverterUInt32.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterSequenceCondition.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<int, List<Condition>> value) {
+    return value.entries
+        .map(
+          (e) =>
+              FfiConverterUInt32.allocationSize(e.key) +
+              FfiConverterSequenceCondition.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<int, List<Condition>> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequencePolicy {
+  static List<Policy> lift(RustBuffer buf) {
+    return FfiConverterSequencePolicy.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Policy>> read(Uint8List buf) {
+    List<Policy> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = Policy.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Policy> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += Policy.write(value[i], Uint8List.view(buf.buffer, offset));
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Policy> value) {
+    return value.map((l) => Policy.allocationSize(l)).fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Policy> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalLocalOutput {
+  static LocalOutput? lift(RustBuffer buf) {
+    return FfiConverterOptionalLocalOutput.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<LocalOutput?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterLocalOutput.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<LocalOutput?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([LocalOutput? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterLocalOutput.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(LocalOutput? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalLocalOutput.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalLocalOutput.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(LocalOutput? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterLocalOutput.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterBool {
+  static bool lift(int value) {
+    return value == 1;
+  }
+
+  static int lower(bool value) {
+    return value ? 1 : 0;
+  }
+
+  static LiftRetVal<bool> read(Uint8List buf) {
+    return LiftRetVal(FfiConverterBool.lift(buf.first), 1);
+  }
+
+  static RustBuffer lowerIntoRustBuffer(bool value) {
+    return toRustBuffer(Uint8List.fromList([FfiConverterBool.lower(value)]));
+  }
+
+  static int allocationSize([bool value = false]) {
+    return 1;
+  }
+
+  static int write(bool value, Uint8List buf) {
+    buf.setAll(0, [value ? 1 : 0]);
+    return allocationSize();
+  }
+}
+
+class FfiConverterSequenceString {
+  static List<String> lift(RustBuffer buf) {
+    return FfiConverterSequenceString.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<String>> read(Uint8List buf) {
+    List<String> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<String> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterString.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<String> value) {
+    return value
+            .map((l) => FfiConverterString.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<String> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterInt32 {
+  static int lift(int value) => value;
+  static LiftRetVal<int> read(Uint8List buf) {
+    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getInt32(0), 4);
+  }
+
+  static int lower(int value) {
+    if (value < -2147483648 || value > 2147483647) {
+      throw ArgumentError("Value out of range for i32: " + value.toString());
+    }
+    return value;
+  }
+
+  static int allocationSize([int value = 0]) {
+    return 4;
+  }
+
+  static int write(int value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, lower(value));
+    return 4;
+  }
+}
+
+class FfiConverterUInt64 {
+  static int lift(int value) => value;
+  static LiftRetVal<int> read(Uint8List buf) {
+    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint64(0), 8);
+  }
+
+  static int lower(int value) {
+    if (value < 0) {
+      throw ArgumentError("Value out of range for u64: " + value.toString());
+    }
+    return value;
+  }
+
+  static int allocationSize([int value = 0]) {
+    return 8;
+  }
+
+  static int write(int value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setUint64(0, lower(value));
+    return 8;
+  }
+}
+
+class FfiConverterOptionalUInt16 {
+  static int? lift(RustBuffer buf) {
+    return FfiConverterOptionalUInt16.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<int?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterUInt16.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([int? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterUInt16.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(int? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalUInt16.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalUInt16.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(int? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterUInt16.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalTxOut {
+  static TxOut? lift(RustBuffer buf) {
+    return FfiConverterOptionalTxOut.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<TxOut?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterTxOut.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<TxOut?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([TxOut? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterTxOut.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(TxOut? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalTxOut.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalTxOut.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(TxOut? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterTxOut.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterSequenceUInt32 {
+  static List<int> lift(RustBuffer buf) {
+    return FfiConverterSequenceUInt32.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<int>> read(Uint8List buf) {
+    List<int> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterUInt32.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<int> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterUInt32.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<int> value) {
+    return value
+            .map((l) => FfiConverterUInt32.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<int> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequenceCanonicalTx {
+  static List<CanonicalTx> lift(RustBuffer buf) {
+    return FfiConverterSequenceCanonicalTx.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<CanonicalTx>> read(Uint8List buf) {
+    List<CanonicalTx> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterCanonicalTx.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<CanonicalTx> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterCanonicalTx.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<CanonicalTx> value) {
+    return value
+            .map((l) => FfiConverterCanonicalTx.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<CanonicalTx> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
   }
 }
 
@@ -23831,1397 +24768,23 @@ class FfiConverterSequencePsbtFinalizeException {
   }
 }
 
-class FfiConverterInt32 {
-  static int lift(int value) => value;
-  static LiftRetVal<int> read(Uint8List buf) {
-    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getInt32(0), 4);
-  }
-
-  static int lower(int value) {
-    if (value < -2147483648 || value > 2147483647) {
-      throw ArgumentError("Value out of range for i32: " + value.toString());
-    }
-    return value;
-  }
-
-  static int allocationSize([int value = 0]) {
-    return 4;
-  }
-
-  static int write(int value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, lower(value));
-    return 4;
-  }
-}
-
-class FfiConverterMapStringToKeySource {
-  static Map<String, KeySource> lift(RustBuffer buf) {
-    return FfiConverterMapStringToKeySource.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Map<String, KeySource>> read(Uint8List buf) {
-    final map = <String, KeySource>{};
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final k = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
-      offset += k.bytesRead;
-      final v = FfiConverterKeySource.read(Uint8List.view(buf.buffer, offset));
-      offset += v.bytesRead;
-      map[k.value] = v.value;
-    }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
-  }
-
-  static int write(Map<String, KeySource> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += FfiConverterString.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterKeySource.write(
-        entry.value,
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(Map<String, KeySource> value) {
-    return value.entries
-        .map(
-          (e) =>
-              FfiConverterString.allocationSize(e.key) +
-              FfiConverterKeySource.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
-  }
-
-  static RustBuffer lower(Map<String, KeySource> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalUInt32 {
-  static int? lift(RustBuffer buf) {
-    return FfiConverterOptionalUInt32.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<int?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterUInt32.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([int? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterUInt32.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(int? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalUInt32.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalUInt32.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(int? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterUInt32.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterUInt16 {
-  static int lift(int value) => value;
-  static LiftRetVal<int> read(Uint8List buf) {
-    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint16(0), 2);
-  }
-
-  static int lower(int value) {
-    if (value < 0 || value > 65535) {
-      throw ArgumentError("Value out of range for u16: " + value.toString());
-    }
-    return value;
-  }
-
-  static int allocationSize([int value = 0]) {
-    return 2;
-  }
-
-  static int write(int value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setUint16(0, lower(value));
-    return 2;
-  }
-}
-
-class FfiConverterOptionalUInt16 {
-  static int? lift(RustBuffer buf) {
-    return FfiConverterOptionalUInt16.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<int?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterUInt16.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([int? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterUInt16.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(int? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalUInt16.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalUInt16.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(int? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterUInt16.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequenceTransaction {
-  static List<Transaction> lift(RustBuffer buf) {
-    return FfiConverterSequenceTransaction.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Transaction>> read(Uint8List buf) {
-    List<Transaction> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = Transaction.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Transaction> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += Transaction.write(value[i], Uint8List.view(buf.buffer, offset));
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Transaction> value) {
-    return value
-            .map((l) => Transaction.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Transaction> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalTx {
-  static Tx? lift(RustBuffer buf) {
-    return FfiConverterOptionalTx.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Tx?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterTx.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<Tx?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([Tx? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterTx.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(Tx? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalTx.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalTx.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(Tx? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterTx.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterUInt64 {
-  static int lift(int value) => value;
-  static LiftRetVal<int> read(Uint8List buf) {
-    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint64(0), 8);
-  }
-
-  static int lower(int value) {
-    if (value < 0) {
-      throw ArgumentError("Value out of range for u64: " + value.toString());
-    }
-    return value;
-  }
-
-  static int allocationSize([int value = 0]) {
-    return 8;
-  }
-
-  static int write(int value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setUint64(0, lower(value));
-    return 8;
-  }
-}
-
-class FfiConverterSequenceOutput {
-  static List<Output> lift(RustBuffer buf) {
-    return FfiConverterSequenceOutput.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Output>> read(Uint8List buf) {
-    List<Output> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterOutput.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Output> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterOutput.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Output> value) {
-    return value
-            .map((l) => FfiConverterOutput.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Output> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceWalletEvent {
-  static List<WalletEvent> lift(RustBuffer buf) {
-    return FfiConverterSequenceWalletEvent.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<WalletEvent>> read(Uint8List buf) {
-    List<WalletEvent> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterWalletEvent.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<WalletEvent> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterWalletEvent.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<WalletEvent> value) {
-    return value
-            .map((l) => FfiConverterWalletEvent.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<WalletEvent> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalString {
-  static String? lift(RustBuffer buf) {
-    return FfiConverterOptionalString.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<String?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterString.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<String?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([String? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterString.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(String? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalString.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalString.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(String? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterString.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequenceTxOut {
-  static List<TxOut> lift(RustBuffer buf) {
-    return FfiConverterSequenceTxOut.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<TxOut>> read(Uint8List buf) {
-    List<TxOut> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterTxOut.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<TxOut> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterTxOut.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<TxOut> value) {
-    return value
-            .map((l) => FfiConverterTxOut.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<TxOut> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalCanonicalTx {
-  static CanonicalTx? lift(RustBuffer buf) {
-    return FfiConverterOptionalCanonicalTx.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<CanonicalTx?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterCanonicalTx.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<CanonicalTx?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([CanonicalTx? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterCanonicalTx.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(CanonicalTx? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalCanonicalTx.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalCanonicalTx.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(CanonicalTx? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterCanonicalTx.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequencePeer {
-  static List<Peer> lift(RustBuffer buf) {
-    return FfiConverterSequencePeer.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Peer>> read(Uint8List buf) {
-    List<Peer> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterPeer.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Peer> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterPeer.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Peer> value) {
-    return value
-            .map((l) => FfiConverterPeer.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Peer> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceLeafNode {
-  static List<LeafNode> lift(RustBuffer buf) {
-    return FfiConverterSequenceLeafNode.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<LeafNode>> read(Uint8List buf) {
-    List<LeafNode> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = LeafNode.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<LeafNode> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += LeafNode.write(value[i], Uint8List.view(buf.buffer, offset));
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<LeafNode> value) {
-    return value
-            .map((l) => LeafNode.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<LeafNode> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalLocalOutput {
-  static LocalOutput? lift(RustBuffer buf) {
-    return FfiConverterOptionalLocalOutput.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<LocalOutput?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterLocalOutput.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<LocalOutput?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([LocalOutput? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterLocalOutput.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(LocalOutput? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalLocalOutput.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalLocalOutput.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(LocalOutput? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterLocalOutput.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterDouble64 {
-  static double lift(double value) => value;
-  static LiftRetVal<double> read(Uint8List buf) {
-    return LiftRetVal(
-      buf.buffer.asByteData(buf.offsetInBytes).getFloat64(0),
-      8,
-    );
-  }
-
-  static double lower(double value) => value;
-  static int allocationSize([double value = 0]) {
-    return 8;
-  }
-
-  static int write(double value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setFloat64(0, value);
-    return FfiConverterDouble64.allocationSize();
-  }
-}
-
-class FfiConverterOptionalKeychainAndIndex {
-  static KeychainAndIndex? lift(RustBuffer buf) {
-    return FfiConverterOptionalKeychainAndIndex.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<KeychainAndIndex?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterKeychainAndIndex.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<KeychainAndIndex?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([KeychainAndIndex? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterKeychainAndIndex.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(KeychainAndIndex? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalKeychainAndIndex.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalKeychainAndIndex.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(KeychainAndIndex? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterKeychainAndIndex.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterOptionalScript {
-  static Script? lift(RustBuffer buf) {
-    return FfiConverterOptionalScript.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Script?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = Script.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<Script?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([Script? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return Script.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(Script? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalScript.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalScript.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(Script? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return Script.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequenceUInt32 {
-  static List<int> lift(RustBuffer buf) {
-    return FfiConverterSequenceUInt32.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<int>> read(Uint8List buf) {
-    List<int> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterUInt32.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<int> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterUInt32.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<int> value) {
-    return value
-            .map((l) => FfiConverterUInt32.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<int> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalBool {
-  static bool? lift(RustBuffer buf) {
-    return FfiConverterOptionalBool.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<bool?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterBool.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<bool?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([bool? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterBool.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(bool? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalBool.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalBool.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(bool? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterBool.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequenceInput {
-  static List<Input> lift(RustBuffer buf) {
-    return FfiConverterSequenceInput.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Input>> read(Uint8List buf) {
-    List<Input> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterInput.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Input> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterInput.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Input> value) {
-    return value
-            .map((l) => FfiConverterInput.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Input> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalTxDetails {
-  static TxDetails? lift(RustBuffer buf) {
-    return FfiConverterOptionalTxDetails.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<TxDetails?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterTxDetails.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<TxDetails?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([TxDetails? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterTxDetails.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(TxDetails? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalTxDetails.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalTxDetails.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(TxDetails? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterTxDetails.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequenceIpAddress {
-  static List<IpAddress> lift(RustBuffer buf) {
-    return FfiConverterSequenceIpAddress.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<IpAddress>> read(Uint8List buf) {
-    List<IpAddress> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = IpAddress.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<IpAddress> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += IpAddress.write(value[i], Uint8List.view(buf.buffer, offset));
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<IpAddress> value) {
-    return value
-            .map((l) => IpAddress.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<IpAddress> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceEvictedTx {
-  static List<EvictedTx> lift(RustBuffer buf) {
-    return FfiConverterSequenceEvictedTx.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<EvictedTx>> read(Uint8List buf) {
-    List<EvictedTx> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterEvictedTx.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<EvictedTx> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterEvictedTx.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<EvictedTx> value) {
-    return value
-            .map((l) => FfiConverterEvictedTx.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<EvictedTx> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalBlockHash {
-  static BlockHash? lift(RustBuffer buf) {
-    return FfiConverterOptionalBlockHash.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<BlockHash?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = BlockHash.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<BlockHash?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([BlockHash? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return BlockHash.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(BlockHash? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalBlockHash.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalBlockHash.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(BlockHash? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return BlockHash.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterUInt8 {
-  static int lift(int value) => value;
-  static LiftRetVal<int> read(Uint8List buf) {
-    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint8(0), 1);
-  }
-
-  static int lower(int value) {
-    if (value < 0 || value > 255) {
-      throw ArgumentError("Value out of range for u8: " + value.toString());
-    }
-    return value;
-  }
-
-  static int allocationSize([int value = 0]) {
-    return 1;
-  }
-
-  static int write(int value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setUint8(0, lower(value));
-    return 1;
-  }
-}
-
-class FfiConverterInt64 {
-  static int lift(int value) => value;
-  static LiftRetVal<int> read(Uint8List buf) {
-    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getInt64(0), 8);
-  }
-
-  static int lower(int value) {
-    if (value < -9223372036854775808 || value > 9223372036854775807) {
-      throw ArgumentError("Value out of range for i64: " + value.toString());
-    }
-    return value;
-  }
-
-  static int allocationSize([int value = 0]) {
-    return 8;
-  }
-
-  static int write(int value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt64(0, lower(value));
-    return 8;
-  }
-}
-
-class FfiConverterSequenceChainChange {
-  static List<ChainChange> lift(RustBuffer buf) {
-    return FfiConverterSequenceChainChange.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<ChainChange>> read(Uint8List buf) {
-    List<ChainChange> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterChainChange.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<ChainChange> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterChainChange.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<ChainChange> value) {
-    return value
-            .map((l) => FfiConverterChainChange.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<ChainChange> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalUInt64 {
-  static int? lift(RustBuffer buf) {
-    return FfiConverterOptionalUInt64.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<int?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterUInt64.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([int? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterUInt64.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(int? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalUInt64.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalUInt64.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(int? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterUInt64.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterDouble32 {
-  static double lift(double value) => value;
-  static LiftRetVal<double> read(Uint8List buf) {
-    return LiftRetVal(
-      buf.buffer.asByteData(buf.offsetInBytes).getFloat32(0),
-      4,
-    );
-  }
-
-  static double lower(double value) => value;
-  static int allocationSize([double value = 0]) {
-    return 4;
-  }
-
-  static int write(double value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setFloat32(0, value);
-    return FfiConverterDouble32.allocationSize();
-  }
-}
-
-class FfiConverterSequenceUnconfirmedTx {
-  static List<UnconfirmedTx> lift(RustBuffer buf) {
-    return FfiConverterSequenceUnconfirmedTx.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<UnconfirmedTx>> read(Uint8List buf) {
-    List<UnconfirmedTx> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterUnconfirmedTx.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<UnconfirmedTx> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterUnconfirmedTx.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<UnconfirmedTx> value) {
-    return value
-            .map((l) => FfiConverterUnconfirmedTx.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<UnconfirmedTx> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterMapStringToTapKeyOrigin {
-  static Map<String, TapKeyOrigin> lift(RustBuffer buf) {
-    return FfiConverterMapStringToTapKeyOrigin.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Map<String, TapKeyOrigin>> read(Uint8List buf) {
-    final map = <String, TapKeyOrigin>{};
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final k = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
-      offset += k.bytesRead;
-      final v = FfiConverterTapKeyOrigin.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += v.bytesRead;
-      map[k.value] = v.value;
-    }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
-  }
-
-  static int write(Map<String, TapKeyOrigin> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += FfiConverterString.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterTapKeyOrigin.write(
-        entry.value,
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(Map<String, TapKeyOrigin> value) {
-    return value.entries
-        .map(
-          (e) =>
-              FfiConverterString.allocationSize(e.key) +
-              FfiConverterTapKeyOrigin.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
-  }
-
-  static RustBuffer lower(Map<String, TapKeyOrigin> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterMapUInt32ToSequenceCondition {
-  static Map<int, List<Condition>> lift(RustBuffer buf) {
-    return FfiConverterMapUInt32ToSequenceCondition.read(
+class FfiConverterMapControlBlockToTapScriptEntry {
+  static Map<ControlBlock, TapScriptEntry> lift(RustBuffer buf) {
+    return FfiConverterMapControlBlockToTapScriptEntry.read(
       buf.asUint8List(),
     ).value;
   }
 
-  static LiftRetVal<Map<int, List<Condition>>> read(Uint8List buf) {
-    final map = <int, List<Condition>>{};
+  static LiftRetVal<Map<ControlBlock, TapScriptEntry>> read(Uint8List buf) {
+    final map = <ControlBlock, TapScriptEntry>{};
     final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < length; i++) {
-      final k = FfiConverterUInt32.read(Uint8List.view(buf.buffer, offset));
+      final k = FfiConverterControlBlock.read(
+        Uint8List.view(buf.buffer, offset),
+      );
       offset += k.bytesRead;
-      final v = FfiConverterSequenceCondition.read(
+      final v = FfiConverterTapScriptEntry.read(
         Uint8List.view(buf.buffer, offset),
       );
       offset += v.bytesRead;
@@ -25230,15 +24793,15 @@ class FfiConverterMapUInt32ToSequenceCondition {
     return LiftRetVal(map, offset - buf.offsetInBytes);
   }
 
-  static int write(Map<int, List<Condition>> value, Uint8List buf) {
+  static int write(Map<ControlBlock, TapScriptEntry> value, Uint8List buf) {
     buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
     int offset = buf.offsetInBytes + 4;
     for (final entry in value.entries) {
-      offset += FfiConverterUInt32.write(
+      offset += FfiConverterControlBlock.write(
         entry.key,
         Uint8List.view(buf.buffer, offset),
       );
-      offset += FfiConverterSequenceCondition.write(
+      offset += FfiConverterTapScriptEntry.write(
         entry.value,
         Uint8List.view(buf.buffer, offset),
       );
@@ -25246,17 +24809,17 @@ class FfiConverterMapUInt32ToSequenceCondition {
     return offset - buf.offsetInBytes;
   }
 
-  static int allocationSize(Map<int, List<Condition>> value) {
+  static int allocationSize(Map<ControlBlock, TapScriptEntry> value) {
     return value.entries
         .map(
           (e) =>
-              FfiConverterUInt32.allocationSize(e.key) +
-              FfiConverterSequenceCondition.allocationSize(e.value),
+              FfiConverterControlBlock.allocationSize(e.key) +
+              FfiConverterTapScriptEntry.allocationSize(e.value),
         )
         .fold(4, (a, b) => a + b);
   }
 
-  static RustBuffer lower(Map<int, List<Condition>> value) {
+  static RustBuffer lower(Map<ControlBlock, TapScriptEntry> value) {
     final buf = Uint8List(allocationSize(value));
     write(value, buf);
     return toRustBuffer(buf);
@@ -25309,210 +24872,6 @@ class FfiConverterMapDescriptorIdToUInt32 {
   }
 
   static RustBuffer lower(Map<DescriptorId, int> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalDouble32 {
-  static double? lift(RustBuffer buf) {
-    return FfiConverterOptionalDouble32.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<double?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterDouble32.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<double?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([double? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterDouble32.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(double? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalDouble32.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalDouble32.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(double? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterDouble32.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterOptionalTransaction {
-  static Transaction? lift(RustBuffer buf) {
-    return FfiConverterOptionalTransaction.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Transaction?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = Transaction.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<Transaction?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([Transaction? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return Transaction.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(Transaction? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalTransaction.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalTransaction.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(Transaction? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return Transaction.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterMapKeyToUint8List {
-  static Map<Key, Uint8List> lift(RustBuffer buf) {
-    return FfiConverterMapKeyToUint8List.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Map<Key, Uint8List>> read(Uint8List buf) {
-    final map = <Key, Uint8List>{};
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final k = FfiConverterKey.read(Uint8List.view(buf.buffer, offset));
-      offset += k.bytesRead;
-      final v = FfiConverterUint8List.read(Uint8List.view(buf.buffer, offset));
-      offset += v.bytesRead;
-      map[k.value] = v.value;
-    }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
-  }
-
-  static int write(Map<Key, Uint8List> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += FfiConverterKey.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterUint8List.write(
-        entry.value,
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(Map<Key, Uint8List> value) {
-    return value.entries
-        .map(
-          (e) =>
-              FfiConverterKey.allocationSize(e.key) +
-              FfiConverterUint8List.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
-  }
-
-  static RustBuffer lower(Map<Key, Uint8List> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterMapUInt16ToDouble64 {
-  static Map<int, double> lift(RustBuffer buf) {
-    return FfiConverterMapUInt16ToDouble64.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Map<int, double>> read(Uint8List buf) {
-    final map = <int, double>{};
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final k = FfiConverterUInt16.read(Uint8List.view(buf.buffer, offset));
-      offset += k.bytesRead;
-      final v = FfiConverterDouble64.read(Uint8List.view(buf.buffer, offset));
-      offset += v.bytesRead;
-      map[k.value] = v.value;
-    }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
-  }
-
-  static int write(Map<int, double> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += FfiConverterUInt16.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterDouble64.write(
-        entry.value,
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(Map<int, double> value) {
-    return value.entries
-        .map(
-          (e) =>
-              FfiConverterUInt16.allocationSize(e.key) +
-              FfiConverterDouble64.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
-  }
-
-  static RustBuffer lower(Map<int, double> value) {
     final buf = Uint8List(allocationSize(value));
     write(value, buf);
     return toRustBuffer(buf);
@@ -25573,6 +24932,503 @@ class FfiConverterMapStringToSequenceUInt64 {
   }
 }
 
+class FfiConverterMapSequenceUInt32ToSequenceCondition {
+  static Map<List<int>, List<Condition>> lift(RustBuffer buf) {
+    return FfiConverterMapSequenceUInt32ToSequenceCondition.read(
+      buf.asUint8List(),
+    ).value;
+  }
+
+  static LiftRetVal<Map<List<int>, List<Condition>>> read(Uint8List buf) {
+    final map = <List<int>, List<Condition>>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = FfiConverterSequenceUInt32.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += k.bytesRead;
+      final v = FfiConverterSequenceCondition.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<List<int>, List<Condition>> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += FfiConverterSequenceUInt32.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterSequenceCondition.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<List<int>, List<Condition>> value) {
+    return value.entries
+        .map(
+          (e) =>
+              FfiConverterSequenceUInt32.allocationSize(e.key) +
+              FfiConverterSequenceCondition.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<List<int>, List<Condition>> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterMapProprietaryKeyToUint8List {
+  static Map<ProprietaryKey, Uint8List> lift(RustBuffer buf) {
+    return FfiConverterMapProprietaryKeyToUint8List.read(
+      buf.asUint8List(),
+    ).value;
+  }
+
+  static LiftRetVal<Map<ProprietaryKey, Uint8List>> read(Uint8List buf) {
+    final map = <ProprietaryKey, Uint8List>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = FfiConverterProprietaryKey.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += k.bytesRead;
+      final v = FfiConverterUint8List.read(Uint8List.view(buf.buffer, offset));
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<ProprietaryKey, Uint8List> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += FfiConverterProprietaryKey.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterUint8List.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<ProprietaryKey, Uint8List> value) {
+    return value.entries
+        .map(
+          (e) =>
+              FfiConverterProprietaryKey.allocationSize(e.key) +
+              FfiConverterUint8List.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<ProprietaryKey, Uint8List> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequenceTxIn {
+  static List<TxIn> lift(RustBuffer buf) {
+    return FfiConverterSequenceTxIn.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<TxIn>> read(Uint8List buf) {
+    List<TxIn> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterTxIn.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<TxIn> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterTxIn.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<TxIn> value) {
+    return value
+            .map((l) => FfiConverterTxIn.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<TxIn> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequenceUInt64 {
+  static List<int> lift(RustBuffer buf) {
+    return FfiConverterSequenceUInt64.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<int>> read(Uint8List buf) {
+    List<int> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterUInt64.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<int> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterUInt64.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<int> value) {
+    return value
+            .map((l) => FfiConverterUInt64.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<int> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterUInt8 {
+  static int lift(int value) => value;
+  static LiftRetVal<int> read(Uint8List buf) {
+    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint8(0), 1);
+  }
+
+  static int lower(int value) {
+    if (value < 0 || value > 255) {
+      throw ArgumentError("Value out of range for u8: " + value.toString());
+    }
+    return value;
+  }
+
+  static int allocationSize([int value = 0]) {
+    return 1;
+  }
+
+  static int write(int value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setUint8(0, lower(value));
+    return 1;
+  }
+}
+
+class FfiConverterSequenceInput {
+  static List<Input> lift(RustBuffer buf) {
+    return FfiConverterSequenceInput.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Input>> read(Uint8List buf) {
+    List<Input> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterInput.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Input> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterInput.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Input> value) {
+    return value
+            .map((l) => FfiConverterInput.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Input> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterDouble64 {
+  static double lift(double value) => value;
+  static LiftRetVal<double> read(Uint8List buf) {
+    return LiftRetVal(
+      buf.buffer.asByteData(buf.offsetInBytes).getFloat64(0),
+      8,
+    );
+  }
+
+  static double lower(double value) => value;
+  static int allocationSize([double value = 0]) {
+    return 8;
+  }
+
+  static int write(double value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setFloat64(0, value);
+    return FfiConverterDouble64.allocationSize();
+  }
+}
+
+class FfiConverterSequenceTxOut {
+  static List<TxOut> lift(RustBuffer buf) {
+    return FfiConverterSequenceTxOut.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<TxOut>> read(Uint8List buf) {
+    List<TxOut> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterTxOut.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<TxOut> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterTxOut.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<TxOut> value) {
+    return value
+            .map((l) => FfiConverterTxOut.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<TxOut> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterUInt16 {
+  static int lift(int value) => value;
+  static LiftRetVal<int> read(Uint8List buf) {
+    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint16(0), 2);
+  }
+
+  static int lower(int value) {
+    if (value < 0 || value > 65535) {
+      throw ArgumentError("Value out of range for u16: " + value.toString());
+    }
+    return value;
+  }
+
+  static int allocationSize([int value = 0]) {
+    return 2;
+  }
+
+  static int write(int value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setUint16(0, lower(value));
+    return 2;
+  }
+}
+
+class FfiConverterOptionalUInt32 {
+  static int? lift(RustBuffer buf) {
+    return FfiConverterOptionalUInt32.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<int?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterUInt32.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([int? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterUInt32.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(int? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalUInt32.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalUInt32.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(int? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterUInt32.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterSequenceUint8List {
+  static List<Uint8List> lift(RustBuffer buf) {
+    return FfiConverterSequenceUint8List.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Uint8List>> read(Uint8List buf) {
+    List<Uint8List> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterUint8List.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Uint8List> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterUint8List.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Uint8List> value) {
+    return value
+            .map((l) => FfiConverterUint8List.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Uint8List> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalInt64 {
+  static int? lift(RustBuffer buf) {
+    return FfiConverterOptionalInt64.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<int?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterInt64.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([int? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterInt64.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(int? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalInt64.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalInt64.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(int? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterInt64.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
 class FfiConverterMapTapScriptSigKeyToUint8List {
   static Map<TapScriptSigKey, Uint8List> lift(RustBuffer buf) {
     return FfiConverterMapTapScriptSigKeyToUint8List.read(
@@ -25629,364 +25485,103 @@ class FfiConverterMapTapScriptSigKeyToUint8List {
   }
 }
 
-class FfiConverterUInt32 {
-  static int lift(int value) => value;
-  static LiftRetVal<int> read(Uint8List buf) {
-    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint32(0), 4);
+class FfiConverterOptionalUint8List {
+  static Uint8List? lift(RustBuffer buf) {
+    return FfiConverterOptionalUint8List.read(buf.asUint8List()).value;
   }
 
-  static int lower(int value) {
-    if (value < 0 || value > 4294967295) {
-      throw ArgumentError("Value out of range for u32: " + value.toString());
-    }
-    return value;
-  }
-
-  static int allocationSize([int value = 0]) {
-    return 4;
-  }
-
-  static int write(int value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setUint32(0, lower(value));
-    return 4;
-  }
-}
-
-class FfiConverterOptionalSequenceUint8List {
-  static List<Uint8List>? lift(RustBuffer buf) {
-    return FfiConverterOptionalSequenceUint8List.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Uint8List>?> read(Uint8List buf) {
+  static LiftRetVal<Uint8List?> read(Uint8List buf) {
     if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
       return LiftRetVal(null, 1);
     }
-    final result = FfiConverterSequenceUint8List.read(
+    final result = FfiConverterUint8List.read(
       Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
     );
-    return LiftRetVal<List<Uint8List>?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([List<Uint8List>? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterSequenceUint8List.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(List<Uint8List>? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalSequenceUint8List.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalSequenceUint8List.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(List<Uint8List>? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterSequenceUint8List.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterMapStringToUint8List {
-  static Map<String, Uint8List> lift(RustBuffer buf) {
-    return FfiConverterMapStringToUint8List.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Map<String, Uint8List>> read(Uint8List buf) {
-    final map = <String, Uint8List>{};
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final k = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
-      offset += k.bytesRead;
-      final v = FfiConverterUint8List.read(Uint8List.view(buf.buffer, offset));
-      offset += v.bytesRead;
-      map[k.value] = v.value;
-    }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
-  }
-
-  static int write(Map<String, Uint8List> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += FfiConverterString.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterUint8List.write(
-        entry.value,
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(Map<String, Uint8List> value) {
-    return value.entries
-        .map(
-          (e) =>
-              FfiConverterString.allocationSize(e.key) +
-              FfiConverterUint8List.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
-  }
-
-  static RustBuffer lower(Map<String, Uint8List> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceAddressInfo {
-  static List<AddressInfo> lift(RustBuffer buf) {
-    return FfiConverterSequenceAddressInfo.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<AddressInfo>> read(Uint8List buf) {
-    List<AddressInfo> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterAddressInfo.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<AddressInfo> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterAddressInfo.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<AddressInfo> value) {
-    return value
-            .map((l) => FfiConverterAddressInfo.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<AddressInfo> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalTapTree {
-  static TapTree? lift(RustBuffer buf) {
-    return FfiConverterOptionalTapTree.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<TapTree?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = TapTree.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<TapTree?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([TapTree? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return TapTree.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(TapTree? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalTapTree.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalTapTree.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(TapTree? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return TapTree.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterUint8List {
-  static Uint8List lift(RustBuffer value) {
-    return FfiConverterUint8List.read(value.asUint8List()).value;
-  }
-
-  static LiftRetVal<Uint8List> read(Uint8List buf) {
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    final bytes = Uint8List.view(buf.buffer, buf.offsetInBytes + 4, length);
-    return LiftRetVal(bytes, length + 4);
-  }
-
-  static RustBuffer lower(Uint8List value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
+    return LiftRetVal<Uint8List?>(result.value, result.bytesRead + 1);
   }
 
   static int allocationSize([Uint8List? value]) {
     if (value == null) {
-      return 4;
+      return 1;
     }
-    return 4 + value.length;
+    return FfiConverterUint8List.allocationSize(value) + 1;
   }
 
-  static int write(Uint8List value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    buf.setRange(offset, offset + value.length, value);
-    return 4 + value.length;
+  static RustBuffer lower(Uint8List? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalUint8List.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalUint8List.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(Uint8List? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterUint8List.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
   }
 }
 
-class FfiConverterSequenceString {
-  static List<String> lift(RustBuffer buf) {
-    return FfiConverterSequenceString.read(buf.asUint8List()).value;
+class FfiConverterOptionalNetwork {
+  static Network? lift(RustBuffer buf) {
+    return FfiConverterOptionalNetwork.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<List<String>> read(Uint8List buf) {
-    List<String> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
+  static LiftRetVal<Network?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
     }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
+    final result = FfiConverterNetwork.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<Network?>(result.value, result.bytesRead + 1);
   }
 
-  static int write(List<String> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterString.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
+  static int allocationSize([Network? value]) {
+    if (value == null) {
+      return 1;
     }
-    return offset - buf.offsetInBytes;
+    return FfiConverterNetwork.allocationSize(value) + 1;
   }
 
-  static int allocationSize(List<String> value) {
-    return value
-            .map((l) => FfiConverterString.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<String> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceDescriptor {
-  static List<Descriptor> lift(RustBuffer buf) {
-    return FfiConverterSequenceDescriptor.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Descriptor>> read(Uint8List buf) {
-    List<Descriptor> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = Descriptor.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
+  static RustBuffer lower(Network? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
     }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
+    final length = FfiConverterOptionalNetwork.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalNetwork.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
   }
 
-  static int write(List<Descriptor> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += Descriptor.write(value[i], Uint8List.view(buf.buffer, offset));
+  static int write(Network? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
     }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Descriptor> value) {
-    return value
-            .map((l) => Descriptor.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Descriptor> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterString {
-  static String lift(RustBuffer buf) {
-    return utf8.decoder.convert(buf.asUint8List());
-  }
-
-  static RustBuffer lower(String value) {
-    return toRustBuffer(Utf8Encoder().convert(value));
-  }
-
-  static LiftRetVal<String> read(Uint8List buf) {
-    final end = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0) + 4;
-    return LiftRetVal(utf8.decoder.convert(buf, 4, end), end);
-  }
-
-  static int allocationSize([String value = ""]) {
-    return utf8.encoder.convert(value).length + 4;
-  }
-
-  static int write(String value, Uint8List buf) {
-    final list = utf8.encoder.convert(value);
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, list.length);
-    buf.setAll(4, list);
-    return list.length + 4;
+    buf[0] = 1;
+    return FfiConverterNetwork.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
   }
 }
 
@@ -26037,225 +25632,6 @@ class FfiConverterOptionalSignOptions {
           Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
         ) +
         1;
-  }
-}
-
-class FfiConverterSequenceLocalOutput {
-  static List<LocalOutput> lift(RustBuffer buf) {
-    return FfiConverterSequenceLocalOutput.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<LocalOutput>> read(Uint8List buf) {
-    List<LocalOutput> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterLocalOutput.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<LocalOutput> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterLocalOutput.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<LocalOutput> value) {
-    return value
-            .map((l) => FfiConverterLocalOutput.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<LocalOutput> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequencePolicy {
-  static List<Policy> lift(RustBuffer buf) {
-    return FfiConverterSequencePolicy.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Policy>> read(Uint8List buf) {
-    List<Policy> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = Policy.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Policy> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += Policy.write(value[i], Uint8List.view(buf.buffer, offset));
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Policy> value) {
-    return value.map((l) => Policy.allocationSize(l)).fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Policy> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceConflict {
-  static List<Conflict> lift(RustBuffer buf) {
-    return FfiConverterSequenceConflict.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Conflict>> read(Uint8List buf) {
-    List<Conflict> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterConflict.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Conflict> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterConflict.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Conflict> value) {
-    return value
-            .map((l) => FfiConverterConflict.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Conflict> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalChangeSet {
-  static ChangeSet? lift(RustBuffer buf) {
-    return FfiConverterOptionalChangeSet.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<ChangeSet?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = ChangeSet.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<ChangeSet?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([ChangeSet? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return ChangeSet.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(ChangeSet? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalChangeSet.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalChangeSet.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(ChangeSet? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return ChangeSet.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequencePkOrF {
-  static List<PkOrF> lift(RustBuffer buf) {
-    return FfiConverterSequencePkOrF.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<PkOrF>> read(Uint8List buf) {
-    List<PkOrF> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterPkOrF.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<PkOrF> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterPkOrF.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<PkOrF> value) {
-    return value
-            .map((l) => FfiConverterPkOrF.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<PkOrF> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
   }
 }
 
@@ -26316,53 +25692,516 @@ class FfiConverterOptionalConfirmationBlockTime {
   }
 }
 
-class FfiConverterOptionalUint8List {
-  static Uint8List? lift(RustBuffer buf) {
-    return FfiConverterOptionalUint8List.read(buf.asUint8List()).value;
+class FfiConverterOptionalBool {
+  static bool? lift(RustBuffer buf) {
+    return FfiConverterOptionalBool.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<Uint8List?> read(Uint8List buf) {
+  static LiftRetVal<bool?> read(Uint8List buf) {
     if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
       return LiftRetVal(null, 1);
     }
-    final result = FfiConverterUint8List.read(
+    final result = FfiConverterBool.read(
       Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
     );
-    return LiftRetVal<Uint8List?>(result.value, result.bytesRead + 1);
+    return LiftRetVal<bool?>(result.value, result.bytesRead + 1);
   }
 
-  static int allocationSize([Uint8List? value]) {
+  static int allocationSize([bool? value]) {
     if (value == null) {
       return 1;
     }
-    return FfiConverterUint8List.allocationSize(value) + 1;
+    return FfiConverterBool.allocationSize(value) + 1;
   }
 
-  static RustBuffer lower(Uint8List? value) {
+  static RustBuffer lower(bool? value) {
     if (value == null) {
       return toRustBuffer(Uint8List.fromList([0]));
     }
-    final length = FfiConverterOptionalUint8List.allocationSize(value);
+    final length = FfiConverterOptionalBool.allocationSize(value);
     final Pointer<Uint8> frameData = calloc<Uint8>(length);
     final buf = frameData.asTypedList(length);
-    FfiConverterOptionalUint8List.write(value, buf);
+    FfiConverterOptionalBool.write(value, buf);
     final bytes = calloc<ForeignBytes>();
     bytes.ref.len = length;
     bytes.ref.data = frameData;
     return RustBuffer.fromBytes(bytes.ref);
   }
 
-  static int write(Uint8List? value, Uint8List buf) {
+  static int write(bool? value, Uint8List buf) {
     if (value == null) {
       buf[0] = 0;
       return 1;
     }
     buf[0] = 1;
-    return FfiConverterUint8List.write(
+    return FfiConverterBool.write(
           value,
           Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
         ) +
         1;
+  }
+}
+
+class FfiConverterSequenceLocalOutput {
+  static List<LocalOutput> lift(RustBuffer buf) {
+    return FfiConverterSequenceLocalOutput.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<LocalOutput>> read(Uint8List buf) {
+    List<LocalOutput> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterLocalOutput.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<LocalOutput> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterLocalOutput.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<LocalOutput> value) {
+    return value
+            .map((l) => FfiConverterLocalOutput.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<LocalOutput> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalAmount {
+  static Amount? lift(RustBuffer buf) {
+    return FfiConverterOptionalAmount.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Amount?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = Amount.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<Amount?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([Amount? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return Amount.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(Amount? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalAmount.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalAmount.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(Amount? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return Amount.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterSequenceWalletEvent {
+  static List<WalletEvent> lift(RustBuffer buf) {
+    return FfiConverterSequenceWalletEvent.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<WalletEvent>> read(Uint8List buf) {
+    List<WalletEvent> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterWalletEvent.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<WalletEvent> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterWalletEvent.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<WalletEvent> value) {
+    return value
+            .map((l) => FfiConverterWalletEvent.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<WalletEvent> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterMapStringToKeySource {
+  static Map<String, KeySource> lift(RustBuffer buf) {
+    return FfiConverterMapStringToKeySource.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<Map<String, KeySource>> read(Uint8List buf) {
+    final map = <String, KeySource>{};
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final k = FfiConverterString.read(Uint8List.view(buf.buffer, offset));
+      offset += k.bytesRead;
+      final v = FfiConverterKeySource.read(Uint8List.view(buf.buffer, offset));
+      offset += v.bytesRead;
+      map[k.value] = v.value;
+    }
+    return LiftRetVal(map, offset - buf.offsetInBytes);
+  }
+
+  static int write(Map<String, KeySource> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (final entry in value.entries) {
+      offset += FfiConverterString.write(
+        entry.key,
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += FfiConverterKeySource.write(
+        entry.value,
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(Map<String, KeySource> value) {
+    return value.entries
+        .map(
+          (e) =>
+              FfiConverterString.allocationSize(e.key) +
+              FfiConverterKeySource.allocationSize(e.value),
+        )
+        .fold(4, (a, b) => a + b);
+  }
+
+  static RustBuffer lower(Map<String, KeySource> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterOptionalTapTree {
+  static TapTree? lift(RustBuffer buf) {
+    return FfiConverterOptionalTapTree.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<TapTree?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = TapTree.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<TapTree?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([TapTree? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return TapTree.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(TapTree? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalTapTree.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalTapTree.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(TapTree? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return TapTree.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterOptionalUInt64 {
+  static int? lift(RustBuffer buf) {
+    return FfiConverterOptionalUInt64.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<int?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = FfiConverterUInt64.read(
+      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+    );
+    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([int? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return FfiConverterUInt64.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(int? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalUInt64.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalUInt64.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(int? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return FfiConverterUInt64.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterSequenceLeafNode {
+  static List<LeafNode> lift(RustBuffer buf) {
+    return FfiConverterSequenceLeafNode.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<LeafNode>> read(Uint8List buf) {
+    List<LeafNode> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = LeafNode.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<LeafNode> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += LeafNode.write(value[i], Uint8List.view(buf.buffer, offset));
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<LeafNode> value) {
+    return value
+            .map((l) => LeafNode.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<LeafNode> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterDouble32 {
+  static double lift(double value) => value;
+  static LiftRetVal<double> read(Uint8List buf) {
+    return LiftRetVal(
+      buf.buffer.asByteData(buf.offsetInBytes).getFloat32(0),
+      4,
+    );
+  }
+
+  static double lower(double value) => value;
+  static int allocationSize([double value = 0]) {
+    return 4;
+  }
+
+  static int write(double value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setFloat32(0, value);
+    return FfiConverterDouble32.allocationSize();
+  }
+}
+
+class FfiConverterSequenceAddressInfo {
+  static List<AddressInfo> lift(RustBuffer buf) {
+    return FfiConverterSequenceAddressInfo.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<AddressInfo>> read(Uint8List buf) {
+    List<AddressInfo> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterAddressInfo.read(
+        Uint8List.view(buf.buffer, offset),
+      );
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<AddressInfo> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterAddressInfo.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<AddressInfo> value) {
+    return value
+            .map((l) => FfiConverterAddressInfo.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<AddressInfo> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterSequenceTransaction {
+  static List<Transaction> lift(RustBuffer buf) {
+    return FfiConverterSequenceTransaction.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Transaction>> read(Uint8List buf) {
+    List<Transaction> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = Transaction.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Transaction> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += Transaction.write(value[i], Uint8List.view(buf.buffer, offset));
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Transaction> value) {
+    return value
+            .map((l) => Transaction.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Transaction> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterString {
+  static String lift(RustBuffer buf) {
+    return utf8.decoder.convert(buf.asUint8List());
+  }
+
+  static RustBuffer lower(String value) {
+    return toRustBuffer(Utf8Encoder().convert(value));
+  }
+
+  static LiftRetVal<String> read(Uint8List buf) {
+    final end = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0) + 4;
+    return LiftRetVal(utf8.decoder.convert(buf, 4, end), end);
+  }
+
+  static int allocationSize([String value = ""]) {
+    return utf8.encoder.convert(value).length + 4;
+  }
+
+  static int write(String value, Uint8List buf) {
+    final list = utf8.encoder.convert(value);
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, list.length);
+    buf.setAll(4, list);
+    return list.length + 4;
   }
 }
 
@@ -26411,28 +26250,30 @@ class FfiConverterSequenceScriptAmount {
   }
 }
 
-class FfiConverterSequenceTxIn {
-  static List<TxIn> lift(RustBuffer buf) {
-    return FfiConverterSequenceTxIn.read(buf.asUint8List()).value;
+class FfiConverterSequenceEvictedTx {
+  static List<EvictedTx> lift(RustBuffer buf) {
+    return FfiConverterSequenceEvictedTx.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<List<TxIn>> read(Uint8List buf) {
-    List<TxIn> res = [];
+  static LiftRetVal<List<EvictedTx>> read(Uint8List buf) {
+    List<EvictedTx> res = [];
     final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < length; i++) {
-      final ret = FfiConverterTxIn.read(Uint8List.view(buf.buffer, offset));
+      final ret = FfiConverterEvictedTx.read(
+        Uint8List.view(buf.buffer, offset),
+      );
       offset += ret.bytesRead;
       res.add(ret.value);
     }
     return LiftRetVal(res, offset - buf.offsetInBytes);
   }
 
-  static int write(List<TxIn> value, Uint8List buf) {
+  static int write(List<EvictedTx> value, Uint8List buf) {
     buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterTxIn.write(
+      offset += FfiConverterEvictedTx.write(
         value[i],
         Uint8List.view(buf.buffer, offset),
       );
@@ -26440,63 +26281,63 @@ class FfiConverterSequenceTxIn {
     return offset - buf.offsetInBytes;
   }
 
-  static int allocationSize(List<TxIn> value) {
+  static int allocationSize(List<EvictedTx> value) {
     return value
-            .map((l) => FfiConverterTxIn.allocationSize(l))
+            .map((l) => FfiConverterEvictedTx.allocationSize(l))
             .fold(0, (a, b) => a + b) +
         4;
   }
 
-  static RustBuffer lower(List<TxIn> value) {
+  static RustBuffer lower(List<EvictedTx> value) {
     final buf = Uint8List(allocationSize(value));
     write(value, buf);
     return toRustBuffer(buf);
   }
 }
 
-class FfiConverterOptionalLockTime {
-  static LockTime? lift(RustBuffer buf) {
-    return FfiConverterOptionalLockTime.read(buf.asUint8List()).value;
+class FfiConverterOptionalTxDetails {
+  static TxDetails? lift(RustBuffer buf) {
+    return FfiConverterOptionalTxDetails.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<LockTime?> read(Uint8List buf) {
+  static LiftRetVal<TxDetails?> read(Uint8List buf) {
     if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
       return LiftRetVal(null, 1);
     }
-    final result = FfiConverterLockTime.read(
+    final result = FfiConverterTxDetails.read(
       Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
     );
-    return LiftRetVal<LockTime?>(result.value, result.bytesRead + 1);
+    return LiftRetVal<TxDetails?>(result.value, result.bytesRead + 1);
   }
 
-  static int allocationSize([LockTime? value]) {
+  static int allocationSize([TxDetails? value]) {
     if (value == null) {
       return 1;
     }
-    return FfiConverterLockTime.allocationSize(value) + 1;
+    return FfiConverterTxDetails.allocationSize(value) + 1;
   }
 
-  static RustBuffer lower(LockTime? value) {
+  static RustBuffer lower(TxDetails? value) {
     if (value == null) {
       return toRustBuffer(Uint8List.fromList([0]));
     }
-    final length = FfiConverterOptionalLockTime.allocationSize(value);
+    final length = FfiConverterOptionalTxDetails.allocationSize(value);
     final Pointer<Uint8> frameData = calloc<Uint8>(length);
     final buf = frameData.asTypedList(length);
-    FfiConverterOptionalLockTime.write(value, buf);
+    FfiConverterOptionalTxDetails.write(value, buf);
     final bytes = calloc<ForeignBytes>();
     bytes.ref.len = length;
     bytes.ref.data = frameData;
     return RustBuffer.fromBytes(bytes.ref);
   }
 
-  static int write(LockTime? value, Uint8List buf) {
+  static int write(TxDetails? value, Uint8List buf) {
     if (value == null) {
       buf[0] = 0;
       return 1;
     }
     buf[0] = 1;
-    return FfiConverterLockTime.write(
+    return FfiConverterTxDetails.write(
           value,
           Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
         ) +
@@ -26504,56 +26345,166 @@ class FfiConverterOptionalLockTime {
   }
 }
 
-class FfiConverterMapProprietaryKeyToUint8List {
-  static Map<ProprietaryKey, Uint8List> lift(RustBuffer buf) {
-    return FfiConverterMapProprietaryKeyToUint8List.read(
-      buf.asUint8List(),
-    ).value;
+class FfiConverterOptionalTxid {
+  static Txid? lift(RustBuffer buf) {
+    return FfiConverterOptionalTxid.read(buf.asUint8List()).value;
   }
 
-  static LiftRetVal<Map<ProprietaryKey, Uint8List>> read(Uint8List buf) {
-    final map = <ProprietaryKey, Uint8List>{};
+  static LiftRetVal<Txid?> read(Uint8List buf) {
+    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
+      return LiftRetVal(null, 1);
+    }
+    final result = Txid.read(Uint8List.view(buf.buffer, buf.offsetInBytes + 1));
+    return LiftRetVal<Txid?>(result.value, result.bytesRead + 1);
+  }
+
+  static int allocationSize([Txid? value]) {
+    if (value == null) {
+      return 1;
+    }
+    return Txid.allocationSize(value) + 1;
+  }
+
+  static RustBuffer lower(Txid? value) {
+    if (value == null) {
+      return toRustBuffer(Uint8List.fromList([0]));
+    }
+    final length = FfiConverterOptionalTxid.allocationSize(value);
+    final Pointer<Uint8> frameData = calloc<Uint8>(length);
+    final buf = frameData.asTypedList(length);
+    FfiConverterOptionalTxid.write(value, buf);
+    final bytes = calloc<ForeignBytes>();
+    bytes.ref.len = length;
+    bytes.ref.data = frameData;
+    return RustBuffer.fromBytes(bytes.ref);
+  }
+
+  static int write(Txid? value, Uint8List buf) {
+    if (value == null) {
+      buf[0] = 0;
+      return 1;
+    }
+    buf[0] = 1;
+    return Txid.write(
+          value,
+          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
+        ) +
+        1;
+  }
+}
+
+class FfiConverterSequenceConflict {
+  static List<Conflict> lift(RustBuffer buf) {
+    return FfiConverterSequenceConflict.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Conflict>> read(Uint8List buf) {
+    List<Conflict> res = [];
     final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
     int offset = buf.offsetInBytes + 4;
     for (var i = 0; i < length; i++) {
-      final k = FfiConverterProprietaryKey.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += k.bytesRead;
-      final v = FfiConverterUint8List.read(Uint8List.view(buf.buffer, offset));
-      offset += v.bytesRead;
-      map[k.value] = v.value;
+      final ret = FfiConverterConflict.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
     }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
+    return LiftRetVal(res, offset - buf.offsetInBytes);
   }
 
-  static int write(Map<ProprietaryKey, Uint8List> value, Uint8List buf) {
+  static int write(List<Conflict> value, Uint8List buf) {
     buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
     int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += FfiConverterProprietaryKey.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterUint8List.write(
-        entry.value,
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterConflict.write(
+        value[i],
         Uint8List.view(buf.buffer, offset),
       );
     }
     return offset - buf.offsetInBytes;
   }
 
-  static int allocationSize(Map<ProprietaryKey, Uint8List> value) {
-    return value.entries
-        .map(
-          (e) =>
-              FfiConverterProprietaryKey.allocationSize(e.key) +
-              FfiConverterUint8List.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
+  static int allocationSize(List<Conflict> value) {
+    return value
+            .map((l) => FfiConverterConflict.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
   }
 
-  static RustBuffer lower(Map<ProprietaryKey, Uint8List> value) {
+  static RustBuffer lower(List<Conflict> value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+}
+
+class FfiConverterUint8List {
+  static Uint8List lift(RustBuffer value) {
+    return FfiConverterUint8List.read(value.asUint8List()).value;
+  }
+
+  static LiftRetVal<Uint8List> read(Uint8List buf) {
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    final bytes = Uint8List.view(buf.buffer, buf.offsetInBytes + 4, length);
+    return LiftRetVal(bytes, length + 4);
+  }
+
+  static RustBuffer lower(Uint8List value) {
+    final buf = Uint8List(allocationSize(value));
+    write(value, buf);
+    return toRustBuffer(buf);
+  }
+
+  static int allocationSize([Uint8List? value]) {
+    if (value == null) {
+      return 4;
+    }
+    return 4 + value.length;
+  }
+
+  static int write(Uint8List value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    buf.setRange(offset, offset + value.length, value);
+    return 4 + value.length;
+  }
+}
+
+class FfiConverterSequencePeer {
+  static List<Peer> lift(RustBuffer buf) {
+    return FfiConverterSequencePeer.read(buf.asUint8List()).value;
+  }
+
+  static LiftRetVal<List<Peer>> read(Uint8List buf) {
+    List<Peer> res = [];
+    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < length; i++) {
+      final ret = FfiConverterPeer.read(Uint8List.view(buf.buffer, offset));
+      offset += ret.bytesRead;
+      res.add(ret.value);
+    }
+    return LiftRetVal(res, offset - buf.offsetInBytes);
+  }
+
+  static int write(List<Peer> value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
+    int offset = buf.offsetInBytes + 4;
+    for (var i = 0; i < value.length; i++) {
+      offset += FfiConverterPeer.write(
+        value[i],
+        Uint8List.view(buf.buffer, offset),
+      );
+    }
+    return offset - buf.offsetInBytes;
+  }
+
+  static int allocationSize(List<Peer> value) {
+    return value
+            .map((l) => FfiConverterPeer.allocationSize(l))
+            .fold(0, (a, b) => a + b) +
+        4;
+  }
+
+  static RustBuffer lower(List<Peer> value) {
     final buf = Uint8List(allocationSize(value));
     write(value, buf);
     return toRustBuffer(buf);
@@ -26610,463 +26561,26 @@ class FfiConverterOptionalPolicy {
   }
 }
 
-class FfiConverterOptionalUInt8 {
-  static int? lift(RustBuffer buf) {
-    return FfiConverterOptionalUInt8.read(buf.asUint8List()).value;
+class FfiConverterUInt32 {
+  static int lift(int value) => value;
+  static LiftRetVal<int> read(Uint8List buf) {
+    return LiftRetVal(buf.buffer.asByteData(buf.offsetInBytes).getUint32(0), 4);
   }
 
-  static LiftRetVal<int?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
+  static int lower(int value) {
+    if (value < 0 || value > 4294967295) {
+      throw ArgumentError("Value out of range for u32: " + value.toString());
     }
-    final result = FfiConverterUInt8.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<int?>(result.value, result.bytesRead + 1);
+    return value;
   }
 
-  static int allocationSize([int? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterUInt8.allocationSize(value) + 1;
+  static int allocationSize([int value = 0]) {
+    return 4;
   }
 
-  static RustBuffer lower(int? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalUInt8.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalUInt8.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(int? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterUInt8.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterSequenceAnchor {
-  static List<Anchor> lift(RustBuffer buf) {
-    return FfiConverterSequenceAnchor.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Anchor>> read(Uint8List buf) {
-    List<Anchor> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterAnchor.read(Uint8List.view(buf.buffer, offset));
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Anchor> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterAnchor.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Anchor> value) {
-    return value
-            .map((l) => FfiConverterAnchor.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Anchor> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalDescriptor {
-  static Descriptor? lift(RustBuffer buf) {
-    return FfiConverterOptionalDescriptor.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Descriptor?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = Descriptor.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<Descriptor?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([Descriptor? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return Descriptor.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(Descriptor? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalDescriptor.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalDescriptor.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(Descriptor? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return Descriptor.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterMapHashableOutPointToTxOut {
-  static Map<HashableOutPoint, TxOut> lift(RustBuffer buf) {
-    return FfiConverterMapHashableOutPointToTxOut.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Map<HashableOutPoint, TxOut>> read(Uint8List buf) {
-    final map = <HashableOutPoint, TxOut>{};
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final k = HashableOutPoint.read(Uint8List.view(buf.buffer, offset));
-      offset += k.bytesRead;
-      final v = FfiConverterTxOut.read(Uint8List.view(buf.buffer, offset));
-      offset += v.bytesRead;
-      map[k.value] = v.value;
-    }
-    return LiftRetVal(map, offset - buf.offsetInBytes);
-  }
-
-  static int write(Map<HashableOutPoint, TxOut> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (final entry in value.entries) {
-      offset += HashableOutPoint.write(
-        entry.key,
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += FfiConverterTxOut.write(
-        entry.value,
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(Map<HashableOutPoint, TxOut> value) {
-    return value.entries
-        .map(
-          (e) =>
-              HashableOutPoint.allocationSize(e.key) +
-              FfiConverterTxOut.allocationSize(e.value),
-        )
-        .fold(4, (a, b) => a + b);
-  }
-
-  static RustBuffer lower(Map<HashableOutPoint, TxOut> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalTxid {
-  static Txid? lift(RustBuffer buf) {
-    return FfiConverterOptionalTxid.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Txid?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = Txid.read(Uint8List.view(buf.buffer, buf.offsetInBytes + 1));
-    return LiftRetVal<Txid?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([Txid? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return Txid.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(Txid? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalTxid.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalTxid.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(Txid? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return Txid.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterBool {
-  static bool lift(int value) {
-    return value == 1;
-  }
-
-  static int lower(bool value) {
-    return value ? 1 : 0;
-  }
-
-  static LiftRetVal<bool> read(Uint8List buf) {
-    return LiftRetVal(FfiConverterBool.lift(buf.first), 1);
-  }
-
-  static RustBuffer lowerIntoRustBuffer(bool value) {
-    return toRustBuffer(Uint8List.fromList([FfiConverterBool.lower(value)]));
-  }
-
-  static int allocationSize([bool value = false]) {
-    return 1;
-  }
-
-  static int write(bool value, Uint8List buf) {
-    buf.setAll(0, [value ? 1 : 0]);
-    return allocationSize();
-  }
-}
-
-class FfiConverterSequenceCondition {
-  static List<Condition> lift(RustBuffer buf) {
-    return FfiConverterSequenceCondition.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<Condition>> read(Uint8List buf) {
-    List<Condition> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterCondition.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<Condition> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterCondition.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<Condition> value) {
-    return value
-            .map((l) => FfiConverterCondition.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<Condition> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterSequenceCanonicalTx {
-  static List<CanonicalTx> lift(RustBuffer buf) {
-    return FfiConverterSequenceCanonicalTx.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<List<CanonicalTx>> read(Uint8List buf) {
-    List<CanonicalTx> res = [];
-    final length = buf.buffer.asByteData(buf.offsetInBytes).getInt32(0);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < length; i++) {
-      final ret = FfiConverterCanonicalTx.read(
-        Uint8List.view(buf.buffer, offset),
-      );
-      offset += ret.bytesRead;
-      res.add(ret.value);
-    }
-    return LiftRetVal(res, offset - buf.offsetInBytes);
-  }
-
-  static int write(List<CanonicalTx> value, Uint8List buf) {
-    buf.buffer.asByteData(buf.offsetInBytes).setInt32(0, value.length);
-    int offset = buf.offsetInBytes + 4;
-    for (var i = 0; i < value.length; i++) {
-      offset += FfiConverterCanonicalTx.write(
-        value[i],
-        Uint8List.view(buf.buffer, offset),
-      );
-    }
-    return offset - buf.offsetInBytes;
-  }
-
-  static int allocationSize(List<CanonicalTx> value) {
-    return value
-            .map((l) => FfiConverterCanonicalTx.allocationSize(l))
-            .fold(0, (a, b) => a + b) +
-        4;
-  }
-
-  static RustBuffer lower(List<CanonicalTx> value) {
-    final buf = Uint8List(allocationSize(value));
-    write(value, buf);
-    return toRustBuffer(buf);
-  }
-}
-
-class FfiConverterOptionalTxOut {
-  static TxOut? lift(RustBuffer buf) {
-    return FfiConverterOptionalTxOut.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<TxOut?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = FfiConverterTxOut.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<TxOut?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([TxOut? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return FfiConverterTxOut.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(TxOut? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalTxOut.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalTxOut.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(TxOut? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return FfiConverterTxOut.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
-  }
-}
-
-class FfiConverterOptionalAmount {
-  static Amount? lift(RustBuffer buf) {
-    return FfiConverterOptionalAmount.read(buf.asUint8List()).value;
-  }
-
-  static LiftRetVal<Amount?> read(Uint8List buf) {
-    if (ByteData.view(buf.buffer, buf.offsetInBytes).getInt8(0) == 0) {
-      return LiftRetVal(null, 1);
-    }
-    final result = Amount.read(
-      Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-    );
-    return LiftRetVal<Amount?>(result.value, result.bytesRead + 1);
-  }
-
-  static int allocationSize([Amount? value]) {
-    if (value == null) {
-      return 1;
-    }
-    return Amount.allocationSize(value) + 1;
-  }
-
-  static RustBuffer lower(Amount? value) {
-    if (value == null) {
-      return toRustBuffer(Uint8List.fromList([0]));
-    }
-    final length = FfiConverterOptionalAmount.allocationSize(value);
-    final Pointer<Uint8> frameData = calloc<Uint8>(length);
-    final buf = frameData.asTypedList(length);
-    FfiConverterOptionalAmount.write(value, buf);
-    final bytes = calloc<ForeignBytes>();
-    bytes.ref.len = length;
-    bytes.ref.data = frameData;
-    return RustBuffer.fromBytes(bytes.ref);
-  }
-
-  static int write(Amount? value, Uint8List buf) {
-    if (value == null) {
-      buf[0] = 0;
-      return 1;
-    }
-    buf[0] = 1;
-    return Amount.write(
-          value,
-          Uint8List.view(buf.buffer, buf.offsetInBytes + 1),
-        ) +
-        1;
+  static int write(int value, Uint8List buf) {
+    buf.buffer.asByteData(buf.offsetInBytes).setUint32(0, lower(value));
+    return 4;
   }
 }
 
@@ -27150,6281 +26664,5395 @@ class UniffiHandleMap<T> {
   }
 }
 
-class _UniffiLib {
-  _UniffiLib._();
-  static final DynamicLibrary _dylib = _open();
-  static DynamicLibrary _open() {
-    if (Platform.isAndroid) return DynamicLibrary.open("libbdkffi.so");
-    if (Platform.isIOS) return DynamicLibrary.executable();
-    if (Platform.isLinux) return DynamicLibrary.open("libbdkffi.so");
-    if (Platform.isMacOS) return DynamicLibrary.open("libbdkffi.dylib");
-    if (Platform.isWindows) return DynamicLibrary.open("bdkffi.dll");
-    throw UnsupportedError(
-      "Unsupported platform: \${Platform.operatingSystem}",
+const _uniffiAssetId = "package:bdk_dart/uniffi:bdk_ffi";
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_address(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_address(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_address_from_script(
+  Pointer<Void> script,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_address_new(
+  RustBuffer address,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_address_is_valid_for_network(
+  Pointer<Void> ptr,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_address_script_pubkey(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_address_to_address_data(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_address_to_qr_uri(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_address_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_address_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_address_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_amount(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_amount(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Double, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_amount_from_btc(
+  double btc,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_amount_from_sat(
+  int satoshi,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Double Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external double uniffi_bdk_ffi_fn_method_amount_to_btc(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_amount_to_sat(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_blockhash(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_blockhash(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_blockhash_from_bytes(
+  RustBuffer bytes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_blockhash_from_string(
+  RustBuffer hex,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_blockhash_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_blockhash_uniffi_trait_ord_cmp(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_bumpfeetxbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_bumpfeetxbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_bumpfeetxbuilder_new(
+  Pointer<Void> txid,
+  Pointer<Void> fee_rate,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Int8, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_allow_dust(
+  Pointer<Void> ptr,
+  int allow_dust,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_current_height(
+  Pointer<Void> ptr,
+  int height,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_finish(
+  Pointer<Void> ptr,
+  Pointer<Void> wallet,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_nlocktime(
+  Pointer<Void> ptr,
+  RustBuffer locktime,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_set_exact_sequence(
+  Pointer<Void> ptr,
+  int nsequence,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Int32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_bumpfeetxbuilder_version(
+  Pointer<Void> ptr,
+  int version,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_cbfbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_cbfbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_cbfbuilder_new(
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_cbfbuilder_build(
+  Pointer<Void> ptr,
+  Pointer<Void> wallet,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Uint64, Uint64, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_method_cbfbuilder_configure_timeout_millis(
+  Pointer<Void> ptr,
+  int handshake,
+  int response,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Uint8, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfbuilder_connections(
+  Pointer<Void> ptr,
+  int connections,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfbuilder_data_dir(
+  Pointer<Void> ptr,
+  RustBuffer data_dir,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfbuilder_peers(
+  Pointer<Void> ptr,
+  RustBuffer peers,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfbuilder_scan_type(
+  Pointer<Void> ptr,
+  RustBuffer scan_type,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfbuilder_socks5_proxy(
+  Pointer<Void> ptr,
+  RustBuffer proxy,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_cbfclient(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_cbfclient(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<Void>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfclient_average_fee_rate(
+  Pointer<Void> ptr,
+  Pointer<Void> blockhash,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<Void>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfclient_broadcast(
+  Pointer<Void> ptr,
+  Pointer<Void> transaction,
+);
+
+@Native<Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_cbfclient_connect(
+  Pointer<Void> ptr,
+  RustBuffer peer,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_cbfclient_is_running(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_cbfclient_lookup_host(
+  Pointer<Void> ptr,
+  RustBuffer hostname,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfclient_min_broadcast_feerate(
+  Pointer<Void> ptr,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfclient_next_info(
+  Pointer<Void> ptr,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfclient_next_warning(
+  Pointer<Void> ptr,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_cbfclient_shutdown(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_cbfclient_update(
+  Pointer<Void> ptr,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_cbfnode(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_cbfnode(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_cbfnode_run(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_changeset(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_changeset(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_changeset_from_aggregate(
+  RustBuffer descriptor,
+  RustBuffer change_descriptor,
+  RustBuffer network,
+  RustBuffer local_chain,
+  RustBuffer tx_graph,
+  RustBuffer indexer,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_changeset_from_descriptor_and_network(
+  RustBuffer descriptor,
+  RustBuffer change_descriptor,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_changeset_from_indexer_changeset(
+  RustBuffer indexer_changes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_changeset_from_local_chain_changes(
+  RustBuffer local_chain_changes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_changeset_from_merge(
+  Pointer<Void> left,
+  Pointer<Void> right,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_changeset_from_tx_graph_changeset(
+  RustBuffer tx_graph_changeset,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_changeset_new(
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_changeset_change_descriptor(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_changeset_descriptor(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_changeset_indexer_changeset(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_changeset_localchain_changeset(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_changeset_network(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_changeset_tx_graph_changeset(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_derivationpath(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_derivationpath(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_derivationpath_master(
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_derivationpath_new(
+  RustBuffer path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_derivationpath_is_empty(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_derivationpath_is_master(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_derivationpath_len(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_derivationpath_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_descriptor(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_descriptor(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptor_new(
+  RustBuffer descriptor,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptor_new_bip44(
+  Pointer<Void> secret_key,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_descriptor_new_bip44_public(
+  Pointer<Void> public_key,
+  RustBuffer fingerprint,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptor_new_bip49(
+  Pointer<Void> secret_key,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_descriptor_new_bip49_public(
+  Pointer<Void> public_key,
+  RustBuffer fingerprint,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptor_new_bip84(
+  Pointer<Void> secret_key,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_descriptor_new_bip84_public(
+  Pointer<Void> public_key,
+  RustBuffer fingerprint,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptor_new_bip86(
+  Pointer<Void> secret_key,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_descriptor_new_bip86_public(
+  Pointer<Void> public_key,
+  RustBuffer fingerprint,
+  RustBuffer keychain_kind,
+  RustBuffer network,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptor_desc_type(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_descriptor_descriptor_id(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_descriptor_is_multipath(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_descriptor_max_weight_to_satisfy(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptor_to_single_descriptors(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptor_to_string_with_secret(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptor_uniffi_trait_debug(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptor_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_descriptorid(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_descriptorid(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptorid_from_bytes(
+  RustBuffer bytes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptorid_from_string(
+  RustBuffer hex,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptorid_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_descriptorid_uniffi_trait_ord_cmp(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_descriptorpublickey(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_descriptorpublickey(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_descriptorpublickey_from_string(
+  RustBuffer public_key,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_descriptorpublickey_derive(
+  Pointer<Void> ptr,
+  Pointer<Void> path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_descriptorpublickey_extend(
+  Pointer<Void> ptr,
+  Pointer<Void> path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_descriptorpublickey_is_multipath(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_descriptorpublickey_master_fingerprint(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_descriptorpublickey_uniffi_trait_debug(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_descriptorpublickey_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_descriptorsecretkey(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_descriptorsecretkey(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_descriptorsecretkey_from_string(
+  RustBuffer private_key,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    RustBuffer,
+    Pointer<Void>,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_descriptorsecretkey_new(
+  RustBuffer network,
+  Pointer<Void> mnemonic,
+  RustBuffer password,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_descriptorsecretkey_as_public(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_descriptorsecretkey_derive(
+  Pointer<Void> ptr,
+  Pointer<Void> path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_descriptorsecretkey_extend(
+  Pointer<Void> ptr,
+  Pointer<Void> path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_descriptorsecretkey_secret_bytes(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_descriptorsecretkey_uniffi_trait_debug(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_descriptorsecretkey_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_electrumclient(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_electrumclient(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_electrumclient_new(
+  RustBuffer url,
+  RustBuffer socks5,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_electrumclient_block_headers_subscribe(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Double Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external double uniffi_bdk_ffi_fn_method_electrumclient_estimate_fee(
+  Pointer<Void> ptr,
+  int number,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    Uint64,
+    Uint64,
+    Int8,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_electrumclient_full_scan(
+  Pointer<Void> ptr,
+  Pointer<Void> request,
+  int stop_gap,
+  int batch_size,
+  int fetch_prev_txouts,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_electrumclient_ping(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_electrumclient_server_features(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    Uint64,
+    Int8,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_electrumclient_sync(
+  Pointer<Void> ptr,
+  Pointer<Void> request,
+  int batch_size,
+  int fetch_prev_txouts,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_method_electrumclient_transaction_broadcast(
+  Pointer<Void> ptr,
+  Pointer<Void> tx,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_esploraclient(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_esploraclient(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_esploraclient_new(
+  RustBuffer url,
+  RustBuffer proxy,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_esploraclient_broadcast(
+  Pointer<Void> ptr,
+  Pointer<Void> transaction,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    Uint64,
+    Uint64,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_esploraclient_full_scan(
+  Pointer<Void> ptr,
+  Pointer<Void> request,
+  int stop_gap,
+  int parallel_requests,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_esploraclient_get_block_hash(
+  Pointer<Void> ptr,
+  int block_height,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_esploraclient_get_fee_estimates(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint32 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_esploraclient_get_height(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_esploraclient_get_tx(
+  Pointer<Void> ptr,
+  Pointer<Void> txid,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_esploraclient_get_tx_info(
+  Pointer<Void> ptr,
+  Pointer<Void> txid,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_esploraclient_get_tx_status(
+  Pointer<Void> ptr,
+  Pointer<Void> txid,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    Uint64,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_esploraclient_sync(
+  Pointer<Void> ptr,
+  Pointer<Void> request,
+  int parallel_requests,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_feerate(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_feerate(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_feerate_from_sat_per_kwu(
+  int sat_kwu,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_feerate_from_sat_per_vb(
+  int sat_vb,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_feerate_fee_vb(
+  Pointer<Void> ptr,
+  int vb,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_feerate_fee_wu(
+  Pointer<Void> ptr,
+  int wu,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_feerate_to_sat_per_kwu(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_feerate_to_sat_per_vb_ceil(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_feerate_to_sat_per_vb_floor(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_feerate_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_fullscanrequest(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_fullscanrequest(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_fullscanrequestbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_fullscanrequestbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_fullscanrequestbuilder_build(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_method_fullscanrequestbuilder_inspect_spks_for_all_keychains(
+  Pointer<Void> ptr,
+  Pointer<Void> inspector,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_fullscanscriptinspector(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_fullscanscriptinspector(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(Pointer<UniffiVTableCallbackInterfaceFullScanScriptInspector>)
+>(assetId: _uniffiAssetId)
+external void uniffi_bdk_ffi_fn_init_callback_vtable_fullscanscriptinspector(
+  Pointer<UniffiVTableCallbackInterfaceFullScanScriptInspector> vtable,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    RustBuffer,
+    Uint32,
+    Pointer<Void>,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external void uniffi_bdk_ffi_fn_method_fullscanscriptinspector_inspect(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  int index,
+  Pointer<Void> script,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_hashableoutpoint(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_hashableoutpoint(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_hashableoutpoint_new(
+  RustBuffer outpoint,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_hashableoutpoint_outpoint(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer
+uniffi_bdk_ffi_fn_method_hashableoutpoint_uniffi_trait_debug(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_hashableoutpoint_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_hashableoutpoint_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_hashableoutpoint_uniffi_trait_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_ipaddress(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_ipaddress(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Uint8, Uint8, Uint8, Uint8, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_ipaddress_from_ipv4(
+  int q1,
+  int q2,
+  int q3,
+  int q4,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Uint16,
+    Uint16,
+    Uint16,
+    Uint16,
+    Uint16,
+    Uint16,
+    Uint16,
+    Uint16,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_ipaddress_from_ipv6(
+  int a,
+  int b,
+  int c,
+  int d,
+  int e,
+  int f,
+  int g,
+  int h,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_leafnode(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_leafnode(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_leafnode_depth(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_leafnode_leaf_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_leafnode_leaf_version(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_leafnode_merkle_branch(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_leafnode_node_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_leafnode_script(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_leafnode_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_mnemonic(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_mnemonic(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_mnemonic_from_entropy(
+  RustBuffer entropy,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_mnemonic_from_string(
+  RustBuffer mnemonic,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_mnemonic_new(
+  RustBuffer word_count,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_mnemonic_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_nodeinfo(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_nodeinfo(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_nodeinfo_leaf_nodes(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_nodeinfo_node_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_nodeinfo_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_persistence(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_persistence(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<UniffiVTableCallbackInterfacePersistence>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_init_callback_vtable_persistence(
+  Pointer<UniffiVTableCallbackInterfacePersistence> vtable,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_persistence_initialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_persistence_persist(
+  Pointer<Void> ptr,
+  Pointer<Void> changeset,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_persister(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_persister(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_persister_custom(
+  Pointer<Void> persistence,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_persister_new_in_memory(
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_persister_new_sqlite(
+  RustBuffer path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_policy(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_policy(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_policy_as_string(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_policy_contribution(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_policy_id(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_policy_item(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_policy_requires_path(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_policy_satisfaction(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_psbt(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_psbt(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_psbt_from_file(
+  RustBuffer path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_psbt_from_unsigned_tx(
+  Pointer<Void> tx,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_psbt_new(
+  RustBuffer psbt_base64,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_psbt_combine(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_psbt_extract_tx(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_psbt_fee(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_psbt_finalize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_psbt_input(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_psbt_json_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_psbt_output(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_psbt_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_psbt_spend_utxo(
+  Pointer<Void> ptr,
+  int input_index,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_psbt_write_to_file(
+  Pointer<Void> ptr,
+  RustBuffer path,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_script(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_script(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_script_new(
+  RustBuffer raw_output_script,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_script_to_bytes(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_script_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_syncrequest(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_syncrequest(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_syncrequestbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_syncrequestbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_syncrequestbuilder_build(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_syncrequestbuilder_inspect_spks(
+  Pointer<Void> ptr,
+  Pointer<Void> inspector,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_syncscriptinspector(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_syncscriptinspector(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(Pointer<UniffiVTableCallbackInterfaceSyncScriptInspector>)
+>(assetId: _uniffiAssetId)
+external void uniffi_bdk_ffi_fn_init_callback_vtable_syncscriptinspector(
+  Pointer<UniffiVTableCallbackInterfaceSyncScriptInspector> vtable,
+);
+
+@Native<
+  Void Function(Pointer<Void>, Pointer<Void>, Uint64, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external void uniffi_bdk_ffi_fn_method_syncscriptinspector_inspect(
+  Pointer<Void> ptr,
+  Pointer<Void> script,
+  int total,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_taptree(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_taptree(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_taptree_node_info(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_taptree_root_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_taptree_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_transaction(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_transaction(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_transaction_new(
+  RustBuffer transaction_bytes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_transaction_compute_txid(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_transaction_compute_wtxid(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_transaction_input(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_is_coinbase(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_is_explicitly_rbf(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_is_lock_time_enabled(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint32 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_lock_time(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_transaction_output(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_transaction_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_total_size(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int32 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_version(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_vsize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_weight(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_transaction_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_transaction_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_txbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_txbuilder(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_txbuilder_new(
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_add_data(
+  Pointer<Void> ptr,
+  RustBuffer data,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_add_global_xpubs(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    Pointer<Void>,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_add_recipient(
+  Pointer<Void> ptr,
+  Pointer<Void> script,
+  Pointer<Void> amount,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_add_unspendable(
+  Pointer<Void> ptr,
+  RustBuffer unspendable,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_add_utxo(
+  Pointer<Void> ptr,
+  RustBuffer outpoint,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_add_utxos(
+  Pointer<Void> ptr,
+  RustBuffer outpoints,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Int8, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_allow_dust(
+  Pointer<Void> ptr,
+  int allow_dust,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_change_policy(
+  Pointer<Void> ptr,
+  RustBuffer change_policy,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_current_height(
+  Pointer<Void> ptr,
+  int height,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_do_not_spend_change(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_drain_to(
+  Pointer<Void> ptr,
+  Pointer<Void> script,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_drain_wallet(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_method_txbuilder_exclude_below_confirmations(
+  Pointer<Void> ptr,
+  int min_confirms,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_exclude_unconfirmed(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_fee_absolute(
+  Pointer<Void> ptr,
+  Pointer<Void> fee_amount,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_fee_rate(
+  Pointer<Void> ptr,
+  Pointer<Void> fee_rate,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_finish(
+  Pointer<Void> ptr,
+  Pointer<Void> wallet,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_method_txbuilder_manually_selected_only(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_nlocktime(
+  Pointer<Void> ptr,
+  RustBuffer locktime,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_only_spend_change(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_policy_path(
+  Pointer<Void> ptr,
+  RustBuffer policy_path,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_set_exact_sequence(
+  Pointer<Void> ptr,
+  int nsequence,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_set_recipients(
+  Pointer<Void> ptr,
+  RustBuffer recipients,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_unspendable(
+  Pointer<Void> ptr,
+  RustBuffer unspendable,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Int32, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_txbuilder_version(
+  Pointer<Void> ptr,
+  int version,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_txmerklenode(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_txmerklenode(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_txmerklenode_from_bytes(
+  RustBuffer bytes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_txmerklenode_from_string(
+  RustBuffer hex,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_txmerklenode_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txmerklenode_uniffi_trait_ord_cmp(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_txid(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_txid(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_txid_from_bytes(
+  RustBuffer bytes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_txid_from_string(
+  RustBuffer hex,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_txid_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_txid_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txid_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txid_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txid_uniffi_trait_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_txid_uniffi_trait_ord_cmp(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_update(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_update(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_wallet(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_wallet(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    Pointer<Void>,
+    Uint32,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_constructor_wallet_create_from_two_path_descriptor(
+  Pointer<Void> two_path_descriptor,
+  RustBuffer network,
+  Pointer<Void> persister,
+  int lookahead,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    RustBuffer,
+    Pointer<Void>,
+    Uint32,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_wallet_create_single(
+  Pointer<Void> descriptor,
+  RustBuffer network,
+  Pointer<Void> persister,
+  int lookahead,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    Pointer<Void>,
+    Uint32,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_wallet_load(
+  Pointer<Void> descriptor,
+  Pointer<Void> change_descriptor,
+  Pointer<Void> persister,
+  int lookahead,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    Uint32,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_wallet_load_single(
+  Pointer<Void> descriptor,
+  Pointer<Void> persister,
+  int lookahead,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    RustBuffer,
+    Pointer<Void>,
+    Uint32,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_wallet_new(
+  Pointer<Void> descriptor,
+  Pointer<Void> change_descriptor,
+  RustBuffer network,
+  Pointer<Void> persister,
+  int lookahead,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_wallet_apply_evicted_txs(
+  Pointer<Void> ptr,
+  RustBuffer evicted_txs,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_wallet_apply_unconfirmed_txs(
+  Pointer<Void> ptr,
+  RustBuffer unconfirmed_txs,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_wallet_apply_update(
+  Pointer<Void> ptr,
+  Pointer<Void> update,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_apply_update_events(
+  Pointer<Void> ptr,
+  Pointer<Void> update,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_balance(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_wallet_calculate_fee(
+  Pointer<Void> ptr,
+  Pointer<Void> tx,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Pointer<Void> Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_wallet_calculate_fee_rate(
+  Pointer<Void> ptr,
+  Pointer<Void> tx,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_method_wallet_cancel_tx(
+  Pointer<Void> ptr,
+  Pointer<Void> tx,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_derivation_index(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_derivation_of_spk(
+  Pointer<Void> ptr,
+  Pointer<Void> spk,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_descriptor_checksum(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Int8 Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_fn_method_wallet_finalize_psbt(
+  Pointer<Void> ptr,
+  Pointer<Void> psbt,
+  RustBuffer sign_options,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_get_tx(
+  Pointer<Void> ptr,
+  Pointer<Void> txid,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_get_utxo(
+  Pointer<Void> ptr,
+  RustBuffer op,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(Pointer<Void>, RustBuffer, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external void uniffi_bdk_ffi_fn_method_wallet_insert_txout(
+  Pointer<Void> ptr,
+  RustBuffer outpoint,
+  RustBuffer txout,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_wallet_is_mine(
+  Pointer<Void> ptr,
+  Pointer<Void> script,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_latest_checkpoint(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_list_output(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_list_unspent(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_list_unused_addresses(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Int8 Function(Pointer<Void>, RustBuffer, Uint32, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_fn_method_wallet_mark_used(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  int index,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_network(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint32 Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_wallet_next_derivation_index(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_next_unused_address(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(
+    Pointer<Void>,
+    RustBuffer,
+    Uint32,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_peek_address(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  int index,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_wallet_persist(
+  Pointer<Void> ptr,
+  Pointer<Void> persister,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_policies(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_public_descriptor(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(
+    Pointer<Void>,
+    RustBuffer,
+    Uint32,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_reveal_addresses_to(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  int index,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_reveal_next_address(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_sent_and_received(
+  Pointer<Void> ptr,
+  Pointer<Void> tx,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Int8 Function(
+    Pointer<Void>,
+    Pointer<Void>,
+    RustBuffer,
+    Pointer<RustCallStatus>,
+  )
+>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_fn_method_wallet_sign(
+  Pointer<Void> ptr,
+  Pointer<Void> psbt,
+  RustBuffer sign_options,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_staged(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_method_wallet_start_full_scan(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void>
+uniffi_bdk_ffi_fn_method_wallet_start_sync_with_revealed_spks(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_take_staged(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_transactions(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  RustBuffer Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external RustBuffer uniffi_bdk_ffi_fn_method_wallet_tx_details(
+  Pointer<Void> ptr,
+  Pointer<Void> txid,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Int8 Function(Pointer<Void>, RustBuffer, Uint32, Pointer<RustCallStatus>)
+>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_fn_method_wallet_unmark_used(
+  Pointer<Void> ptr,
+  RustBuffer keychain,
+  int index,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_clone_wtxid(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void uniffi_bdk_ffi_fn_free_wtxid(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_wtxid_from_bytes(
+  RustBuffer bytes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external Pointer<Void> uniffi_bdk_ffi_fn_constructor_wtxid_from_string(
+  RustBuffer hex,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wtxid_serialize(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_display(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_eq_eq(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_eq_ne(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_hash(
+  Pointer<Void> ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int uniffi_bdk_ffi_fn_method_wtxid_uniffi_trait_ord_cmp(
+  Pointer<Void> ptr,
+  Pointer<Void> other,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_walletevent_uniffi_trait_display(
+  RustBuffer ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer uniffi_bdk_ffi_fn_method_conflict_uniffi_trait_display(
+  RustBuffer ptr,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer ffi_bdk_ffi_rustbuffer_alloc(
+  int size,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(ForeignBytes, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer ffi_bdk_ffi_rustbuffer_from_bytes(
+  ForeignBytes bytes,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Void Function(RustBuffer, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void ffi_bdk_ffi_rustbuffer_free(
+  RustBuffer buf,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<RustBuffer Function(RustBuffer, Uint64, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer ffi_bdk_ffi_rustbuffer_reserve(
+  RustBuffer buf,
+  int additional,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_u8(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_u8(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_u8(Pointer<Void> handle);
+
+@Native<Uint8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_u8(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_i8(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_i8(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_i8(Pointer<Void> handle);
+
+@Native<Int8 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_i8(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_u16(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_u16(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_u16(Pointer<Void> handle);
+
+@Native<Uint16 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_u16(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_i16(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_i16(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_i16(Pointer<Void> handle);
+
+@Native<Int16 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_i16(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_u32(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_u32(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_u32(Pointer<Void> handle);
+
+@Native<Uint32 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_u32(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_i32(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_i32(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_i32(Pointer<Void> handle);
+
+@Native<Int32 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_i32(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_u64(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_u64(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_u64(Pointer<Void> handle);
+
+@Native<Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_u64(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_i64(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_i64(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_i64(Pointer<Void> handle);
+
+@Native<Int64 Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external int ffi_bdk_ffi_rust_future_complete_i64(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_f32(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_f32(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_f32(Pointer<Void> handle);
+
+@Native<Float Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external double ffi_bdk_ffi_rust_future_complete_f32(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_f64(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_f64(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_f64(Pointer<Void> handle);
+
+@Native<Double Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external double ffi_bdk_ffi_rust_future_complete_f64(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_rust_buffer(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_rust_buffer(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_rust_buffer(Pointer<Void> handle);
+
+@Native<RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external RustBuffer ffi_bdk_ffi_rust_future_complete_rust_buffer(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<
+  Void Function(
+    Pointer<Void>,
+    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
+    Pointer<Void>,
+  )
+>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_poll_void(
+  Pointer<Void> handle,
+  Pointer<NativeFunction<UniffiRustFutureContinuationCallback>> callback,
+  Pointer<Void> callback_data,
+);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_cancel_void(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>)>(assetId: _uniffiAssetId)
+external void ffi_bdk_ffi_rust_future_free_void(Pointer<Void> handle);
+
+@Native<Void Function(Pointer<Void>, Pointer<RustCallStatus>)>(
+  assetId: _uniffiAssetId,
+)
+external void ffi_bdk_ffi_rust_future_complete_void(
+  Pointer<Void> handle,
+  Pointer<RustCallStatus> uniffiStatus,
+);
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_address_is_valid_for_network();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_address_script_pubkey();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_address_to_address_data();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_address_to_qr_uri();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_amount_to_btc();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_amount_to_sat();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_blockhash_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_allow_dust();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_current_height();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_finish();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_nlocktime();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_set_exact_sequence();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_version();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfbuilder_build();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_cbfbuilder_configure_timeout_millis();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfbuilder_connections();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfbuilder_data_dir();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfbuilder_peers();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfbuilder_scan_type();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfbuilder_socks5_proxy();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_average_fee_rate();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_broadcast();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_connect();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_is_running();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_lookup_host();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_min_broadcast_feerate();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_next_info();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_next_warning();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_shutdown();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfclient_update();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_cbfnode_run();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_changeset_change_descriptor();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_changeset_descriptor();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_changeset_indexer_changeset();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_changeset_localchain_changeset();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_changeset_network();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_changeset_tx_graph_changeset();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_derivationpath_is_empty();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_derivationpath_is_master();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_derivationpath_len();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptor_desc_type();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptor_descriptor_id();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptor_is_multipath();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptor_max_weight_to_satisfy();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptor_to_single_descriptors();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptor_to_string_with_secret();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorid_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorpublickey_derive();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorpublickey_extend();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorpublickey_is_multipath();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_descriptorpublickey_master_fingerprint();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorsecretkey_as_public();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorsecretkey_derive();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorsecretkey_extend();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_descriptorsecretkey_secret_bytes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_electrumclient_block_headers_subscribe();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_electrumclient_estimate_fee();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_electrumclient_full_scan();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_electrumclient_ping();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_electrumclient_server_features();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_electrumclient_sync();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_electrumclient_transaction_broadcast();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_broadcast();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_full_scan();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_get_block_hash();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_get_fee_estimates();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_get_height();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_get_tx();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_get_tx_info();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_get_tx_status();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_esploraclient_sync();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_feerate_fee_vb();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_feerate_fee_wu();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_feerate_to_sat_per_kwu();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_feerate_to_sat_per_vb_ceil();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_feerate_to_sat_per_vb_floor();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_fullscanrequestbuilder_build();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_fullscanrequestbuilder_inspect_spks_for_all_keychains();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_fullscanscriptinspector_inspect();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_hashableoutpoint_outpoint();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_leafnode_depth();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_leafnode_leaf_hash();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_leafnode_leaf_version();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_leafnode_merkle_branch();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_leafnode_node_hash();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_leafnode_script();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_nodeinfo_leaf_nodes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_nodeinfo_node_hash();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_persistence_initialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_persistence_persist();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_policy_as_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_policy_contribution();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_policy_id();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_policy_item();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_policy_requires_path();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_policy_satisfaction();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_combine();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_extract_tx();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_fee();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_finalize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_input();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_json_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_output();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_spend_utxo();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_psbt_write_to_file();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_script_to_bytes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_syncrequestbuilder_build();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_syncrequestbuilder_inspect_spks();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_syncscriptinspector_inspect();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_taptree_node_info();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_taptree_root_hash();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_compute_txid();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_compute_wtxid();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_input();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_is_coinbase();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_is_explicitly_rbf();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_is_lock_time_enabled();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_lock_time();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_output();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_total_size();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_version();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_vsize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_transaction_weight();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_add_data();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_add_global_xpubs();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_add_recipient();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_add_unspendable();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_add_utxo();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_add_utxos();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_allow_dust();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_change_policy();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_current_height();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_do_not_spend_change();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_drain_to();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_drain_wallet();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_txbuilder_exclude_below_confirmations();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_exclude_unconfirmed();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_fee_absolute();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_fee_rate();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_finish();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_manually_selected_only();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_nlocktime();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_only_spend_change();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_policy_path();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_set_exact_sequence();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_set_recipients();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_unspendable();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txbuilder_version();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txmerklenode_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_txid_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_apply_evicted_txs();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_apply_unconfirmed_txs();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_apply_update();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_apply_update_events();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_balance();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_calculate_fee();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_calculate_fee_rate();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_cancel_tx();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_derivation_index();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_derivation_of_spk();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_descriptor_checksum();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_finalize_psbt();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_get_tx();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_get_utxo();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_insert_txout();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_is_mine();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_latest_checkpoint();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_list_output();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_list_unspent();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_list_unused_addresses();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_mark_used();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_network();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_next_derivation_index();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_next_unused_address();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_peek_address();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_persist();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_policies();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_public_descriptor();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_reveal_addresses_to();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_reveal_next_address();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_sent_and_received();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_sign();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_staged();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_start_full_scan();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_method_wallet_start_sync_with_revealed_spks();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_take_staged();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_transactions();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_tx_details();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wallet_unmark_used();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_method_wtxid_serialize();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_address_from_script();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_address_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_amount_from_btc();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_amount_from_sat();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_blockhash_from_bytes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_blockhash_from_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_bumpfeetxbuilder_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_cbfbuilder_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_changeset_from_aggregate();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_constructor_changeset_from_descriptor_and_network();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_constructor_changeset_from_indexer_changeset();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_constructor_changeset_from_local_chain_changes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_changeset_from_merge();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_constructor_changeset_from_tx_graph_changeset();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_changeset_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_derivationpath_master();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_derivationpath_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip44();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip44_public();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip49();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip49_public();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip84();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip84_public();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip86();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip86_public();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptorid_from_bytes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptorid_from_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_constructor_descriptorpublickey_from_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_constructor_descriptorsecretkey_from_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_descriptorsecretkey_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_electrumclient_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_esploraclient_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_feerate_from_sat_per_kwu();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_feerate_from_sat_per_vb();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_hashableoutpoint_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_ipaddress_from_ipv4();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_ipaddress_from_ipv6();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_mnemonic_from_entropy();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_mnemonic_from_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_mnemonic_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_persister_custom();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_persister_new_in_memory();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_persister_new_sqlite();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_psbt_from_file();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_psbt_from_unsigned_tx();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_psbt_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_script_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_transaction_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_txbuilder_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_txmerklenode_from_bytes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_txmerklenode_from_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_txid_from_bytes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_txid_from_string();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int
+uniffi_bdk_ffi_checksum_constructor_wallet_create_from_two_path_descriptor();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_wallet_create_single();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_wallet_load();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_wallet_load_single();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_wallet_new();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_wtxid_from_bytes();
+
+@Native<Uint16 Function()>(assetId: _uniffiAssetId)
+external int uniffi_bdk_ffi_checksum_constructor_wtxid_from_string();
+
+@Native<Uint32 Function()>(assetId: _uniffiAssetId)
+external int ffi_bdk_ffi_uniffi_contract_version();
+
+void _checkApiVersion() {
+  final bindingsVersion = 30;
+  final scaffoldingVersion = ffi_bdk_ffi_uniffi_contract_version();
+  if (bindingsVersion != scaffoldingVersion) {
+    throw UniffiInternalError.panicked(
+      "UniFFI contract version mismatch: bindings version \$bindingsVersion, scaffolding version \$scaffoldingVersion",
     );
-  }
-
-  static final _UniffiLib instance = _UniffiLib._();
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_address = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_address");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_address = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_address");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_address_from_script = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_address_from_script");
-  late final Pointer<Void> Function(
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_address_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_address_new");
-  late final int Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_address_is_valid_for_network = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_address_is_valid_for_network");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_address_script_pubkey = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_address_script_pubkey");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_address_to_address_data = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_address_to_address_data");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_address_to_qr_uri = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_address_to_qr_uri");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_address_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_address_uniffi_trait_display");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_address_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_address_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_address_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_address_uniffi_trait_eq_ne");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_amount = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_amount");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_amount = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_amount");
-  late final Pointer<Void> Function(double, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_amount_from_btc = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Double, Pointer<RustCallStatus>),
-        Pointer<Void> Function(double, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_amount_from_btc");
-  late final Pointer<Void> Function(int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_amount_from_sat = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Uint64, Pointer<RustCallStatus>),
-        Pointer<Void> Function(int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_amount_from_sat");
-  late final double Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_amount_to_btc = _dylib
-      .lookupFunction<
-        Double Function(Pointer<Void>, Pointer<RustCallStatus>),
-        double Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_amount_to_btc");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_amount_to_sat = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_amount_to_sat");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_blockhash = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_blockhash");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_blockhash = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_blockhash");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_blockhash_from_bytes = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_blockhash_from_bytes");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_blockhash_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_blockhash_from_string");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_blockhash_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_blockhash_serialize");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_blockhash_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_blockhash_uniffi_trait_display");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_blockhash_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_blockhash_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_blockhash_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_blockhash_uniffi_trait_eq_ne");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_blockhash_uniffi_trait_hash = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_blockhash_uniffi_trait_hash");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_blockhash_uniffi_trait_ord_cmp = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_blockhash_uniffi_trait_ord_cmp");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_bumpfeetxbuilder = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_bumpfeetxbuilder");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_bumpfeetxbuilder = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_bumpfeetxbuilder");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_bumpfeetxbuilder_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_bumpfeetxbuilder_new");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_bumpfeetxbuilder_allow_dust = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Int8, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_bumpfeetxbuilder_allow_dust");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_bumpfeetxbuilder_current_height = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_bumpfeetxbuilder_current_height");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_bumpfeetxbuilder_finish = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_bumpfeetxbuilder_finish");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_bumpfeetxbuilder_nlocktime = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_bumpfeetxbuilder_nlocktime");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_bumpfeetxbuilder_set_exact_sequence = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_bumpfeetxbuilder_set_exact_sequence");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_bumpfeetxbuilder_version = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Int32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_bumpfeetxbuilder_version");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_cbfbuilder = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_cbfbuilder");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_cbfbuilder = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_cbfbuilder");
-  late final Pointer<Void> Function(Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_cbfbuilder_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_cbfbuilder_new");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_cbfbuilder_build = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_cbfbuilder_build");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    int,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_cbfbuilder_configure_timeout_millis = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Uint64,
-          Uint64,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(Pointer<Void>, int, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_cbfbuilder_configure_timeout_millis");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_cbfbuilder_connections = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Uint8, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_cbfbuilder_connections");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_cbfbuilder_data_dir = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_cbfbuilder_data_dir");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_cbfbuilder_peers = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_cbfbuilder_peers");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_cbfbuilder_scan_type = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_cbfbuilder_scan_type");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_cbfbuilder_socks5_proxy = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_cbfbuilder_socks5_proxy");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_cbfclient = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_cbfclient");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_cbfclient = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_cbfclient");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<Void>)
-  uniffi_bdkffi_fn_method_cbfclient_average_fee_rate = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<Void>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<Void>)
-      >("uniffi_bdkffi_fn_method_cbfclient_average_fee_rate");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<Void>)
-  uniffi_bdkffi_fn_method_cbfclient_broadcast = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<Void>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<Void>)
-      >("uniffi_bdkffi_fn_method_cbfclient_broadcast");
-  late final void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_cbfclient_connect = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_cbfclient_connect");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_cbfclient_is_running = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_cbfclient_is_running");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_cbfclient_lookup_host = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_cbfclient_lookup_host");
-  late final Pointer<Void> Function(Pointer<Void>)
-  uniffi_bdkffi_fn_method_cbfclient_min_broadcast_feerate = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>),
-        Pointer<Void> Function(Pointer<Void>)
-      >("uniffi_bdkffi_fn_method_cbfclient_min_broadcast_feerate");
-  late final Pointer<Void> Function(Pointer<Void>)
-  uniffi_bdkffi_fn_method_cbfclient_next_info = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>),
-        Pointer<Void> Function(Pointer<Void>)
-      >("uniffi_bdkffi_fn_method_cbfclient_next_info");
-  late final Pointer<Void> Function(Pointer<Void>)
-  uniffi_bdkffi_fn_method_cbfclient_next_warning = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>),
-        Pointer<Void> Function(Pointer<Void>)
-      >("uniffi_bdkffi_fn_method_cbfclient_next_warning");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_cbfclient_shutdown = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_cbfclient_shutdown");
-  late final Pointer<Void> Function(Pointer<Void>)
-  uniffi_bdkffi_fn_method_cbfclient_update = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>),
-        Pointer<Void> Function(Pointer<Void>)
-      >("uniffi_bdkffi_fn_method_cbfclient_update");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_cbfnode = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_cbfnode");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_cbfnode = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_cbfnode");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_cbfnode_run = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_cbfnode_run");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_changeset = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_changeset");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_changeset = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_changeset");
-  late final Pointer<Void> Function(
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_changeset_from_aggregate = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_changeset_from_aggregate");
-  late final Pointer<Void> Function(
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_changeset_from_descriptor_and_network = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_changeset_from_descriptor_and_network");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_changeset_from_indexer_changeset = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_changeset_from_indexer_changeset");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_changeset_from_local_chain_changes = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_changeset_from_local_chain_changes");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_changeset_from_merge = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_changeset_from_merge");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_changeset_from_tx_graph_changeset = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_changeset_from_tx_graph_changeset");
-  late final Pointer<Void> Function(Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_changeset_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_changeset_new");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_changeset_change_descriptor = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_changeset_change_descriptor");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_changeset_descriptor = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_changeset_descriptor");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_changeset_indexer_changeset = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_changeset_indexer_changeset");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_changeset_localchain_changeset = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_changeset_localchain_changeset");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_changeset_network = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_changeset_network");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_changeset_tx_graph_changeset = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_changeset_tx_graph_changeset");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_derivationpath = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_derivationpath");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_derivationpath = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_derivationpath");
-  late final Pointer<Void> Function(Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_derivationpath_master = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_derivationpath_master");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_derivationpath_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_derivationpath_new");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_derivationpath_is_empty = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_derivationpath_is_empty");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_derivationpath_is_master = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_derivationpath_is_master");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_derivationpath_len = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_derivationpath_len");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_derivationpath_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_derivationpath_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_descriptor = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_descriptor");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_descriptor = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_descriptor");
-  late final Pointer<Void> Function(
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_descriptor_new");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip44 = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip44");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip44_public = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip44_public");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip49 = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip49");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip49_public = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip49_public");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip84 = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip84");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip84_public = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip84_public");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip86 = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip86");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptor_new_bip86_public = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptor_new_bip86_public");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_desc_type = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_desc_type");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_descriptor_id = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_descriptor_id");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_is_multipath = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_is_multipath");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_max_weight_to_satisfy = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_max_weight_to_satisfy");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_to_single_descriptors = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_to_single_descriptors");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_to_string_with_secret = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_to_string_with_secret");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_uniffi_trait_debug = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_uniffi_trait_debug");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptor_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptor_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_descriptorid = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_descriptorid");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_descriptorid = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_descriptorid");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_descriptorid_from_bytes = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_descriptorid_from_bytes");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_descriptorid_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_descriptorid_from_string");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorid_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorid_serialize");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_display");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_eq_ne");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_hash = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_hash");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_ord_cmp = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorid_uniffi_trait_ord_cmp");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_descriptorpublickey = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_descriptorpublickey");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_descriptorpublickey = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_descriptorpublickey");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_descriptorpublickey_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_descriptorpublickey_from_string");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_descriptorpublickey_derive = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_descriptorpublickey_derive");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_descriptorpublickey_extend = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_descriptorpublickey_extend");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorpublickey_is_multipath = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorpublickey_is_multipath");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorpublickey_master_fingerprint = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorpublickey_master_fingerprint");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorpublickey_uniffi_trait_debug = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorpublickey_uniffi_trait_debug");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorpublickey_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorpublickey_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_descriptorsecretkey = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_descriptorsecretkey");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_descriptorsecretkey = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_descriptorsecretkey");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_descriptorsecretkey_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_descriptorsecretkey_from_string");
-  late final Pointer<Void> Function(
-    RustBuffer,
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_descriptorsecretkey_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          RustBuffer,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          RustBuffer,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_descriptorsecretkey_new");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorsecretkey_as_public = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorsecretkey_as_public");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_descriptorsecretkey_derive = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_descriptorsecretkey_derive");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_descriptorsecretkey_extend = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_descriptorsecretkey_extend");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorsecretkey_secret_bytes = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorsecretkey_secret_bytes");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorsecretkey_uniffi_trait_debug = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorsecretkey_uniffi_trait_debug");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_descriptorsecretkey_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_descriptorsecretkey_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_electrumclient = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_electrumclient");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_electrumclient = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_electrumclient");
-  late final Pointer<Void> Function(
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_electrumclient_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_electrumclient_new");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_electrumclient_block_headers_subscribe = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_electrumclient_block_headers_subscribe");
-  late final double Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_electrumclient_estimate_fee = _dylib
-      .lookupFunction<
-        Double Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>),
-        double Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_electrumclient_estimate_fee");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    int,
-    int,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_electrumclient_full_scan = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Uint64,
-          Uint64,
-          Int8,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          int,
-          int,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_electrumclient_full_scan");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_electrumclient_ping = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_electrumclient_ping");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_electrumclient_server_features = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_electrumclient_server_features");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    int,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_electrumclient_sync = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Uint64,
-          Int8,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          int,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_electrumclient_sync");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_electrumclient_transaction_broadcast = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_electrumclient_transaction_broadcast");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_esploraclient = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_esploraclient");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_esploraclient = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_esploraclient");
-  late final Pointer<Void> Function(
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_esploraclient_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_esploraclient_new");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_esploraclient_broadcast = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_esploraclient_broadcast");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    int,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_esploraclient_full_scan = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Uint64,
-          Uint64,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          int,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_esploraclient_full_scan");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_esploraclient_get_block_hash = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_esploraclient_get_block_hash");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_esploraclient_get_fee_estimates = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_esploraclient_get_fee_estimates");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_esploraclient_get_height = _dylib
-      .lookupFunction<
-        Uint32 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_esploraclient_get_height");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_esploraclient_get_tx = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_esploraclient_get_tx");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_esploraclient_get_tx_info = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_esploraclient_get_tx_info");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_esploraclient_get_tx_status = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_esploraclient_get_tx_status");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_esploraclient_sync = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Uint64,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_esploraclient_sync");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_feerate = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_feerate");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_feerate = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_feerate");
-  late final Pointer<Void> Function(int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_feerate_from_sat_per_kwu = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Uint64, Pointer<RustCallStatus>),
-        Pointer<Void> Function(int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_feerate_from_sat_per_kwu");
-  late final Pointer<Void> Function(int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_feerate_from_sat_per_vb = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Uint64, Pointer<RustCallStatus>),
-        Pointer<Void> Function(int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_feerate_from_sat_per_vb");
-  late final RustBuffer Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_feerate_fee_vb = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_feerate_fee_vb");
-  late final RustBuffer Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_feerate_fee_wu = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_feerate_fee_wu");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_feerate_to_sat_per_kwu = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_feerate_to_sat_per_kwu");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_feerate_to_sat_per_vb_ceil = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_feerate_to_sat_per_vb_ceil");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_feerate_to_sat_per_vb_floor = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_feerate_to_sat_per_vb_floor");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_feerate_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_feerate_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_fullscanrequest = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_fullscanrequest");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_fullscanrequest = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_fullscanrequest");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_fullscanrequestbuilder = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_fullscanrequestbuilder");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_fullscanrequestbuilder = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_fullscanrequestbuilder");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_fullscanrequestbuilder_build = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_fullscanrequestbuilder_build");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_fullscanrequestbuilder_inspect_spks_for_all_keychains =
-      _dylib.lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >(
-        "uniffi_bdkffi_fn_method_fullscanrequestbuilder_inspect_spks_for_all_keychains",
-      );
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_fullscanscriptinspector = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_fullscanscriptinspector");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_fullscanscriptinspector = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_fullscanscriptinspector");
-  late final void Function(
-    Pointer<UniffiVTableCallbackInterfaceFullScanScriptInspector>,
-  )
-  uniffi_bdkffi_fn_init_callback_vtable_fullscanscriptinspector = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<UniffiVTableCallbackInterfaceFullScanScriptInspector>,
-        ),
-        void Function(
-          Pointer<UniffiVTableCallbackInterfaceFullScanScriptInspector>,
-        )
-      >("uniffi_bdkffi_fn_init_callback_vtable_fullscanscriptinspector");
-  late final void Function(
-    Pointer<Void>,
-    RustBuffer,
-    int,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_fullscanscriptinspector_inspect = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          RustBuffer,
-          Uint32,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        void Function(
-          Pointer<Void>,
-          RustBuffer,
-          int,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_fullscanscriptinspector_inspect");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_hashableoutpoint = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_hashableoutpoint");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_hashableoutpoint = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_hashableoutpoint");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_hashableoutpoint_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_hashableoutpoint_new");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_hashableoutpoint_outpoint = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_hashableoutpoint_outpoint");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_debug = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_debug");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_eq_ne");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_hash = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_hashableoutpoint_uniffi_trait_hash");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_ipaddress = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_ipaddress");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_ipaddress = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_ipaddress");
-  late final Pointer<Void> Function(int, int, int, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_ipaddress_from_ipv4 = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Uint8,
-          Uint8,
-          Uint8,
-          Uint8,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(int, int, int, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_ipaddress_from_ipv4");
-  late final Pointer<Void> Function(
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_ipaddress_from_ipv6 = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Uint16,
-          Uint16,
-          Uint16,
-          Uint16,
-          Uint16,
-          Uint16,
-          Uint16,
-          Uint16,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          int,
-          int,
-          int,
-          int,
-          int,
-          int,
-          int,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_ipaddress_from_ipv6");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_leafnode = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_leafnode");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_leafnode = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_leafnode");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_leafnode_depth = _dylib
-      .lookupFunction<
-        Uint8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_leafnode_depth");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_leafnode_leaf_hash = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_leafnode_leaf_hash");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_leafnode_leaf_version = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_leafnode_leaf_version");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_leafnode_merkle_branch = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_leafnode_merkle_branch");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_leafnode_node_hash = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_leafnode_node_hash");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_leafnode_script = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_leafnode_script");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_leafnode_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_leafnode_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_mnemonic = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_mnemonic");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_mnemonic = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_mnemonic");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_mnemonic_from_entropy = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_mnemonic_from_entropy");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_mnemonic_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_mnemonic_from_string");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_mnemonic_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_mnemonic_new");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_mnemonic_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_mnemonic_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_nodeinfo = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_nodeinfo");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_nodeinfo = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_nodeinfo");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_nodeinfo_leaf_nodes = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_nodeinfo_leaf_nodes");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_nodeinfo_node_hash = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_nodeinfo_node_hash");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_nodeinfo_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_nodeinfo_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_persistence = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_persistence");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_persistence = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_persistence");
-  late final void Function(Pointer<UniffiVTableCallbackInterfacePersistence>)
-  uniffi_bdkffi_fn_init_callback_vtable_persistence = _dylib
-      .lookupFunction<
-        Void Function(Pointer<UniffiVTableCallbackInterfacePersistence>),
-        void Function(Pointer<UniffiVTableCallbackInterfacePersistence>)
-      >("uniffi_bdkffi_fn_init_callback_vtable_persistence");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_persistence_initialize = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_persistence_initialize");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_persistence_persist = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_persistence_persist");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_persister = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_persister");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_persister = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_persister");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_persister_custom = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_persister_custom");
-  late final Pointer<Void> Function(Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_persister_new_in_memory = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_persister_new_in_memory");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_persister_new_sqlite = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_persister_new_sqlite");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_policy = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_policy");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_policy = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_policy");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_policy_as_string = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_policy_as_string");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_policy_contribution = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_policy_contribution");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_policy_id = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_policy_id");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_policy_item = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_policy_item");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_policy_requires_path = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_policy_requires_path");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_policy_satisfaction = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_policy_satisfaction");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_psbt = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_psbt");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_psbt = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_psbt");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_psbt_from_file = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_psbt_from_file");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_psbt_from_unsigned_tx = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_psbt_from_unsigned_tx");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_psbt_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_psbt_new");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_psbt_combine = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_psbt_combine");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_extract_tx = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_extract_tx");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_fee = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_fee");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_finalize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_finalize");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_input = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_input");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_json_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_json_serialize");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_output = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_output");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_serialize");
-  late final RustBuffer Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_spend_utxo = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Uint64, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_spend_utxo");
-  late final void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_psbt_write_to_file = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_psbt_write_to_file");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_script = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_script");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_script = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_script");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_script_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_script_new");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_script_to_bytes = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_script_to_bytes");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_script_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_script_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_syncrequest = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_syncrequest");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_syncrequest = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_syncrequest");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_syncrequestbuilder = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_syncrequestbuilder");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_syncrequestbuilder = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_syncrequestbuilder");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_syncrequestbuilder_build = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_syncrequestbuilder_build");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_syncrequestbuilder_inspect_spks = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_syncrequestbuilder_inspect_spks");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_syncscriptinspector = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_syncscriptinspector");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_syncscriptinspector = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_syncscriptinspector");
-  late final void Function(
-    Pointer<UniffiVTableCallbackInterfaceSyncScriptInspector>,
-  )
-  uniffi_bdkffi_fn_init_callback_vtable_syncscriptinspector = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<UniffiVTableCallbackInterfaceSyncScriptInspector>,
-        ),
-        void Function(Pointer<UniffiVTableCallbackInterfaceSyncScriptInspector>)
-      >("uniffi_bdkffi_fn_init_callback_vtable_syncscriptinspector");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_syncscriptinspector_inspect = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Uint64,
-          Pointer<RustCallStatus>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_syncscriptinspector_inspect");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_taptree = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_taptree");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_taptree = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_taptree");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_taptree_node_info = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_taptree_node_info");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_taptree_root_hash = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_taptree_root_hash");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_taptree_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_taptree_uniffi_trait_display");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_transaction = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_transaction");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_transaction = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_transaction");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_transaction_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_transaction_new");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_compute_txid = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_compute_txid");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_compute_wtxid = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_compute_wtxid");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_input = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_input");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_is_coinbase = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_is_coinbase");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_is_explicitly_rbf = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_is_explicitly_rbf");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_is_lock_time_enabled = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_is_lock_time_enabled");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_lock_time = _dylib
-      .lookupFunction<
-        Uint32 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_lock_time");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_output = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_output");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_serialize");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_total_size = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_total_size");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_version = _dylib
-      .lookupFunction<
-        Int32 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_version");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_vsize = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_vsize");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_weight = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_weight");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_uniffi_trait_display");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_transaction_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_transaction_uniffi_trait_eq_ne");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_txbuilder = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_txbuilder");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_txbuilder = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_txbuilder");
-  late final Pointer<Void> Function(Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_txbuilder_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_txbuilder_new");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_add_data = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_add_data");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_add_global_xpubs = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_add_global_xpubs");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_add_recipient = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_add_recipient");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_add_unspendable = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_add_unspendable");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_add_utxo = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_add_utxo");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_add_utxos = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_add_utxos");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_allow_dust = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Int8, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_allow_dust");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_change_policy = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_change_policy");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_current_height = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_current_height");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_do_not_spend_change = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_do_not_spend_change");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_drain_to = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_drain_to");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_drain_wallet = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_drain_wallet");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_exclude_below_confirmations = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_exclude_below_confirmations");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_exclude_unconfirmed = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_exclude_unconfirmed");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_fee_absolute = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_fee_absolute");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_fee_rate = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_fee_rate");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_finish = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_finish");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_manually_selected_only = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_manually_selected_only");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_nlocktime = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_nlocktime");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_only_spend_change = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_only_spend_change");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_policy_path = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_policy_path");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_set_exact_sequence = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Uint32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_set_exact_sequence");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_set_recipients = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_set_recipients");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_txbuilder_unspendable = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_txbuilder_unspendable");
-  late final Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txbuilder_version = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Int32, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txbuilder_version");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_txmerklenode = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_txmerklenode");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_txmerklenode = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_txmerklenode");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_txmerklenode_from_bytes = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_txmerklenode_from_bytes");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_txmerklenode_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_txmerklenode_from_string");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txmerklenode_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txmerklenode_serialize");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_display");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_eq_ne");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_hash = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_hash");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_ord_cmp = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txmerklenode_uniffi_trait_ord_cmp");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_txid = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_txid");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_txid = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_txid");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_txid_from_bytes = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_txid_from_bytes");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_txid_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_txid_from_string");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txid_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txid_serialize");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txid_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txid_uniffi_trait_display");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txid_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txid_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txid_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txid_uniffi_trait_eq_ne");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txid_uniffi_trait_hash = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txid_uniffi_trait_hash");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_txid_uniffi_trait_ord_cmp = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_txid_uniffi_trait_ord_cmp");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_update = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_update");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_update = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_update");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_wallet = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_wallet");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_wallet = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_wallet");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<Void>,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_wallet_create_from_two_path_descriptor = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<Void>,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<Void>,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_wallet_create_from_two_path_descriptor");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<Void>,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_wallet_create_single = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<Void>,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<Void>,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_wallet_create_single");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<Void>,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_wallet_load = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<Void>,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<Void>,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_wallet_load");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_wallet_load_single = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_wallet_load_single");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<Void>,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_constructor_wallet_new = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<Void>,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<Void>,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_constructor_wallet_new");
-  late final void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_apply_evicted_txs = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_apply_evicted_txs");
-  late final void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_apply_unconfirmed_txs = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_apply_unconfirmed_txs");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_apply_update = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_apply_update");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_apply_update_events = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_apply_update_events");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_balance = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_balance");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_calculate_fee = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_calculate_fee");
-  late final Pointer<Void> Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_calculate_fee_rate = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        Pointer<Void> Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_calculate_fee_rate");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_cancel_tx = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_cancel_tx");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_derivation_index = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_derivation_index");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_derivation_of_spk = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_derivation_of_spk");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_descriptor_checksum = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_descriptor_checksum");
-  late final int Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_finalize_psbt = _dylib
-      .lookupFunction<
-        Int8 Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        int Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_finalize_psbt");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_get_tx = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_get_tx");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_get_utxo = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_get_utxo");
-  late final void Function(
-    Pointer<Void>,
-    RustBuffer,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_insert_txout = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        void Function(
-          Pointer<Void>,
-          RustBuffer,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_insert_txout");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_is_mine = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_is_mine");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_latest_checkpoint = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_latest_checkpoint");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_list_output = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_list_output");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_list_unspent = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_list_unspent");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_list_unused_addresses = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_list_unused_addresses");
-  late final int Function(
-    Pointer<Void>,
-    RustBuffer,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_mark_used = _dylib
-      .lookupFunction<
-        Int8 Function(
-          Pointer<Void>,
-          RustBuffer,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        int Function(Pointer<Void>, RustBuffer, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_mark_used");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_network = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_network");
-  late final int Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_next_derivation_index = _dylib
-      .lookupFunction<
-        Uint32 Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_next_derivation_index");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_next_unused_address = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_next_unused_address");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_peek_address = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          RustBuffer,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          RustBuffer,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_peek_address");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_persist = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_persist");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_policies = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_policies");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_public_descriptor = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_public_descriptor");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_reveal_addresses_to = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          RustBuffer,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          RustBuffer,
-          int,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_reveal_addresses_to");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_reveal_next_address = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_reveal_next_address");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_sent_and_received = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_sent_and_received");
-  late final int Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    RustBuffer,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_sign = _dylib
-      .lookupFunction<
-        Int8 Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        ),
-        int Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          RustBuffer,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_sign");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_staged = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_staged");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_start_full_scan = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_start_full_scan");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_start_sync_with_revealed_spks = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_start_sync_with_revealed_spks");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_take_staged = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_take_staged");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wallet_transactions = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_transactions");
-  late final RustBuffer Function(
-    Pointer<Void>,
-    Pointer<Void>,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_tx_details = _dylib
-      .lookupFunction<
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        ),
-        RustBuffer Function(
-          Pointer<Void>,
-          Pointer<Void>,
-          Pointer<RustCallStatus>,
-        )
-      >("uniffi_bdkffi_fn_method_wallet_tx_details");
-  late final int Function(
-    Pointer<Void>,
-    RustBuffer,
-    int,
-    Pointer<RustCallStatus>,
-  )
-  uniffi_bdkffi_fn_method_wallet_unmark_used = _dylib
-      .lookupFunction<
-        Int8 Function(
-          Pointer<Void>,
-          RustBuffer,
-          Uint32,
-          Pointer<RustCallStatus>,
-        ),
-        int Function(Pointer<Void>, RustBuffer, int, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wallet_unmark_used");
-  late final Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_clone_wtxid = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>),
-        Pointer<Void> Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_clone_wtxid");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_free_wtxid = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_free_wtxid");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_wtxid_from_bytes = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_wtxid_from_bytes");
-  late final Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_constructor_wtxid_from_string = _dylib
-      .lookupFunction<
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>),
-        Pointer<Void> Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_constructor_wtxid_from_string");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wtxid_serialize = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wtxid_serialize");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wtxid_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wtxid_uniffi_trait_display");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wtxid_uniffi_trait_eq_eq = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wtxid_uniffi_trait_eq_eq");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wtxid_uniffi_trait_eq_ne = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wtxid_uniffi_trait_eq_ne");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wtxid_uniffi_trait_hash = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wtxid_uniffi_trait_hash");
-  late final int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_wtxid_uniffi_trait_ord_cmp = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<Void>, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_wtxid_uniffi_trait_ord_cmp");
-  late final RustBuffer Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_walletevent_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_walletevent_uniffi_trait_display");
-  late final RustBuffer Function(RustBuffer, Pointer<RustCallStatus>)
-  uniffi_bdkffi_fn_method_conflict_uniffi_trait_display = _dylib
-      .lookupFunction<
-        RustBuffer Function(RustBuffer, Pointer<RustCallStatus>),
-        RustBuffer Function(RustBuffer, Pointer<RustCallStatus>)
-      >("uniffi_bdkffi_fn_method_conflict_uniffi_trait_display");
-  late final RustBuffer Function(int, Pointer<RustCallStatus>)
-  ffi_bdkffi_rustbuffer_alloc = _dylib
-      .lookupFunction<
-        RustBuffer Function(Uint64, Pointer<RustCallStatus>),
-        RustBuffer Function(int, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rustbuffer_alloc");
-  late final RustBuffer Function(ForeignBytes, Pointer<RustCallStatus>)
-  ffi_bdkffi_rustbuffer_from_bytes = _dylib
-      .lookupFunction<
-        RustBuffer Function(ForeignBytes, Pointer<RustCallStatus>),
-        RustBuffer Function(ForeignBytes, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rustbuffer_from_bytes");
-  late final void Function(RustBuffer, Pointer<RustCallStatus>)
-  ffi_bdkffi_rustbuffer_free = _dylib
-      .lookupFunction<
-        Void Function(RustBuffer, Pointer<RustCallStatus>),
-        void Function(RustBuffer, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rustbuffer_free");
-  late final RustBuffer Function(RustBuffer, int, Pointer<RustCallStatus>)
-  ffi_bdkffi_rustbuffer_reserve = _dylib
-      .lookupFunction<
-        RustBuffer Function(RustBuffer, Uint64, Pointer<RustCallStatus>),
-        RustBuffer Function(RustBuffer, int, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rustbuffer_reserve");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_u8 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_u8");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_u8 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_u8");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_u8 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_u8");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_u8 = _dylib
-      .lookupFunction<
-        Uint8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_u8");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_i8 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_i8");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_i8 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_i8");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_i8 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_i8");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_i8 = _dylib
-      .lookupFunction<
-        Int8 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_i8");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_u16 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_u16");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_u16 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_u16");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_u16 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_u16");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_u16 = _dylib
-      .lookupFunction<
-        Uint16 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_u16");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_i16 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_i16");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_i16 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_i16");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_i16 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_i16");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_i16 = _dylib
-      .lookupFunction<
-        Int16 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_i16");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_u32 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_u32");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_u32 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_u32");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_u32 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_u32");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_u32 = _dylib
-      .lookupFunction<
-        Uint32 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_u32");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_i32 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_i32");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_i32 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_i32");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_i32 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_i32");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_i32 = _dylib
-      .lookupFunction<
-        Int32 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_i32");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_u64 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_u64");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_u64 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_u64");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_u64 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_u64");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_u64 = _dylib
-      .lookupFunction<
-        Uint64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_u64");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_i64 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_i64");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_i64 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_i64");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_i64 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_i64");
-  late final int Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_i64 = _dylib
-      .lookupFunction<
-        Int64 Function(Pointer<Void>, Pointer<RustCallStatus>),
-        int Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_i64");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_f32 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_f32");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_f32 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_f32");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_f32 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_f32");
-  late final double Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_f32 = _dylib
-      .lookupFunction<
-        Float Function(Pointer<Void>, Pointer<RustCallStatus>),
-        double Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_f32");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_f64 = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_f64");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_f64 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_f64");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_f64 =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_f64");
-  late final double Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_f64 = _dylib
-      .lookupFunction<
-        Double Function(Pointer<Void>, Pointer<RustCallStatus>),
-        double Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_f64");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_rust_buffer = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_rust_buffer");
-  late final void Function(Pointer<Void>)
-  ffi_bdkffi_rust_future_cancel_rust_buffer = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_rust_buffer");
-  late final void Function(Pointer<Void>)
-  ffi_bdkffi_rust_future_free_rust_buffer = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_rust_buffer");
-  late final RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_rust_buffer = _dylib
-      .lookupFunction<
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>),
-        RustBuffer Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_rust_buffer");
-  late final void Function(
-    Pointer<Void>,
-    Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-    Pointer<Void>,
-  )
-  ffi_bdkffi_rust_future_poll_void = _dylib
-      .lookupFunction<
-        Void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        ),
-        void Function(
-          Pointer<Void>,
-          Pointer<NativeFunction<UniffiRustFutureContinuationCallback>>,
-          Pointer<Void>,
-        )
-      >("ffi_bdkffi_rust_future_poll_void");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_cancel_void =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_cancel_void");
-  late final void Function(Pointer<Void>) ffi_bdkffi_rust_future_free_void =
-      _dylib.lookupFunction<
-        Void Function(Pointer<Void>),
-        void Function(Pointer<Void>)
-      >("ffi_bdkffi_rust_future_free_void");
-  late final void Function(Pointer<Void>, Pointer<RustCallStatus>)
-  ffi_bdkffi_rust_future_complete_void = _dylib
-      .lookupFunction<
-        Void Function(Pointer<Void>, Pointer<RustCallStatus>),
-        void Function(Pointer<Void>, Pointer<RustCallStatus>)
-      >("ffi_bdkffi_rust_future_complete_void");
-  late final int Function()
-  uniffi_bdkffi_checksum_method_address_is_valid_for_network = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_address_is_valid_for_network",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_address_script_pubkey = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_address_script_pubkey",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_address_to_address_data = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_address_to_address_data",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_address_to_qr_uri =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_address_to_qr_uri",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_amount_to_btc = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_amount_to_btc",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_amount_to_sat = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_amount_to_sat",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_blockhash_serialize =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_blockhash_serialize",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_bumpfeetxbuilder_allow_dust = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_bumpfeetxbuilder_allow_dust",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_bumpfeetxbuilder_current_height = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_bumpfeetxbuilder_current_height",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_bumpfeetxbuilder_finish = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_bumpfeetxbuilder_finish",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_bumpfeetxbuilder_nlocktime = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_bumpfeetxbuilder_nlocktime",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_bumpfeetxbuilder_set_exact_sequence = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_bumpfeetxbuilder_set_exact_sequence",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_bumpfeetxbuilder_version = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_bumpfeetxbuilder_version",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfbuilder_build =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfbuilder_build",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_cbfbuilder_configure_timeout_millis = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfbuilder_configure_timeout_millis",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_cbfbuilder_connections = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfbuilder_connections",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfbuilder_data_dir =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfbuilder_data_dir",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfbuilder_peers =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfbuilder_peers",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfbuilder_scan_type =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfbuilder_scan_type",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_cbfbuilder_socks5_proxy = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfbuilder_socks5_proxy",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_cbfclient_average_fee_rate = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_average_fee_rate",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfclient_broadcast =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_broadcast",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfclient_connect =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_connect",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfclient_is_running =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_is_running",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_cbfclient_lookup_host = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_lookup_host",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_cbfclient_min_broadcast_feerate = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_min_broadcast_feerate",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfclient_next_info =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_next_info",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_cbfclient_next_warning = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_next_warning",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfclient_shutdown =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_shutdown",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfclient_update =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfclient_update",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_cbfnode_run = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_cbfnode_run",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_changeset_change_descriptor = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_changeset_change_descriptor",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_changeset_descriptor =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_changeset_descriptor",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_changeset_indexer_changeset = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_changeset_indexer_changeset",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_changeset_localchain_changeset = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_changeset_localchain_changeset",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_changeset_network =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_changeset_network",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_changeset_tx_graph_changeset = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_changeset_tx_graph_changeset",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_derivationpath_is_empty = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_derivationpath_is_empty",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_derivationpath_is_master = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_derivationpath_is_master",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_derivationpath_len =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_derivationpath_len",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_descriptor_desc_type =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptor_desc_type",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptor_descriptor_id = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptor_descriptor_id",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptor_is_multipath = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptor_is_multipath",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptor_max_weight_to_satisfy = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptor_max_weight_to_satisfy",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptor_to_single_descriptors = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptor_to_single_descriptors",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptor_to_string_with_secret = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptor_to_string_with_secret",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorid_serialize = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorid_serialize",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorpublickey_derive = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorpublickey_derive",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorpublickey_extend = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorpublickey_extend",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorpublickey_is_multipath = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorpublickey_is_multipath",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorpublickey_master_fingerprint = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorpublickey_master_fingerprint",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorsecretkey_as_public = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorsecretkey_as_public",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorsecretkey_derive = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorsecretkey_derive",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorsecretkey_extend = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorsecretkey_extend",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_descriptorsecretkey_secret_bytes = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_descriptorsecretkey_secret_bytes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_electrumclient_block_headers_subscribe = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_electrumclient_block_headers_subscribe",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_electrumclient_estimate_fee = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_electrumclient_estimate_fee",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_electrumclient_full_scan = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_electrumclient_full_scan",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_electrumclient_ping =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_electrumclient_ping",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_electrumclient_server_features = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_electrumclient_server_features",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_electrumclient_sync =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_electrumclient_sync",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_electrumclient_transaction_broadcast = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_electrumclient_transaction_broadcast",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_esploraclient_broadcast = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_broadcast",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_esploraclient_full_scan = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_full_scan",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_esploraclient_get_block_hash = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_get_block_hash",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_esploraclient_get_fee_estimates = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_get_fee_estimates",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_esploraclient_get_height = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_get_height",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_esploraclient_get_tx =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_get_tx",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_esploraclient_get_tx_info = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_get_tx_info",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_esploraclient_get_tx_status = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_get_tx_status",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_esploraclient_sync =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_esploraclient_sync",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_feerate_fee_vb =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_feerate_fee_vb",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_feerate_fee_wu =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_feerate_fee_wu",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_feerate_to_sat_per_kwu = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_feerate_to_sat_per_kwu",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_feerate_to_sat_per_vb_ceil = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_feerate_to_sat_per_vb_ceil",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_feerate_to_sat_per_vb_floor = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_feerate_to_sat_per_vb_floor",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_fullscanrequestbuilder_build = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_fullscanrequestbuilder_build",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_fullscanrequestbuilder_inspect_spks_for_all_keychains =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_fullscanrequestbuilder_inspect_spks_for_all_keychains",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_fullscanscriptinspector_inspect = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_fullscanscriptinspector_inspect",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_hashableoutpoint_outpoint = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_hashableoutpoint_outpoint",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_leafnode_depth =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_leafnode_depth",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_leafnode_leaf_hash =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_leafnode_leaf_hash",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_leafnode_leaf_version = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_leafnode_leaf_version",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_leafnode_merkle_branch = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_leafnode_merkle_branch",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_leafnode_node_hash =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_leafnode_node_hash",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_leafnode_script =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_leafnode_script",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_nodeinfo_leaf_nodes =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_nodeinfo_leaf_nodes",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_nodeinfo_node_hash =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_nodeinfo_node_hash",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_persistence_initialize = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_persistence_initialize",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_persistence_persist =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_persistence_persist",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_policy_as_string =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_policy_as_string",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_policy_contribution =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_policy_contribution",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_policy_id = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_policy_id",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_policy_item = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_policy_item",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_policy_requires_path =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_policy_requires_path",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_policy_satisfaction =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_policy_satisfaction",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_combine = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_combine",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_extract_tx =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_extract_tx",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_fee = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_fee",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_finalize = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_finalize",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_input = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_input",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_json_serialize =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_json_serialize",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_output = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_output",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_serialize =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_serialize",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_spend_utxo =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_spend_utxo",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_psbt_write_to_file =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_psbt_write_to_file",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_script_to_bytes =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_script_to_bytes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_syncrequestbuilder_build = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_syncrequestbuilder_build",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_syncrequestbuilder_inspect_spks = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_syncrequestbuilder_inspect_spks",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_syncscriptinspector_inspect = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_syncscriptinspector_inspect",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_taptree_node_info =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_taptree_node_info",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_taptree_root_hash =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_taptree_root_hash",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_compute_txid = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_compute_txid",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_compute_wtxid = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_compute_wtxid",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_transaction_input =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_input",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_is_coinbase = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_is_coinbase",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_is_explicitly_rbf = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_is_explicitly_rbf",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_is_lock_time_enabled = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_is_lock_time_enabled",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_lock_time = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_lock_time",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_transaction_output =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_output",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_serialize = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_serialize",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_transaction_total_size = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_total_size",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_transaction_version =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_version",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_transaction_vsize =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_vsize",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_transaction_weight =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_transaction_weight",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_add_data =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_add_data",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_add_global_xpubs = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_add_global_xpubs",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_add_recipient = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_add_recipient",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_add_unspendable = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_add_unspendable",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_add_utxo =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_add_utxo",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_add_utxos =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_add_utxos",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_allow_dust =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_allow_dust",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_change_policy = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_change_policy",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_current_height = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_current_height",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_do_not_spend_change = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_do_not_spend_change",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_drain_to =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_drain_to",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_drain_wallet = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_drain_wallet",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_exclude_below_confirmations = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_exclude_below_confirmations",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_exclude_unconfirmed = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_exclude_unconfirmed",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_fee_absolute = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_fee_absolute",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_fee_rate =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_fee_rate",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_finish =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_finish",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_manually_selected_only = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_manually_selected_only",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_nlocktime =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_nlocktime",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_only_spend_change = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_only_spend_change",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_policy_path = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_policy_path",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_set_exact_sequence = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_set_exact_sequence",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_set_recipients = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_set_recipients",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txbuilder_unspendable = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_unspendable",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txbuilder_version =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txbuilder_version",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_txmerklenode_serialize = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txmerklenode_serialize",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_txid_serialize =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_txid_serialize",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_apply_evicted_txs = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_apply_evicted_txs",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_apply_unconfirmed_txs = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_apply_unconfirmed_txs",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_apply_update =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_apply_update",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_apply_update_events = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_apply_update_events",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_balance =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_balance",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_calculate_fee =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_calculate_fee",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_calculate_fee_rate = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_calculate_fee_rate",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_cancel_tx =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_cancel_tx",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_derivation_index = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_derivation_index",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_derivation_of_spk = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_derivation_of_spk",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_descriptor_checksum = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_descriptor_checksum",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_finalize_psbt =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_finalize_psbt",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_get_tx = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_get_tx",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_get_utxo =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_get_utxo",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_insert_txout =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_insert_txout",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_is_mine =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_is_mine",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_latest_checkpoint = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_latest_checkpoint",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_list_output =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_list_output",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_list_unspent =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_list_unspent",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_list_unused_addresses = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_list_unused_addresses",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_mark_used =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_mark_used",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_network =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_network",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_next_derivation_index = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_next_derivation_index",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_next_unused_address = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_next_unused_address",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_peek_address =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_peek_address",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_persist =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_persist",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_policies =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_policies",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_public_descriptor = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_public_descriptor",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_reveal_addresses_to = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_reveal_addresses_to",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_reveal_next_address = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_reveal_next_address",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_sent_and_received = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_sent_and_received",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_sign = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_sign",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_staged = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_staged",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_start_full_scan = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_start_full_scan",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_method_wallet_start_sync_with_revealed_spks = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_start_sync_with_revealed_spks",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_take_staged =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_take_staged",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_transactions =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_transactions",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_tx_details =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_tx_details",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wallet_unmark_used =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wallet_unmark_used",
-      );
-  late final int Function() uniffi_bdkffi_checksum_method_wtxid_serialize =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_method_wtxid_serialize",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_address_from_script = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_address_from_script",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_address_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_address_new",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_amount_from_btc =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_amount_from_btc",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_amount_from_sat =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_amount_from_sat",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_blockhash_from_bytes = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_blockhash_from_bytes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_blockhash_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_blockhash_from_string",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_bumpfeetxbuilder_new = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_bumpfeetxbuilder_new",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_cbfbuilder_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_cbfbuilder_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_changeset_from_aggregate = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_changeset_from_aggregate",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_changeset_from_descriptor_and_network =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_changeset_from_descriptor_and_network",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_changeset_from_indexer_changeset = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_changeset_from_indexer_changeset",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_changeset_from_local_chain_changes = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_changeset_from_local_chain_changes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_changeset_from_merge = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_changeset_from_merge",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_changeset_from_tx_graph_changeset = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_changeset_from_tx_graph_changeset",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_changeset_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_changeset_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_derivationpath_master = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_derivationpath_master",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_derivationpath_new = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_derivationpath_new",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_descriptor_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip44 = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip44",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip44_public = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip44_public",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip49 = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip49",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip49_public = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip49_public",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip84 = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip84",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip84_public = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip84_public",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip86 = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip86",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptor_new_bip86_public = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptor_new_bip86_public",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptorid_from_bytes = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptorid_from_bytes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptorid_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptorid_from_string",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptorpublickey_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptorpublickey_from_string",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptorsecretkey_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptorsecretkey_from_string",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_descriptorsecretkey_new = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_descriptorsecretkey_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_electrumclient_new = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_electrumclient_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_esploraclient_new = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_esploraclient_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_feerate_from_sat_per_kwu = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_feerate_from_sat_per_kwu",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_feerate_from_sat_per_vb = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_feerate_from_sat_per_vb",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_hashableoutpoint_new = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_hashableoutpoint_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_ipaddress_from_ipv4 = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_ipaddress_from_ipv4",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_ipaddress_from_ipv6 = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_ipaddress_from_ipv6",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_mnemonic_from_entropy = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_mnemonic_from_entropy",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_mnemonic_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_mnemonic_from_string",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_mnemonic_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_mnemonic_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_persister_custom = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_persister_custom",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_persister_new_in_memory = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_persister_new_in_memory",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_persister_new_sqlite = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_persister_new_sqlite",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_psbt_from_file =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_psbt_from_file",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_psbt_from_unsigned_tx = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_psbt_from_unsigned_tx",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_psbt_new = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_psbt_new",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_script_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_script_new",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_transaction_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_transaction_new",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_txbuilder_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_txbuilder_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_txmerklenode_from_bytes = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_txmerklenode_from_bytes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_txmerklenode_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_txmerklenode_from_string",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_txid_from_bytes =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_txid_from_bytes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_txid_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_txid_from_string",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_wallet_create_from_two_path_descriptor =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_wallet_create_from_two_path_descriptor",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_wallet_create_single = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_wallet_create_single",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_wallet_load =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_wallet_load",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_wallet_load_single = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_wallet_load_single",
-      );
-  late final int Function() uniffi_bdkffi_checksum_constructor_wallet_new =
-      _dylib.lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_wallet_new",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_wtxid_from_bytes = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_wtxid_from_bytes",
-      );
-  late final int Function()
-  uniffi_bdkffi_checksum_constructor_wtxid_from_string = _dylib
-      .lookupFunction<Uint16 Function(), int Function()>(
-        "uniffi_bdkffi_checksum_constructor_wtxid_from_string",
-      );
-  late final int Function() ffi_bdkffi_uniffi_contract_version = _dylib
-      .lookupFunction<Uint32 Function(), int Function()>(
-        "ffi_bdkffi_uniffi_contract_version",
-      );
-  static void _checkApiVersion() {
-    final bindingsVersion = 30;
-    final scaffoldingVersion = _UniffiLib.instance
-        .ffi_bdkffi_uniffi_contract_version();
-    if (bindingsVersion != scaffoldingVersion) {
-      throw UniffiInternalError.panicked(
-        "UniFFI contract version mismatch: bindings version \$bindingsVersion, scaffolding version \$scaffoldingVersion",
-      );
-    }
-  }
-
-  static void _checkApiChecksums() {
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_address_is_valid_for_network() !=
-        799) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_address_script_pubkey() !=
-        23663) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_address_to_address_data() !=
-        6766) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_address_to_qr_uri() !=
-        60630) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_amount_to_btc() !=
-        44112) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_amount_to_sat() !=
-        2062) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_blockhash_serialize() !=
-        58329) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_bumpfeetxbuilder_allow_dust() !=
-        64834) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_bumpfeetxbuilder_current_height() !=
-        25489) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_bumpfeetxbuilder_finish() !=
-        36534) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_bumpfeetxbuilder_nlocktime() !=
-        13924) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_bumpfeetxbuilder_set_exact_sequence() !=
-        13533) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_bumpfeetxbuilder_version() !=
-        18790) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_cbfbuilder_build() !=
-        4783) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfbuilder_configure_timeout_millis() !=
-        41120) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfbuilder_connections() !=
-        8040) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfbuilder_data_dir() !=
-        31903) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_cbfbuilder_peers() !=
-        54701) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfbuilder_scan_type() !=
-        58442) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfbuilder_socks5_proxy() !=
-        50836) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_average_fee_rate() !=
-        26767) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_broadcast() !=
-        56213) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_cbfclient_connect() !=
-        2287) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_is_running() !=
-        22584) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_lookup_host() !=
-        27293) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_min_broadcast_feerate() !=
-        31908) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_next_info() !=
-        61206) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_next_warning() !=
-        38083) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_cbfclient_shutdown() !=
-        21067) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_cbfclient_update() !=
-        59279) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_cbfnode_run() !=
-        61383) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_changeset_change_descriptor() !=
-        60265) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_changeset_descriptor() !=
-        8527) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_changeset_indexer_changeset() !=
-        12024) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_changeset_localchain_changeset() !=
-        8072) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_changeset_network() !=
-        12695) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_changeset_tx_graph_changeset() !=
-        51559) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_derivationpath_is_empty() !=
-        7158) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_derivationpath_is_master() !=
-        46604) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_derivationpath_len() !=
-        25050) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptor_desc_type() !=
-        22274) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptor_descriptor_id() !=
-        35226) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptor_is_multipath() !=
-        24851) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptor_max_weight_to_satisfy() !=
-        27840) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptor_to_single_descriptors() !=
-        24048) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptor_to_string_with_secret() !=
-        44538) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorid_serialize() !=
-        36044) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorpublickey_derive() !=
-        53424) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorpublickey_extend() !=
-        11343) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorpublickey_is_multipath() !=
-        23614) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorpublickey_master_fingerprint() !=
-        43604) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorsecretkey_as_public() !=
-        40418) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorsecretkey_derive() !=
-        17313) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorsecretkey_extend() !=
-        24206) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_descriptorsecretkey_secret_bytes() !=
-        44537) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_electrumclient_block_headers_subscribe() !=
-        27583) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_electrumclient_estimate_fee() !=
-        55819) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_electrumclient_full_scan() !=
-        12661) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_electrumclient_ping() !=
-        41284) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_electrumclient_server_features() !=
-        31597) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_electrumclient_sync() !=
-        55678) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_electrumclient_transaction_broadcast() !=
-        24746) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_broadcast() !=
-        45367) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_full_scan() !=
-        19768) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_get_block_hash() !=
-        37777) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_get_fee_estimates() !=
-        62859) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_get_height() !=
-        26148) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_get_tx() !=
-        51222) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_get_tx_info() !=
-        59479) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_get_tx_status() !=
-        61956) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_esploraclient_sync() !=
-        21097) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_feerate_fee_vb() !=
-        13312) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_feerate_fee_wu() !=
-        37154) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_feerate_to_sat_per_kwu() !=
-        61714) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_feerate_to_sat_per_vb_ceil() !=
-        54521) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_feerate_to_sat_per_vb_floor() !=
-        56773) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_fullscanrequestbuilder_build() !=
-        5585) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_fullscanrequestbuilder_inspect_spks_for_all_keychains() !=
-        43667) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_fullscanscriptinspector_inspect() !=
-        36414) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_hashableoutpoint_outpoint() !=
-        21921) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_leafnode_depth() !=
-        16190) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_leafnode_leaf_hash() !=
-        18725) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_leafnode_leaf_version() !=
-        52940) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_leafnode_merkle_branch() !=
-        6578) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_leafnode_node_hash() !=
-        44601) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_leafnode_script() !=
-        7899) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_nodeinfo_leaf_nodes() !=
-        12922) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_nodeinfo_node_hash() !=
-        61900) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_persistence_initialize() !=
-        9283) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_persistence_persist() !=
-        29474) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_policy_as_string() !=
-        42734) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_policy_contribution() !=
-        11262) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_policy_id() !=
-        23964) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_policy_item() !=
-        6003) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_policy_requires_path() !=
-        4187) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_policy_satisfaction() !=
-        46765) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_combine() !=
-        42075) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_extract_tx() !=
-        26653) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_fee() != 30353) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_finalize() !=
-        51031) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_input() !=
-        48443) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_psbt_json_serialize() !=
-        25111) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_output() !=
-        60764) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_serialize() !=
-        9376) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_psbt_spend_utxo() !=
-        12381) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_psbt_write_to_file() !=
-        17670) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_script_to_bytes() !=
-        64817) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_syncrequestbuilder_build() !=
-        26747) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_syncrequestbuilder_inspect_spks() !=
-        38063) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_syncscriptinspector_inspect() !=
-        63115) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_taptree_node_info() !=
-        19028) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_taptree_root_hash() !=
-        12196) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_compute_txid() !=
-        4600) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_compute_wtxid() !=
-        59414) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_transaction_input() !=
-        17971) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_is_coinbase() !=
-        52376) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_is_explicitly_rbf() !=
-        33467) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_is_lock_time_enabled() !=
-        17927) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_lock_time() !=
-        11673) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_output() !=
-        18641) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_serialize() !=
-        63746) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_total_size() !=
-        32499) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_version() !=
-        57173) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_transaction_vsize() !=
-        23751) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_transaction_weight() !=
-        22642) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_add_data() !=
-        3485) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_add_global_xpubs() !=
-        60600) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_add_recipient() !=
-        38261) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_add_unspendable() !=
-        42556) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_add_utxo() !=
-        55155) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_add_utxos() !=
-        36635) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_allow_dust() !=
-        36330) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_change_policy() !=
-        33210) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_current_height() !=
-        25990) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_do_not_spend_change() !=
-        279) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_drain_to() !=
-        19958) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_drain_wallet() !=
-        21886) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_exclude_below_confirmations() !=
-        24447) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_exclude_unconfirmed() !=
-        30391) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_fee_absolute() !=
-        6920) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_fee_rate() !=
-        42880) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_txbuilder_finish() !=
-        43504) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_manually_selected_only() !=
-        17632) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_nlocktime() !=
-        61968) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_only_spend_change() !=
-        2625) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_policy_path() !=
-        36425) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_set_exact_sequence() !=
-        11338) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_set_recipients() !=
-        8653) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txbuilder_unspendable() !=
-        59793) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_txbuilder_version() !=
-        12910) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_txmerklenode_serialize() !=
-        6758) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_txid_serialize() !=
-        15501) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_apply_evicted_txs() !=
-        47441) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_apply_unconfirmed_txs() !=
-        61391) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_apply_update() !=
-        14059) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_apply_update_events() !=
-        36003) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_balance() !=
-        1065) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_calculate_fee() !=
-        62842) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_calculate_fee_rate() !=
-        52109) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_cancel_tx() !=
-        52250) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_derivation_index() !=
-        17133) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_derivation_of_spk() !=
-        57131) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_descriptor_checksum() !=
-        65455) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_finalize_psbt() !=
-        37754) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_get_tx() !=
-        23045) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_get_utxo() !=
-        31901) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_insert_txout() !=
-        63010) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_is_mine() !=
-        12109) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_latest_checkpoint() !=
-        15617) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_list_output() !=
-        28293) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_list_unspent() !=
-        38160) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_list_unused_addresses() !=
-        43002) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_mark_used() !=
-        53437) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_network() !=
-        61015) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_next_derivation_index() !=
-        54301) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_next_unused_address() !=
-        64390) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_peek_address() !=
-        33286) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_persist() !=
-        45543) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_policies() !=
-        10593) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_public_descriptor() !=
-        58017) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_reveal_addresses_to() !=
-        39125) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_reveal_next_address() !=
-        21378) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_sent_and_received() !=
-        55583) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_sign() !=
-        45596) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_staged() !=
-        59474) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_start_full_scan() !=
-        29628) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_start_sync_with_revealed_spks() !=
-        37305) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_take_staged() !=
-        49180) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_transactions() !=
-        45722) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wallet_tx_details() !=
-        21865) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_method_wallet_unmark_used() !=
-        41613) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_method_wtxid_serialize() !=
-        29733) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_address_from_script() !=
-        63311) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_constructor_address_new() !=
-        15543) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_amount_from_btc() !=
-        43617) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_amount_from_sat() !=
-        18287) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_blockhash_from_bytes() !=
-        58986) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_blockhash_from_string() !=
-        55044) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_bumpfeetxbuilder_new() !=
-        17822) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_cbfbuilder_new() !=
-        33361) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_changeset_from_aggregate() !=
-        32936) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_changeset_from_descriptor_and_network() !=
-        39614) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_changeset_from_indexer_changeset() !=
-        52453) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_changeset_from_local_chain_changes() !=
-        14452) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_changeset_from_merge() !=
-        41467) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_changeset_from_tx_graph_changeset() !=
-        31574) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_changeset_new() !=
-        22000) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_derivationpath_master() !=
-        32930) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_derivationpath_new() !=
-        30769) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new() !=
-        19141) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip44() !=
-        3624) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip44_public() !=
-        44307) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip49() !=
-        25091) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip49_public() !=
-        5708) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip84() !=
-        64808) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip84_public() !=
-        36216) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip86() !=
-        29942) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptor_new_bip86_public() !=
-        18734) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptorid_from_bytes() !=
-        7595) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptorid_from_string() !=
-        26289) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptorpublickey_from_string() !=
-        45545) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptorsecretkey_from_string() !=
-        11133) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_descriptorsecretkey_new() !=
-        48188) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_electrumclient_new() !=
-        17660) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_esploraclient_new() !=
-        3197) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_feerate_from_sat_per_kwu() !=
-        13519) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_feerate_from_sat_per_vb() !=
-        42959) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_hashableoutpoint_new() !=
-        16705) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_ipaddress_from_ipv4() !=
-        14635) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_ipaddress_from_ipv6() !=
-        31033) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_mnemonic_from_entropy() !=
-        812) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_mnemonic_from_string() !=
-        30002) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_constructor_mnemonic_new() !=
-        11901) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_persister_custom() !=
-        31182) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_persister_new_in_memory() !=
-        62085) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_persister_new_sqlite() !=
-        14945) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_psbt_from_file() !=
-        48265) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_psbt_from_unsigned_tx() !=
-        6265) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_constructor_psbt_new() !=
-        6279) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_constructor_script_new() !=
-        53899) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_transaction_new() !=
-        50797) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_txbuilder_new() !=
-        20554) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_txmerklenode_from_bytes() !=
-        62268) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_txmerklenode_from_string() !=
-        34111) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_txid_from_bytes() !=
-        24877) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_txid_from_string() !=
-        39405) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_wallet_create_from_two_path_descriptor() !=
-        61620) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_wallet_create_single() !=
-        55224) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_constructor_wallet_load() !=
-        26636) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_wallet_load_single() !=
-        2793) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance.uniffi_bdkffi_checksum_constructor_wallet_new() !=
-        55622) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_wtxid_from_bytes() !=
-        34456) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
-    if (_UniffiLib.instance
-            .uniffi_bdkffi_checksum_constructor_wtxid_from_string() !=
-        20341) {
-      throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
-    }
   }
 }
 
-void initialize() {
-  _UniffiLib._open();
+void _checkApiChecksums() {
+  if (uniffi_bdk_ffi_checksum_method_address_is_valid_for_network() != 58834) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_address_script_pubkey() != 6492) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_address_to_address_data() != 47484) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_address_to_qr_uri() != 52985) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_amount_to_btc() != 64424) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_amount_to_sat() != 31792) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_blockhash_serialize() != 32449) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_allow_dust() != 12923) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_current_height() !=
+      7758) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_finish() != 12165) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_nlocktime() != 59890) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_set_exact_sequence() !=
+      64283) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_bumpfeetxbuilder_version() != 6860) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfbuilder_build() != 8770) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfbuilder_configure_timeout_millis() !=
+      17634) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfbuilder_connections() != 6011) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfbuilder_data_dir() != 20215) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfbuilder_peers() != 55620) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfbuilder_scan_type() != 59906) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfbuilder_socks5_proxy() != 54084) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_average_fee_rate() != 1878) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_broadcast() != 40093) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_connect() != 8651) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_is_running() != 36862) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_lookup_host() != 38279) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_min_broadcast_feerate() !=
+      44424) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_next_info() != 37639) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_next_warning() != 50627) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_shutdown() != 2636) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfclient_update() != 47432) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_cbfnode_run() != 38486) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_changeset_change_descriptor() != 17621) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_changeset_descriptor() != 5023) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_changeset_indexer_changeset() != 30454) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_changeset_localchain_changeset() !=
+      51162) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_changeset_network() != 45541) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_changeset_tx_graph_changeset() != 53854) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_derivationpath_is_empty() != 3986) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_derivationpath_is_master() != 19617) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_derivationpath_len() != 28121) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptor_desc_type() != 58900) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptor_descriptor_id() != 38146) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptor_is_multipath() != 21030) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptor_max_weight_to_satisfy() !=
+      17346) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptor_to_single_descriptors() !=
+      17090) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptor_to_string_with_secret() !=
+      8784) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorid_serialize() != 2747) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorpublickey_derive() != 37477) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorpublickey_extend() != 58762) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorpublickey_is_multipath() !=
+      4579) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorpublickey_master_fingerprint() !=
+      51355) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorsecretkey_as_public() != 8511) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorsecretkey_derive() != 16347) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorsecretkey_extend() != 55133) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_descriptorsecretkey_secret_bytes() !=
+      16565) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_electrumclient_block_headers_subscribe() !=
+      15719) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_electrumclient_estimate_fee() != 2683) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_electrumclient_full_scan() != 30842) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_electrumclient_ping() != 61668) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_electrumclient_server_features() !=
+      41743) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_electrumclient_sync() != 11118) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_electrumclient_transaction_broadcast() !=
+      26614) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_broadcast() != 54246) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_full_scan() != 53805) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_get_block_hash() != 37103) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_get_fee_estimates() !=
+      42504) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_get_height() != 18107) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_get_tx() != 48382) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_get_tx_info() != 22272) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_get_tx_status() != 21863) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_esploraclient_sync() != 36366) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_feerate_fee_vb() != 32527) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_feerate_fee_wu() != 44005) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_feerate_to_sat_per_kwu() != 25467) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_feerate_to_sat_per_vb_ceil() != 50163) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_feerate_to_sat_per_vb_floor() != 59137) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_fullscanrequestbuilder_build() != 65268) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_fullscanrequestbuilder_inspect_spks_for_all_keychains() !=
+      11482) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_fullscanscriptinspector_inspect() !=
+      40482) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_hashableoutpoint_outpoint() != 4424) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_leafnode_depth() != 53733) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_leafnode_leaf_hash() != 43032) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_leafnode_leaf_version() != 8207) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_leafnode_merkle_branch() != 63181) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_leafnode_node_hash() != 4592) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_leafnode_script() != 3198) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_nodeinfo_leaf_nodes() != 8604) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_nodeinfo_node_hash() != 13774) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_persistence_initialize() != 37215) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_persistence_persist() != 21226) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_policy_as_string() != 46589) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_policy_contribution() != 57429) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_policy_id() != 38100) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_policy_item() != 42710) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_policy_requires_path() != 18313) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_policy_satisfaction() != 1276) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_combine() != 27079) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_extract_tx() != 43213) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_fee() != 53973) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_finalize() != 36345) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_input() != 49394) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_json_serialize() != 36223) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_output() != 20297) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_serialize() != 13370) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_spend_utxo() != 38830) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_psbt_write_to_file() != 17778) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_script_to_bytes() != 48556) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_syncrequestbuilder_build() != 15665) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_syncrequestbuilder_inspect_spks() !=
+      40632) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_syncscriptinspector_inspect() != 22632) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_taptree_node_info() != 35322) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_taptree_root_hash() != 46565) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_compute_txid() != 8292) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_compute_wtxid() != 7392) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_input() != 44057) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_is_coinbase() != 14764) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_is_explicitly_rbf() != 39504) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_is_lock_time_enabled() !=
+      18938) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_lock_time() != 59770) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_output() != 19078) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_serialize() != 37460) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_total_size() != 52740) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_version() != 9035) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_vsize() != 33645) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_transaction_weight() != 16184) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_add_data() != 61325) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_add_global_xpubs() != 38250) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_add_recipient() != 5503) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_add_unspendable() != 64023) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_add_utxo() != 44072) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_add_utxos() != 34042) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_allow_dust() != 2598) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_change_policy() != 16899) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_current_height() != 36023) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_do_not_spend_change() != 13237) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_drain_to() != 28724) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_drain_wallet() != 12155) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_exclude_below_confirmations() !=
+      16889) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_exclude_unconfirmed() != 22626) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_fee_absolute() != 64438) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_fee_rate() != 41179) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_finish() != 20400) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_manually_selected_only() !=
+      3419) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_nlocktime() != 64019) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_only_spend_change() != 48921) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_policy_path() != 45225) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_set_exact_sequence() != 26020) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_set_recipients() != 42923) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_unspendable() != 37752) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txbuilder_version() != 56620) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txmerklenode_serialize() != 55458) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_txid_serialize() != 34368) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_apply_evicted_txs() != 38613) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_apply_unconfirmed_txs() != 36047) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_apply_update() != 21985) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_apply_update_events() != 8925) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_balance() != 40623) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_calculate_fee() != 58614) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_calculate_fee_rate() != 23595) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_cancel_tx() != 62653) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_derivation_index() != 12147) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_derivation_of_spk() != 33890) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_descriptor_checksum() != 16571) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_finalize_psbt() != 47196) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_get_tx() != 11548) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_get_utxo() != 50480) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_insert_txout() != 43418) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_is_mine() != 34050) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_latest_checkpoint() != 39027) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_list_output() != 35853) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_list_unspent() != 39350) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_list_unused_addresses() != 36825) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_mark_used() != 31695) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_network() != 45497) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_next_derivation_index() != 48019) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_next_unused_address() != 59238) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_peek_address() != 47237) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_persist() != 38195) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_policies() != 1627) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_public_descriptor() != 46409) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_reveal_addresses_to() != 26974) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_reveal_next_address() != 59794) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_sent_and_received() != 64344) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_sign() != 38758) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_staged() != 53622) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_start_full_scan() != 49663) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_start_sync_with_revealed_spks() !=
+      37953) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_take_staged() != 53866) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_transactions() != 39233) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_tx_details() != 63343) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wallet_unmark_used() != 12388) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_method_wtxid_serialize() != 11692) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_address_from_script() != 53873) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_address_new() != 15043) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_amount_from_btc() != 23325) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_amount_from_sat() != 17199) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_blockhash_from_bytes() != 27411) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_blockhash_from_string() != 62285) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_bumpfeetxbuilder_new() != 61384) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_cbfbuilder_new() != 15933) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_changeset_from_aggregate() != 57192) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_changeset_from_descriptor_and_network() !=
+      50900) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_changeset_from_indexer_changeset() !=
+      9631) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_changeset_from_local_chain_changes() !=
+      2667) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_changeset_from_merge() != 43851) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_changeset_from_tx_graph_changeset() !=
+      22890) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_changeset_new() != 56637) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_derivationpath_master() != 6600) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_derivationpath_new() != 34456) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new() != 27373) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip44() != 38441) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip44_public() !=
+      31976) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip49() != 21710) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip49_public() !=
+      33058) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip84() != 31499) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip84_public() !=
+      6369) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip86() != 8889) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptor_new_bip86_public() !=
+      25176) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptorid_from_bytes() != 30517) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptorid_from_string() != 5253) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptorpublickey_from_string() !=
+      15349) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptorsecretkey_from_string() !=
+      9449) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_descriptorsecretkey_new() != 21450) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_electrumclient_new() != 31738) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_esploraclient_new() != 58792) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_feerate_from_sat_per_kwu() != 33221) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_feerate_from_sat_per_vb() != 20574) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_hashableoutpoint_new() != 47084) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_ipaddress_from_ipv4() != 45725) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_ipaddress_from_ipv6() != 37730) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_mnemonic_from_entropy() != 49307) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_mnemonic_from_string() != 6308) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_mnemonic_new() != 55849) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_persister_custom() != 46513) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_persister_new_in_memory() != 30307) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_persister_new_sqlite() != 24754) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_psbt_from_file() != 20679) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_psbt_from_unsigned_tx() != 32825) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_psbt_new() != 22484) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_script_new() != 36422) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_transaction_new() != 55676) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_txbuilder_new() != 13310) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_txmerklenode_from_bytes() != 11813) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_txmerklenode_from_string() != 48702) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_txid_from_bytes() != 31263) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_txid_from_string() != 10387) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_wallet_create_from_two_path_descriptor() !=
+      51041) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_wallet_create_single() != 12991) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_wallet_load() != 62118) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_wallet_load_single() != 26442) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_wallet_new() != 42446) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_wtxid_from_bytes() != 30088) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
+  if (uniffi_bdk_ffi_checksum_constructor_wtxid_from_string() != 30209) {
+    throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
+  }
 }
 
 void ensureInitialized() {
-  _UniffiLib._checkApiVersion();
-  _UniffiLib._checkApiChecksums();
+  _checkApiVersion();
+  _checkApiChecksums();
 }

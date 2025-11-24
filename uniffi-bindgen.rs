@@ -31,11 +31,17 @@ fn main() {
                 .expect("--out-dir is required when using --library");
 
             // For library mode with proc macros, we need to extract metadata from the built library
-            // The UDL path is used for config lookup, we can use a placeholder
+            // UDL path is placeholder, config path is what matters for configuration
             let udl_path = Utf8Path::new("src/lib.rs");
+
+            // Get absolute path to uniffi.toml
+            let current_dir = std::env::current_dir().expect("Failed to get current directory");
+            let config_path_abs = current_dir.join("uniffi.toml");
+            let config_path = Utf8Path::from_path(&config_path_abs).expect("Invalid UTF-8 in path");
+
             uniffi_dart::gen::generate_dart_bindings(
                 udl_path,
-                None,
+                Some(config_path),
                 Some(Utf8Path::new(output_dir.as_str())),
                 Utf8Path::new(library_path.as_str()),
                 true,
