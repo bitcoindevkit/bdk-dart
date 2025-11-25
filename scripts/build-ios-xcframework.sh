@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 PROJECT_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
 IOS_BUILD_ROOT="$PROJECT_ROOT/build/ios"
-OUTPUT_ROOT="$PROJECT_ROOT/ios/Release"
+OUTPUT_ROOT="ios/Release"
 XCFRAMEWORK_NAME="bdkffi.xcframework"
 
 DEVICE_LIB="$IOS_BUILD_ROOT/aarch64-apple-ios/libbdkffi.a"
@@ -12,6 +12,42 @@ SIM_ARM64_LIB="$IOS_BUILD_ROOT/aarch64-apple-ios-sim/libbdkffi.a"
 SIM_X86_LIB="$IOS_BUILD_ROOT/x86_64-apple-ios/libbdkffi.a"
 SIM_UNIVERSAL_DIR="$IOS_BUILD_ROOT/simulator-universal"
 SIM_UNIVERSAL_LIB="$SIM_UNIVERSAL_DIR/libbdkffi.a"
+
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") [--output <dir>]
+
+Create an XCFramework from previously built static libraries and write it to
+<dir>. When <dir> is relative, it is resolved from the repository root.
+Defaults to ios/Release.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --output|-o)
+            OUTPUT_ROOT="${2:-}"
+            if [[ -z "$OUTPUT_ROOT" ]]; then
+                echo "Error: --output requires a value" >&2
+                exit 1
+            fi
+            shift 2
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            usage >&2
+            exit 1
+            ;;
+    esac
+done
+
+if [[ "$OUTPUT_ROOT" != /* ]]; then
+    OUTPUT_ROOT="$PROJECT_ROOT/$OUTPUT_ROOT"
+fi
 
 if [[ ! -f "$DEVICE_LIB" ]]; then
     echo "Missing device library: $DEVICE_LIB" >&2

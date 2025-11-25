@@ -22,7 +22,13 @@ scripts in `scripts/`.
    ```bash
    ./scripts/build-ios-xcframework.sh
    ```
-   The framework is written to `ios/Release/bdkffi.xcframework/`.
+   The framework is written to `ios/Release/bdkffi.xcframework/`. Keep it there to
+   reuse across multiple apps, or direct the output into a Flutter project with the
+   optional flag:
+
+   ```bash
+   ./scripts/build-ios-xcframework.sh --output bdk_demo/ios/ios
+   ```
 
 ### Android (.so libraries)
 
@@ -42,12 +48,21 @@ scripts in `scripts/`.
    ```
 3. Stage the artifacts for inclusion in a Flutter project (make script executable or run with `bash`):
    ```bash
-   chmod +x scripts/build-android.sh 
+   chmod +x scripts/build-android.sh
    ./scripts/build-android.sh
-    # or
+   # or
    bash ./scripts/build-android.sh 
    ```
-   Output libraries are copied to `android/libs/<abi>/libbdkffi.so`.
+
+   By default the script stages artifacts in `android/libs/<abi>/libbdkffi.so` so the same
+   slices can be reused across multiple apps; direct them into the demo’s `jniLibs`
+   by passing `--output` as shown below. 
+
+   ```bash
+   chmod +x scripts/build-android.sh
+   ./scripts/build-android.sh --output bdk_demo/android/app/src/main/jniLibs
+   # or, without changing permissions
+   bash ./scripts/build-android.sh --output bdk_demo/android/app/src/main/jniLibs
 
 ### Desktop tests (macOS/Linux)
 

@@ -27,8 +27,9 @@ Thumbs.db
 # Native libs built locally
 libbdkffi.*
 android/libs
+bdk_demo/android/app/src/main/jniLibs
 ios/Release/
-bdk_demo/ios/ios/Release/
+bdk_demo/ios/ios/
 test_output.txt
 test output.txt
 lib/bdk.dart
