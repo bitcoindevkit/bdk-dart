@@ -40,9 +40,12 @@ scripts in `scripts/`.
    ```bash
    ./scripts/generate_bindings.sh --target android
    ```
-3. Stage the artifacts for inclusion in a Flutter project:
+3. Stage the artifacts for inclusion in a Flutter project (make script executable or run with `bash`):
    ```bash
+   chmod +x scripts/build-android.sh 
    ./scripts/build-android.sh
+    # or
+   bash ./scripts/build-android.sh 
    ```
    Output libraries are copied to `android/libs/<abi>/libbdkffi.so`.
 
