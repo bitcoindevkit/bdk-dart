@@ -1,2 +1,3 @@
 [bindings.dart]
-cdylib_name = "bdkffi"
+cdylib_name = "bdk_ffi"
+package_name = "bdk_dart"

@@ -1,5 +1,6 @@
 # Rust
 /target
+native/target/
 **/*.rs.bk
 Cargo.lock
 
@@ -25,7 +26,8 @@ Thumbs.db
 *.log
 
 # Native libs built locally
-libbdkffi.*
+*.dylib
+*.so
+*.dll
 test_output.txt
 test output.txt
-lib/bdk.dart

@@ -1,3 +1,4 @@
+import 'package:bdk_dart/bdk.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,6 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _showSignetNetwork() {
     setState(() {
+      final mnemonic = Mnemonic(WordCount.words12);
+      print('Generated mnemonic: ${mnemonic.toString()}');
+      // Initialize BDK to ensure bindings are loaded
       // This simulates what the real Dart bindings would return
       // when properly linked to the Rust library
       _networkName = 'Signet';
