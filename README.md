@@ -1,18 +1,19 @@
 # bdk-dart
 
 Dart bindings for the [Bitcoin Dev Kit (BDK)](https://bitcoindevkit.org/) wallet library.
-The repo packages the generated UniFFI bindings (`lib/bdk.dart`) together with the
-compiled `libbdkffi` native library so Dart and Flutter apps can work with descriptor-based
-wallets, key management utilities, and blockchain backends from BDK.
+The repo contains the sources for generating UniFFI-based bindings (`lib/bdk.dart`) and the
+`libbdkffi` native library, both of which are produced locally (they are gitignored and not
+checked into the repository) so Dart and Flutter apps can work with descriptor-based wallets,
+key management utilities, and blockchain backends from BDK.
 
 ## Repository layout
 
 | Path | Purpose |
 | ---- | ------- |
 | `bdk-ffi/` | Rust sources and build scripts for the underlying `bdk-ffi` crate. |
-| `lib/` | Generated Dart bindings (`bdk.dart`) produced by UniFFI-Dart. |
+| `lib/` | Dart bindings (`bdk.dart`) generated locally by UniFFI-Dart. |
 | `examples/` | Standalone Dart examples that exercise common workflows. |
-| `test/` | Integration-style tests that cover wallet creation, persistence, and networking. |
+| `test/` | Offline/construction/persistence tests (not full integration tests). |
 | `bdk_demo/` | Flutter sample app you can point at mobile targets once the bindings are built. |
 | `scripts/generate_bindings.sh` | Helper used to rebuild the native library and regenerate the Dart bindings. |
 
@@ -38,7 +39,7 @@ cd bdk-dart
    ```bash
    dart pub get
    ```
-2. Generate the Dart bindings and native binary:
+2. Generate the Dart bindings and native binary (requires a macOS or Linux host):
    ```bash
    ./scripts/generate_bindings.sh
    ```
@@ -70,8 +71,8 @@ build steps or platform-specific build scripts).
 
 ## Testing
 
-Once `lib/bdk.dart` and the native library are available you can execute the Dart test
-suite, which covers wallet creation, persistence, offline behavior, and descriptor APIs:
+Once you have generated `lib/bdk.dart` and the native library locally you can execute the
+Dart test suite, which covers wallet creation, persistence, offline behavior, and descriptor APIs:
 
 ```bash
 dart test
