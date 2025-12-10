@@ -51,6 +51,8 @@ test *ARGS:
 clean:
   rm -rf .dart_tool/
   rm -rf build/
+  rm -rf target/
+  rm -rf bdk-ffi/target/
   rm -rf coverage/
   rm -rf bdk_demo/.dart_tool/
   rm -rf bdk_demo/build/
