@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, "**" ]
+    branches: [main, "**"]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-test:
@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -29,7 +27,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: "3.9.2"
+          sdk: "3.10.0"
 
       - name: Install lipo (macOS)
         if: matrix.os == 'macos-latest'
@@ -52,10 +50,10 @@ jobs:
         run: flutter pub get
 
       - name: Format check
-        run: dart format --output=none --set-exit-if-changed lib test examples bdk_demo/lib bdk_demo/test
+        run: dart format --output=none --set-exit-if-changed lib test example bdk_demo/lib bdk_demo/test
 
       - name: Analyze
-        run: dart analyze --fatal-infos --fatal-warnings lib test examples
+        run: dart analyze --fatal-infos --fatal-warnings lib test example
 
       - name: Analyze (bdk_demo)
         working-directory: bdk_demo
