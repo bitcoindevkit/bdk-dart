@@ -1,32 +1,5 @@
-import 'dart:io' as io;
-
 import 'package:bdk_dart/bdk.dart' as bdk;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-const _nativeLibChannel = MethodChannel('bdk_demo/native_lib_dir');
-String? _cachedNativeLibDir;
-
-Future<void> _ensureNativeLibraryDir() async {
-  if (_cachedNativeLibDir != null) {
-    io.Directory.current = io.Directory(_cachedNativeLibDir!);
-    return;
-  }
-
-  if (io.Platform.isAndroid) {
-    final dir = await _nativeLibChannel.invokeMethod<String>('getNativeLibDir');
-    if (dir == null || dir.isEmpty) {
-      throw StateError('Native library directory channel returned empty path');
-    }
-    _cachedNativeLibDir = dir;
-  } else {
-    _cachedNativeLibDir = io.File(io.Platform.resolvedExecutable).parent.path;
-  }
-
-  if (_cachedNativeLibDir != null) {
-    io.Directory.current = io.Directory(_cachedNativeLibDir!);
-  }
-}
 
 void main() {
   runApp(const MyApp());
@@ -61,10 +34,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String? _descriptorSnippet;
   String? _error;
 
-  Future<void> _loadBindingData() async {
+  void _showSignetNetwork() {
     try {
-      await _ensureNativeLibraryDir();
-
       final network = bdk.Network.testnet;
       final descriptor = bdk.Descriptor(
         'wpkh(tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B/'
@@ -144,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _loadBindingData,
+        onPressed: _showSignetNetwork,
         backgroundColor: Colors.orange,
         icon: const Icon(Icons.play_circle_fill),
         label: const Text('Load Dart binding'),
