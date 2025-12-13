@@ -8,11 +8,9 @@ environment:
 dependencies:
   ffi: ^2.1.4
   hooks: ^1.0.0
-  code_assets: ^1.0.0
-  native_toolchain_rs: ^1.0.0
+  native_toolchain_rust: ^1.0.0
 dev_dependencies:
   test: ^1.26.2
-  http: ^1.4.0
 
 hooks:
   build: hook/build.dart
