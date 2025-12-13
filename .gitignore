@@ -11,6 +11,12 @@ Cargo.lock
 **/.pub-cache/
 **/.pub/
 **/pubspec.lock
+**/local.properties
+**/GeneratedPluginRegistrant.*
+**/flutter_export_environment.sh
+**/Flutter-Generated.xcconfig
+**/Generated.xcconfig
+**/Flutter/ephemeral/
 
 # IDE
 .vscode/

@@ -8,7 +8,8 @@ BDK_DART_DIR="$SCRIPT_DIR/.."
 NATIVE_DIR="$BDK_DART_DIR/native"
 
 OS=$(uname -s)
-echo "Running on $OS"
+ARCH=$(uname -m)
+echo "Running on $OS ($ARCH)"
 
 # Navigate to bdk-dart directory (parent of scripts/)
 cd "$BDK_DART_DIR"
@@ -22,7 +23,7 @@ if [[ "$OS" == "Darwin" ]]; then
 elif [[ "$OS" == "Linux" ]]; then
     LIBNAME=libbdk_dart_ffi.so
 else
-    echo "Unsupported os: $OS"
+    echo "Unsupported os: $OS" >&2
     exit 1
 fi
 

@@ -1,4 +1,4 @@
-import 'package:bdk_dart/bdk.dart';
+import 'package:bdk_dart/bdk.dart' as bdk;
 import 'package:flutter/material.dart';
 
 void main() {
@@ -30,19 +30,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _networkName = 'Press button to show network';
-  bool _success = false;
+  String? _networkName;
+  String? _descriptorSnippet;
+  String? _error;
 
   void _showSignetNetwork() {
-    setState(() {
-      final mnemonic = Mnemonic(WordCount.words12);
-      print('Generated mnemonic: ${mnemonic.toString()}');
-      // Initialize BDK to ensure bindings are loaded
-      // This simulates what the real Dart bindings would return
-      // when properly linked to the Rust library
-      _networkName = 'Signet';
-      _success = true;
-    });
+    try {
+      final network = bdk.Network.testnet;
+      final descriptor = bdk.Descriptor(
+        'wpkh(tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B/'
+        '84h/1h/0h/0/*)',
+        network,
+      );
+
+      setState(() {
+        _networkName = network.name;
+        _descriptorSnippet = descriptor.toString().substring(0, 32);
+        _error = null;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _networkName = null;
+        _descriptorSnippet = null;
+      });
+    }
   }
 
   @override
@@ -57,52 +69,56 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(
-              _success ? Icons.check_circle : Icons.network_check,
+              _error != null
+                  ? Icons.error_outline
+                  : _networkName != null
+                  ? Icons.check_circle
+                  : Icons.network_check,
               size: 80,
-              color: _success ? Colors.green : Colors.grey,
+              color: _error != null
+                  ? Colors.red
+                  : _networkName != null
+                  ? Colors.green
+                  : Colors.grey,
             ),
             const SizedBox(height: 20),
-            const Text('BDK Network Type:', style: TextStyle(fontSize: 20)),
-            Text(
-              _networkName,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: _success ? Colors.orange : null,
-                fontWeight: FontWeight.bold,
+            const Text('BDK bindings status', style: TextStyle(fontSize: 20)),
+            if (_networkName != null) ...[
+              Text(
+                'Network: $_networkName',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-            Container(
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  Text('✅ Dart bindings generated with uniffi-dart'),
-                  Text('✅ Network enum includes SIGNET'),
-                  Text('✅ Flutter app ready to use BDK'),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Generated from: bdk.udl → bdk.dart',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontFamily: 'monospace',
-                    ),
+              if (_descriptorSnippet != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    'Descriptor sample: $_descriptorSnippet…',
+                    style: const TextStyle(fontFamily: 'monospace'),
                   ),
-                ],
+                ),
+            ] else if (_error != null) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  _error!,
+                  style: const TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
+            ] else ...[
+              const Text('Press the button to load bindings'),
+            ],
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showSignetNetwork,
         backgroundColor: Colors.orange,
-        icon: const Icon(Icons.network_check),
-        label: const Text('Get Signet Network'),
+        icon: const Icon(Icons.play_circle_fill),
+        label: const Text('Load Dart binding'),
       ),
     );
   }
