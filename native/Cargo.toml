@@ -1,5 +1,5 @@
 [package]
-name = "bdk-dart"
+name = "bdk_dart_ffi"
 description = "This is a simple wrapper crate which re-exports bdk-ffi for publishing to pub.dev"
 version = "2.3.0-alpha.0"
 homepage = "https://bitcoindevkit.org"
@@ -10,7 +10,7 @@ publish = false
 
 [lib]
 crate-type = ["staticlib", "cdylib"]
-name = "bdk_ffi"
+name = "bdk_dart_ffi"
 
 [[bin]]
 name = "uniffi-bindgen"

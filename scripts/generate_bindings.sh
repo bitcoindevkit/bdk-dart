@@ -18,9 +18,9 @@ dart pub get
 
 # Install Rust targets if on macOS
 if [[ "$OS" == "Darwin" ]]; then
-    LIBNAME=libbdk_ffi.dylib
+    LIBNAME=libbdk_dart_ffi.dylib
 elif [[ "$OS" == "Linux" ]]; then
-    LIBNAME=libbdk_ffi.so
+    LIBNAME=libbdk_dart_ffi.so
 else
     echo "Unsupported os: $OS"
     exit 1
@@ -28,7 +28,7 @@ fi
 
 # Navigate to the native directory to build the rust code using Cargo.toml
 cd "$NATIVE_DIR"
-echo "Building bdk-ffi..."
+echo "Building bdk-dart-ffi..."
 cargo build --profile dev
 
 # Generate Dart bindings using local uniffi-bindgen wrapper
