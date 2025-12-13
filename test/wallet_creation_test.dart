@@ -3,10 +3,7 @@ import 'package:test/test.dart';
 
 import 'test_constants.dart';
 
-Wallet _createWallet(
-  Descriptor descriptor,
-  Descriptor changeDescriptor,
-) {
+Wallet _createWallet(Descriptor descriptor, Descriptor changeDescriptor) {
   final persister = Persister.newInMemory();
   return Wallet(
     descriptor,
@@ -77,10 +74,8 @@ void main() {
 
     test('fails for private multipath descriptor', () {
       expect(
-        () => buildDescriptor(
-          privateMultipathDescriptorString,
-          Network.testnet,
-        ),
+        () =>
+            buildDescriptor(privateMultipathDescriptorString, Network.testnet),
         throwsA(isA<DescriptorException>()),
       );
     });

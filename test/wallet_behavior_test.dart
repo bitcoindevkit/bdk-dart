@@ -33,23 +33,24 @@ void main() {
     });
 
     test(
-        'single-descriptor wallet returns identical external/internal addresses',
-        () {
-      final persister = Persister.newInMemory();
-      final wallet = Wallet.createSingle(
-        buildBip84Descriptor(Network.testnet),
-        Network.testnet,
-        persister,
-        defaultLookahead,
-      );
+      'single-descriptor wallet returns identical external/internal addresses',
+      () {
+        final persister = Persister.newInMemory();
+        final wallet = Wallet.createSingle(
+          buildBip84Descriptor(Network.testnet),
+          Network.testnet,
+          persister,
+          defaultLookahead,
+        );
 
-      final externalAddress = wallet.peekAddress(KeychainKind.external_, 0);
-      final internalAddress = wallet.peekAddress(KeychainKind.internal, 0);
+        final externalAddress = wallet.peekAddress(KeychainKind.external_, 0);
+        final internalAddress = wallet.peekAddress(KeychainKind.internal, 0);
 
-      expect(
-        externalAddress.address.scriptPubkey().toBytes(),
-        orderedEquals(internalAddress.address.scriptPubkey().toBytes()),
-      );
-    });
+        expect(
+          externalAddress.address.scriptPubkey().toBytes(),
+          orderedEquals(internalAddress.address.scriptPubkey().toBytes()),
+        );
+      },
+    );
   });
 }

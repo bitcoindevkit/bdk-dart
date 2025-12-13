@@ -6,10 +6,14 @@ import 'test_constants.dart';
 void main() {
   group('Offline wallet', () {
     test('revealNextAddress yields expected address on multiple networks', () {
-      final descriptor =
-          buildDescriptor(offlineDescriptorString, Network.signet);
-      final changeDescriptor =
-          buildDescriptor(offlineChangeDescriptorString, Network.signet);
+      final descriptor = buildDescriptor(
+        offlineDescriptorString,
+        Network.signet,
+      );
+      final changeDescriptor = buildDescriptor(
+        offlineChangeDescriptorString,
+        Network.signet,
+      );
       final persister = Persister.newInMemory();
       final wallet = Wallet(
         descriptor,
@@ -34,10 +38,14 @@ void main() {
     });
 
     test('new wallet starts with zero balance', () {
-      final descriptor =
-          buildDescriptor(offlineDescriptorString, Network.signet);
-      final changeDescriptor =
-          buildDescriptor(offlineChangeDescriptorString, Network.signet);
+      final descriptor = buildDescriptor(
+        offlineDescriptorString,
+        Network.signet,
+      );
+      final changeDescriptor = buildDescriptor(
+        offlineChangeDescriptorString,
+        Network.signet,
+      );
       final persister = Persister.newInMemory();
       final wallet = Wallet(
         descriptor,
