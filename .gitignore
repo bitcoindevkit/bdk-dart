@@ -1,5 +1,6 @@
 # Rust
 /target
+native/target/
 **/*.rs.bk
 Cargo.lock
 
@@ -31,11 +32,8 @@ Thumbs.db
 *.log
 
 # Native libs built locally
-libbdkffi.*
-android/libs
-bdk_demo/android/app/src/main/jniLibs
-ios/Release/
-bdk_demo/ios/ios/
+*.dylib
+*.so
+*.dll
 test_output.txt
 test output.txt
-lib/bdk.dart
