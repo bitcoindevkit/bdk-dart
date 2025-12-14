@@ -29,4 +29,4 @@ uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", features = [
 ] }
 
 [patch."https://github.com/bitcoindevkit/bdk-ffi.git"]
-bdk-ffi = { path = "../../bdk-ffi/bdk-ffi" }
+bdk-ffi = { package = "bdk-ffi", git = "https://github.com/kumulynja/bdk-ffi.git", branch = "master" }
