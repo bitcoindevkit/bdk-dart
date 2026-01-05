@@ -18,12 +18,11 @@ key management utilities, and blockchain backends from BDK.
 
 ## Prerequisites
 
-To build the bindings locally you need:
+To use this package you need:
 
 - Dart SDK >= 3.10 or newer (see `pubspec.yaml`).
-- Rust toolchain with `cargo` and the native targets you intend to build.
-- `clang`/`lld` (or equivalent platform toolchain) for producing the shared library.
-- Flutter (optional) if you plan to run `bdk_demo`.
+- Rust toolchain with `cargo` and the native targets you intend to build. You can install Rust via [rustup](https://rustup.rs/).
+- Flutter SDK if you plan to use the package in a Flutter app or run the [Flutter demo](bdk_demo/).
 
 ### Add to your project
 
@@ -56,7 +55,7 @@ Run it with:
 dart run example/main.dart
 ```
 
-The native library will be automatically built by Dart's Native Assets system.
+If you have the Rust toolchain installed, the native library will be automatically built by Dart's Native Assets system.
 As a user of the package, you don't need to worry about building the native library or bindings yourself.
 Only if you want to contribute to the bindings or modify the native code yourself, you can follow the instructions in [development](#development) below.
 
