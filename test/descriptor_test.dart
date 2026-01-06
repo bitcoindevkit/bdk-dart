@@ -6,49 +6,19 @@ import 'test_constants.dart';
 void main() {
   group('Descriptor construction', () {
     test('creates extended WPKH descriptors across networks', () {
-      expect(
-        () => buildBip84Descriptor(Network.regtest),
-        returnsNormally,
-      );
-      expect(
-        () => buildBip84Descriptor(Network.testnet),
-        returnsNormally,
-      );
-      expect(
-        () => buildBip84Descriptor(Network.testnet4),
-        returnsNormally,
-      );
-      expect(
-        () => buildBip84Descriptor(Network.signet),
-        returnsNormally,
-      );
-      expect(
-        () => buildMainnetBip84Descriptor(),
-        returnsNormally,
-      );
+      expect(() => buildBip84Descriptor(Network.regtest), returnsNormally);
+      expect(() => buildBip84Descriptor(Network.testnet), returnsNormally);
+      expect(() => buildBip84Descriptor(Network.testnet4), returnsNormally);
+      expect(() => buildBip84Descriptor(Network.signet), returnsNormally);
+      expect(() => buildMainnetBip84Descriptor(), returnsNormally);
     });
 
     test('creates extended TR descriptors across networks', () {
-      expect(
-        () => buildBip86Descriptor(Network.regtest),
-        returnsNormally,
-      );
-      expect(
-        () => buildBip86Descriptor(Network.testnet),
-        returnsNormally,
-      );
-      expect(
-        () => buildBip86Descriptor(Network.testnet4),
-        returnsNormally,
-      );
-      expect(
-        () => buildBip86Descriptor(Network.signet),
-        returnsNormally,
-      );
-      expect(
-        () => buildMainnetBip86Descriptor(),
-        returnsNormally,
-      );
+      expect(() => buildBip86Descriptor(Network.regtest), returnsNormally);
+      expect(() => buildBip86Descriptor(Network.testnet), returnsNormally);
+      expect(() => buildBip86Descriptor(Network.testnet4), returnsNormally);
+      expect(() => buildBip86Descriptor(Network.signet), returnsNormally);
+      expect(() => buildMainnetBip86Descriptor(), returnsNormally);
     });
 
     test('creates non-extended descriptors for all networks', () {
