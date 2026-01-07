@@ -101,14 +101,14 @@ class _MyHomePageState extends State<MyHomePage> {
               _error != null
                   ? Icons.error_outline
                   : _networkName != null
-                  ? Icons.check_circle
-                  : Icons.network_check,
+                      ? Icons.check_circle
+                      : Icons.network_check,
               size: 80,
               color: _error != null
                   ? Colors.red
                   : _networkName != null
-                  ? Colors.green
-                  : Colors.grey,
+                      ? Colors.green
+                      : Colors.grey,
             ),
             const SizedBox(height: 20),
             const Text('BDK bindings status', style: TextStyle(fontSize: 20)),
@@ -116,9 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Text(
                 'Network: $_networkName',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                ),
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               if (_descriptorSnippet != null)
                 Padding(

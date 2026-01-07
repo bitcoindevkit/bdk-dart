@@ -50,18 +50,18 @@ Descriptor buildBip86ChangeDescriptor(Network network) =>
     Descriptor("tr($testExtendedPrivKey/$bip86TestChangePath/*)", network);
 
 Descriptor buildMainnetBip84Descriptor() => Descriptor(
-  "wpkh($mainnetExtendedPrivKey/$bip84MainnetReceivePath/*)",
-  Network.bitcoin,
-);
+      "wpkh($mainnetExtendedPrivKey/$bip84MainnetReceivePath/*)",
+      Network.bitcoin,
+    );
 
 Descriptor buildMainnetBip86Descriptor() => Descriptor(
-  "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/*)",
-  Network.bitcoin,
-);
+      "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/*)",
+      Network.bitcoin,
+    );
 
 Descriptor buildNonExtendedDescriptor(int index) => Descriptor(
-  "wpkh($testExtendedPrivKey/$bip84TestReceivePath/$index)",
-  Network.testnet,
-);
+      "wpkh($testExtendedPrivKey/$bip84TestReceivePath/$index)",
+      Network.testnet,
+    );
 
 const defaultLookahead = 25;
