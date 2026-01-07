@@ -44,7 +44,9 @@ void main() {
       final wallet = Wallet.load(
         buildDescriptor(persistencePublicDescriptorString, Network.signet),
         buildDescriptor(
-            persistencePublicChangeDescriptorString, Network.signet),
+          persistencePublicChangeDescriptorString,
+          Network.signet,
+        ),
         persister,
         defaultLookahead,
       );

@@ -37,25 +37,17 @@ const expectedPersistedAddress = "tb1qan3lldunh37ma6c0afeywgjyjgnyc8uz975zl2";
 Descriptor buildDescriptor(String descriptor, Network network) =>
     Descriptor(descriptor, network);
 
-Descriptor buildBip84Descriptor(Network network) => Descriptor(
-      "wpkh($testExtendedPrivKey/$bip84TestReceivePath/*)",
-      network,
-    );
+Descriptor buildBip84Descriptor(Network network) =>
+    Descriptor("wpkh($testExtendedPrivKey/$bip84TestReceivePath/*)", network);
 
-Descriptor buildBip84ChangeDescriptor(Network network) => Descriptor(
-      "wpkh($testExtendedPrivKey/$bip84TestChangePath/*)",
-      network,
-    );
+Descriptor buildBip84ChangeDescriptor(Network network) =>
+    Descriptor("wpkh($testExtendedPrivKey/$bip84TestChangePath/*)", network);
 
-Descriptor buildBip86Descriptor(Network network) => Descriptor(
-      "tr($testExtendedPrivKey/$bip86TestReceivePath/*)",
-      network,
-    );
+Descriptor buildBip86Descriptor(Network network) =>
+    Descriptor("tr($testExtendedPrivKey/$bip86TestReceivePath/*)", network);
 
-Descriptor buildBip86ChangeDescriptor(Network network) => Descriptor(
-      "tr($testExtendedPrivKey/$bip86TestChangePath/*)",
-      network,
-    );
+Descriptor buildBip86ChangeDescriptor(Network network) =>
+    Descriptor("tr($testExtendedPrivKey/$bip86TestChangePath/*)", network);
 
 Descriptor buildMainnetBip84Descriptor() => Descriptor(
       "wpkh($mainnetExtendedPrivKey/$bip84MainnetReceivePath/*)",
