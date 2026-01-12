@@ -58,6 +58,7 @@ dart run example/main.dart
 If you have the Rust toolchain installed, the native library will be automatically built by Dart's Native Assets system.
 As a user of the package, you don't need to worry about building the native library or bindings yourself.
 Only if you want to contribute to the bindings or modify the native code yourself, you can follow the instructions in [development](#development) below.
+The first build can take several minutes depending on your machine and network (subsequent builds are faster).
 
 ## Development
 
@@ -83,5 +84,5 @@ dart test
 ## License
 
 The Rust crate and generated bindings are dual-licensed under MIT or Apache 2.0 per the
-`license = "MIT OR Apache-2.0"` entry in `Cargo.toml`. You may choose either license when
+`license = "MIT OR Apache-2.0"` entry in `native/Cargo.toml`. You may choose either license when
 using the library in your project.
