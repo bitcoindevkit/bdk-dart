@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:bdk_dart/bdk.dart';
 
-/// Run with: `dart run examples/network_example.dart`
+/// Run with: `dart run example/main.dart`
 ///
 /// Prerequisites:
-///  * Generated bindings (`scripts/generate_bindings.sh`)
-///  * Native library (`libbdkffi.*`) discoverable by the Dart process
+///  * Rust toolchain available for Native Assets builds.
+///  * If you update native bindings, run `bash ./scripts/generate_bindings.sh`.
 void main() {
   final network = Network.testnet;
 
