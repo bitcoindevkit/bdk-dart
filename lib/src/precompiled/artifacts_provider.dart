@@ -1,0 +1,178 @@
+import 'dart:io';
+
+import 'package:code_assets/code_assets.dart';
+import 'package:ed25519_edwards/ed25519_edwards.dart';
+import 'package:hooks/hooks.dart';
+import 'package:logging/logging.dart';
+import 'package:path/path.dart' as path;
+
+import 'cargo.dart';
+import 'crate_hash.dart';
+import 'options.dart';
+import 'target.dart';
+import 'util.dart';
+
+// Handles locating, downloading, and verifying precompiled artifacts.
+final _log = Logger('bdk_dart.artifacts_provider');
+
+// Infer the invoking package root from the build output directory.
+String? _invokerRootFromOutputDirectory(Uri outputDirectory) {
+  final parts = path.split(path.fromUri(outputDirectory));
+  final dartToolIndex = parts.lastIndexOf('.dart_tool');
+  if (dartToolIndex <= 0) {
+    return null;
+  }
+  return path.joinAll(parts.take(dartToolIndex));
+}
+
+// Result of a successful download + verification.
+class DownloadedArtifact {
+  DownloadedArtifact({required this.filePath, required this.dependencies});
+
+  final String filePath;
+  final List<Uri> dependencies;
+}
+
+// Resolves config, downloads binary + signature, and verifies them.
+class PrecompiledArtifactProvider {
+  PrecompiledArtifactProvider({
+    required this.input,
+    required this.buildModeName,
+    required this.crateDir,
+  });
+
+  final BuildInput input;
+  final String buildModeName;
+  final Directory crateDir;
+
+  Future<DownloadedArtifact?> tryGetPrecompiledArtifact() async {
+    // Read precompiled_binaries configuration from pubspec.yaml.
+    final pubspecOptions = PubspecOptions.load(
+      packageRoot: path.fromUri(input.packageRoot),
+      pluginConfigKey: 'bdk_dart',
+    );
+    final baseConfig = pubspecOptions.precompiledBinaries;
+    if (baseConfig == null) {
+      return null;
+    }
+
+    // Allow invoker package to override mode for this build.
+    final invokerRoot = _invokerRootFromOutputDirectory(input.outputDirectory);
+    final invokerMode = invokerRoot == null
+        ? null
+        : PubspecOptions.loadModeOverride(
+            packageRoot: invokerRoot,
+            packageName: input.packageName,
+          );
+
+    final precompiled = invokerMode == null
+        ? baseConfig
+        : PrecompiledBinariesConfig(
+            artifactHost: baseConfig.artifactHost,
+            mode: invokerMode,
+            publicKey: baseConfig.publicKey,
+            urlPrefix: baseConfig.urlPrefix,
+          );
+
+    if (invokerMode != null) {
+      _log.info(
+        'Using invoker override precompiled_binaries.mode=${invokerMode.name} from $invokerRoot',
+      );
+    }
+
+    if (precompiled.mode == PrecompiledBinaryMode.never) {
+      _log.info('Precompiled binaries disabled by mode=never');
+      return null;
+    }
+
+    if (precompiled.mode == PrecompiledBinaryMode.auto) {
+      final userOptions = UserOptions.load(hasConfig: true);
+      if (!userOptions.usePrecompiledBinaries) {
+        _log.info(
+          'Precompiled binaries disabled (auto mode + local build preferred)',
+        );
+        return null;
+      }
+    }
+
+    if (!input.config.buildCodeAssets) {
+      return null;
+    }
+
+    final codeConfig = input.config.code;
+    // Derive crate name from Cargo.toml for file naming.
+    final crateInfo = CrateInfo.load(crateDir.path);
+    final targetTriple = codeConfig.targetTriple;
+    final linkMode = codeConfig.linkMode;
+
+    // Write into the build output target directory.
+    final outDir = path.join(path.fromUri(input.outputDirectory), 'target');
+    final libFileName = codeConfig.targetOS
+        .libraryFileName(crateInfo.packageName, linkMode)
+        .replaceAll('-', '_');
+    final finalLibPath = path.join(
+      outDir,
+      targetTriple,
+      buildModeName,
+      libFileName,
+    );
+
+    Directory(path.dirname(finalLibPath)).createSync(recursive: true);
+
+    // Crate hash keys the release tag and artifact path.
+    final crateHash = CrateHash.compute(crateDir.path, tempStorage: outDir);
+
+    final remoteFileName = '${targetTriple}_$libFileName';
+    final remoteSignatureName = '$remoteFileName.sig';
+
+    final binaryUrl = precompiled.fileUrl(
+      crateHash: crateHash,
+      fileName: remoteFileName,
+    );
+    final signatureUrl = precompiled.fileUrl(
+      crateHash: crateHash,
+      fileName: remoteSignatureName,
+    );
+
+    _log.info('Downloading signature from $signatureUrl');
+    final signatureRes = await httpGetWithRetry(signatureUrl);
+    if (signatureRes.statusCode == 404) {
+      _log.info('No precompiled binaries for crate hash $crateHash');
+      return null;
+    }
+    if (signatureRes.statusCode != 200) {
+      _log.warning(
+        'Failed to download signature: status ${signatureRes.statusCode}',
+      );
+      return null;
+    }
+
+    _log.info('Downloading binary from $binaryUrl');
+    final binaryRes = await httpGetWithRetry(binaryUrl);
+    if (binaryRes.statusCode != 200) {
+      _log.warning('Failed to download binary: status ${binaryRes.statusCode}');
+      return null;
+    }
+
+    // Verify binary integrity before writing it to disk.
+    final ok = verify(
+      precompiled.publicKey,
+      binaryRes.bodyBytes,
+      signatureRes.bodyBytes,
+    );
+    if (!ok) {
+      _log.warning('Signature verification failed; ignoring binary');
+      return null;
+    }
+
+    await writeBytesAtomically(File(finalLibPath), binaryRes.bodyBytes);
+    _log.info('Verified and wrote precompiled binary to $finalLibPath');
+
+    // Dependencies track local crate inputs for rebuild invalidation.
+    final deps = CrateHash.collectFiles(
+      crateDir.path,
+    ).map((f) => f.absolute.uri).toList(growable: false);
+
+    return DownloadedArtifact(filePath: finalLibPath, dependencies: deps);
+  }
+}
