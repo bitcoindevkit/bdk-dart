@@ -62,7 +62,7 @@ Only if you want to contribute to the bindings or modify the native code yoursel
 ## Precompiled binaries
 
 This plugin adds a precompiled-binary layer on top of the standard Native Assets approach.
-When enabled, the build hook tries to download a signed precompiled binary for your target first.
+Depending on the mode configuration, the build hook may download signed precompiled binaries or build locally.
 If no matching binary is available or verification fails, it falls back to building from scratch via the Flutter/Dart build hook.
 This gives consumers a choice between using published binaries or building locally.
 
