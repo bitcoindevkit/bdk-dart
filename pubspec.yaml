@@ -29,5 +29,5 @@ executables:
 
 bdk_dart:
   precompiled_binaries:
-    artifact_host: nuCode-Tech/bdk-dart
+    artifact_host: bitcoindevkit/bdk-dart
     public_key: 4a13d74312b96c0b8a98f9cc48540c8bf083a47a34bd3ff691a940bef44ee4dc
