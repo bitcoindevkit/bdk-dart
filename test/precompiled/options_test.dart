@@ -12,7 +12,7 @@ void main() {
       () {
         final node =
             loadYamlNode('''
-artifact_host: https://github.com/nucode-tech/bdk-dart/
+artifact_host: https://github.com/bitcoindevkit/bdk-dart/
 public_key: ${_hexKey(64)}
 mode: download
 ''')
@@ -20,12 +20,12 @@ mode: download
 
         final config = PrecompiledBinariesConfig.parse(node);
         expect(config.mode, PrecompiledBinaryMode.always);
-        expect(config.artifactHost, 'nucode-tech/bdk-dart');
+        expect(config.artifactHost, 'bitcoindevkit/bdk-dart');
 
         final fileUrl = config.fileUrl(crateHash: 'abc123', fileName: 'asset');
         expect(
           fileUrl.toString(),
-          'https://github.com/nucode-tech/bdk-dart/releases/download/precompiled_abc123/asset',
+          'https://github.com/bitcoindevkit/bdk-dart/releases/download/precompiled_abc123/asset',
         );
       },
     );
@@ -67,7 +67,7 @@ public_key: ${_hexKey(64)}
 name: sample
 bdk_dart:
   precompiled_binaries:
-    artifact_host: nuCode-Tech/bdk-dart
+    artifact_host: bitcoindevkit/bdk-dart
     public_key: ${_hexKey(64)}
 ''');
 
@@ -76,7 +76,7 @@ bdk_dart:
         pluginConfigKey: 'bdk_dart',
       );
       expect(options.precompiledBinaries, isNotNull);
-      expect(options.precompiledBinaries!.artifactHost, 'nuCode-Tech/bdk-dart');
+      expect(options.precompiledBinaries!.artifactHost, 'bitcoindevkit/bdk-dart');
     });
 
     test('loadModeOverride honors invoker pubspec mode overrides', () {
