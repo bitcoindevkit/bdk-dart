@@ -11,8 +11,10 @@ import 'package:yaml/yaml.dart';
 class CrateHash {
   // Compute (and optionally cache) the crate hash.
   static String compute(String manifestDir, {String? tempStorage}) {
-    return CrateHash._(manifestDir: manifestDir, tempStorage: tempStorage)
-        ._compute();
+    return CrateHash._(
+      manifestDir: manifestDir,
+      tempStorage: tempStorage,
+    )._compute();
   }
 
   CrateHash._({required this.manifestDir, required this.tempStorage});
@@ -87,8 +89,9 @@ class CrateHash {
       final yamlContent = file.readAsStringSync();
       final doc = loadYaml(yamlContent);
       final extensionSection = doc is YamlMap ? doc['bdk_dart'] : null;
-      final precompiled =
-          extensionSection is YamlMap ? extensionSection['precompiled_binaries'] : null;
+      final precompiled = extensionSection is YamlMap
+          ? extensionSection['precompiled_binaries']
+          : null;
       final normalized = _normalizeYaml(precompiled ?? <String, Object?>{});
       input.add(utf8.encode('pubspec.yaml:bdk_dart.precompiled_binaries:'));
       input.add(utf8.encode(jsonEncode(normalized)));
@@ -168,4 +171,3 @@ class CrateHash {
     return files;
   }
 }
-
