@@ -5,10 +5,7 @@ import 'package:toml/toml.dart';
 
 // Parses rust-toolchain.toml and exposes channel/targets.
 class RustToolchain {
-  RustToolchain._({
-    required this.channel,
-    required this.targets,
-  });
+  RustToolchain._({required this.channel, required this.targets});
 
   final String channel;
   final List<String> targets;
@@ -37,10 +34,7 @@ class RustToolchain {
     final targets = targetsRaw is List
         ? targetsRaw.whereType<String>().toList(growable: false)
         : const <String>[];
-    return RustToolchain._(
-      channel: channel.trim(),
-      targets: targets,
-    );
+    return RustToolchain._(channel: channel.trim(), targets: targets);
   }
 
   // Filter targets for a given OS label.
@@ -73,10 +67,10 @@ class RustToolchain {
       'ios' => t.contains('apple-ios'),
       'linux' => t.endsWith('unknown-linux-gnu'),
       'windows' => t.endsWith('pc-windows-msvc'),
-      'android' => t.endsWith('linux-android') || t.endsWith('linux-androideabi'),
+      'android' =>
+        t.endsWith('linux-android') || t.endsWith('linux-androideabi'),
       _ => false,
     };
     return targets.where(include).toList(growable: false);
   }
 }
-
