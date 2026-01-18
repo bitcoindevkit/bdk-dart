@@ -7,10 +7,27 @@ environment:
 
 dependencies:
   ffi: ^2.1.4
+  code_assets: ^1.0.0
+  convert: ^3.1.2
+  crypto: ^3.0.7
+  ed25519_edwards: ^0.3.1
+  http: ^1.2.2
   hooks: ^1.0.0
+  logging: ^1.0.0
   native_toolchain_rust: ^1.0.0
+  path: ^1.9.0
+  toml: ^0.17.0
+  yaml: ^3.1.2
 dev_dependencies:
   test: ^1.26.2
 
 hooks:
   build: hook/build.dart
+
+executables:
+  build_tool: build_tool
+
+bdk_dart:
+  precompiled_binaries:
+    artifact_host: nuCode-Tech/bdk-dart
+    public_key: 4a13d74312b96c0b8a98f9cc48540c8bf083a47a34bd3ff691a940bef44ee4dc
