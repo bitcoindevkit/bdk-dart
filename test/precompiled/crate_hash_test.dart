@@ -56,8 +56,10 @@ bdk_dart:
       final basenames = files.map((file) => path.basename(file.path)).toSet();
 
       expect(basenames, contains('Cargo.toml'));
-      expect(files.any((file) => file.path.contains(path.join('src', 'lib.rs'))),
-          isTrue);
+      expect(
+        files.any((file) => file.path.contains(path.join('src', 'lib.rs'))),
+        isTrue,
+      );
     });
   });
 }
@@ -66,8 +68,9 @@ Directory _prepareCrate(Directory root) {
   final crateDir = Directory(path.join(root.path, 'native'));
   crateDir.createSync(recursive: true);
 
-  File(path.join(crateDir.path, 'Cargo.toml'))
-      .writeAsStringSync('[package]\nname = "bdk_test"\nversion = "0.1.0"\n');
+  File(
+    path.join(crateDir.path, 'Cargo.toml'),
+  ).writeAsStringSync('[package]\nname = "bdk_test"\nversion = "0.1.0"\n');
   File(path.join(crateDir.path, 'Cargo.lock')).writeAsStringSync('# empty\n');
   File(path.join(crateDir.path, 'build.rs')).writeAsStringSync('');
 
