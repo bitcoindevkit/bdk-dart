@@ -22,4 +22,3 @@ Future<void> runOrThrow(
     throw StateError('Command failed: $exe ${args.join(' ')}');
   }
 }
-

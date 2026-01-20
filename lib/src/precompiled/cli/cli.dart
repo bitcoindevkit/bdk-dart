@@ -54,4 +54,3 @@ Commands:
 Run 'dart run bdk_dart <command> --help' for command-specific help.
 ''');
 }
-

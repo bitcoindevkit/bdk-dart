@@ -11,4 +11,3 @@ String? normalizeOs(String raw) {
     _ => v.isEmpty ? null : v,
   };
 }
-
