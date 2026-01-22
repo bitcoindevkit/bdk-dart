@@ -33,6 +33,16 @@ class DownloadedArtifact {
   final List<Uri> dependencies;
 }
 
+class PrecompiledBinaryRequiredException implements Exception {
+  PrecompiledBinaryRequiredException(this.message);
+
+  final String message;
+
+  @override
+  String toString() =>
+      'PrecompiledBinaryRequiredException: $message';
+}
+
 // Resolves config, downloads binary + signature, and verifies them.
 class PrecompiledArtifactProvider {
   PrecompiledArtifactProvider({
@@ -134,24 +144,38 @@ class PrecompiledArtifactProvider {
       fileName: remoteSignatureName,
     );
 
+    final bool requirePrecompiled =
+        precompiled.mode == PrecompiledBinaryMode.always;
+
+    DownloadedArtifact? handleFailure(String message) {
+      if (requirePrecompiled) {
+        throw PrecompiledBinaryRequiredException(message);
+      }
+      return null;
+    }
+
     _log.info('Downloading signature from $signatureUrl');
     final signatureRes = await httpGetWithRetry(signatureUrl);
     if (signatureRes.statusCode == 404) {
       _log.info('No precompiled binaries for crate hash $crateHash');
-      return null;
+      return handleFailure('No precompiled binaries for crate hash $crateHash');
     }
     if (signatureRes.statusCode != 200) {
       _log.warning(
         'Failed to download signature: status ${signatureRes.statusCode}',
       );
-      return null;
+      return handleFailure(
+        'Failed to download signature: status ${signatureRes.statusCode}',
+      );
     }
 
     _log.info('Downloading binary from $binaryUrl');
     final binaryRes = await httpGetWithRetry(binaryUrl);
     if (binaryRes.statusCode != 200) {
       _log.warning('Failed to download binary: status ${binaryRes.statusCode}');
-      return null;
+      return handleFailure(
+        'Failed to download binary: status ${binaryRes.statusCode}',
+      );
     }
 
     // Verify binary integrity before writing it to disk.
@@ -162,7 +186,7 @@ class PrecompiledArtifactProvider {
     );
     if (!ok) {
       _log.warning('Signature verification failed; ignoring binary');
-      return null;
+      return handleFailure('Signature verification failed; ignoring binary');
     }
 
     await writeBytesAtomically(File(finalLibPath), binaryRes.bodyBytes);
