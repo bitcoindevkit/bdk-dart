@@ -7,7 +7,7 @@ This document describes how precompiled binaries are built, signed, and publishe
 - CI builds and uploads precompiled binaries via `.github/workflows/precompile_binaries.yml`.
 - Artifacts are tagged by the crate hash and uploaded to a GitHub release.
 - Each binary is signed with an Ed25519 key; the public key is embedded in `pubspec.yaml`.
-- The build hook tries to download a verified binary first and falls back to a local build if needed.
+- The build hook downloads verified binaries when appropriate (depending on mode configuration) and falls back to local builds if needed.
 
 ## CI workflow
 
