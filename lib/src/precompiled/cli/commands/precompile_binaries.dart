@@ -171,7 +171,11 @@ Options:
 
   // If release already contains assets, avoid duplicate builds.
   final releaseHasAssets = buildableTargets.isNotEmpty
-      ? await _releaseHasAllAssets(tag: tag, targets: buildableTargets)
+      ? await _releaseHasAllAssets(
+          tag: tag,
+          targets: buildableTargets,
+          repository: repository,
+        )
       : false;
 
   // Local build and upload staging folders.
@@ -184,7 +188,11 @@ Options:
     p.join(Directory.current.absolute.path, uploadDir.path),
   );
 
-  await _ensureReleaseExists(tag: tag, crateHash: crateHash);
+  await _ensureReleaseExists(
+    tag: tag,
+    crateHash: crateHash,
+    repository: repository,
+  );
   if (releaseHasAssets) {
     if (verbose) {
       stderr.writeln(
@@ -370,6 +378,8 @@ Options:
   await runOrThrow('gh', [
     'release',
     'upload',
+    '--repo',
+    repository,
     tag,
     '${uploadDirAbs.path}/*',
     '--clobber',
@@ -379,6 +389,7 @@ Options:
 Future<void> _ensureReleaseExists({
   required String tag,
   required String crateHash,
+  required String repository,
 }) async {
   final view = await Process.run('gh', ['release', 'view', tag]);
   if (view.exitCode == 0) return;
@@ -387,6 +398,8 @@ Future<void> _ensureReleaseExists({
     'create',
     tag,
     '--title',
+    '--repo',
+    repository,
     'Precompiled binaries $crateHash',
     '--notes',
     'Precompiled binaries for crate hash $crateHash.',
@@ -402,11 +415,14 @@ Future<void> _ensureReleaseExists({
 Future<bool> _releaseHasAllAssets({
   required String tag,
   required List<String> targets,
+  required String repository,
 }) async {
   final view = await Process.run('gh', [
     'release',
     'view',
     tag,
+    '--repo',
+    repository,
     '--json',
     'assets',
     '--jq',
