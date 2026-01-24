@@ -77,7 +77,7 @@ bdk_dart:
 ```
 
 `mode` controls when the precompiled path is used:
-- `auto` prefers precompiled binaries when available, otherwise builds locally
+- `auto` prefers local builds if Rust toolchain is detected (for development), otherwise uses precompiled binaries
 - `always` requires precompiled binaries and skips local builds
 - `never` always builds from source via the build hook
 
