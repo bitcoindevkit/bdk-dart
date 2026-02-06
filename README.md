@@ -65,6 +65,28 @@ Only if you want to contribute to the bindings or modify the native code yoursel
 The first build can take several minutes depending on your machine and network (subsequent builds are faster).
 We currently pin git dependencies to specific commits for reproducibility (including `bdk-ffi` until the next release is cut); the plan is to move to release tags as upstream ships them.
 
+## Precompiled binaries
+
+This plugin adds a precompiled-binary layer on top of the standard Native Assets approach.
+Depending on the mode configuration, the build hook may download signed precompiled binaries or build locally.
+If precompiled binaries are attempted but unavailable or verification fails, it falls back to building from scratch via the Flutter/Dart build hook.
+This gives consumers a choice between using published binaries or building locally.
+
+### pubspec.yaml configuration
+
+In your app's `pubspec.yaml`, add the `bdk_dart` section at the top level (next to `dependencies`), like:
+
+```yaml
+bdk_dart:
+  precompiled_binaries:
+    mode: auto # auto | always | never
+```
+
+`mode` controls when the precompiled path is used:
+- `auto` prefers local builds if Rust toolchain is detected (for development), otherwise uses precompiled binaries
+- `always` requires precompiled binaries and skips local builds
+- `never` always builds from source via the build hook
+
 ## Development
 
 For release operations, see [PUBDEV_RELEASE_CHECKLIST.md](PUBDEV_RELEASE_CHECKLIST.md).
@@ -87,6 +109,10 @@ Dart test suite, which covers wallet creation, persistence, offline behavior, an
 ```bash
 dart test
 ```
+
+### Precompiled binaries (maintainers)
+
+See `docs/precompiled_binaries.md` for CI details, manual release steps, and configuration.
 
 ## License
 
