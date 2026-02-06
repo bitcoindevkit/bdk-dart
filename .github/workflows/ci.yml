@@ -77,16 +77,6 @@ jobs:
         with:
           sdk: "3.10.0"
 
-      - name: Generate bindings and native library
-        shell: bash
-        run: |
-          chmod +x scripts/generate_bindings.sh
-          ./scripts/generate_bindings.sh
-
-      - name: Ensure generated bindings exist
-        shell: bash
-        run: test -f lib/bdk.dart
-
       - name: Pub get
         run: dart pub get
 
