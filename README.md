@@ -24,6 +24,10 @@ To use this package you need:
 - Rust toolchain with `cargo` and the native targets you intend to build. You can install Rust via [rustup](https://rustup.rs/).
 - Flutter SDK if you plan to use the package in a Flutter app or run the [Flutter demo](bdk_demo/).
 
+## Supported targets
+
+See [SUPPORTED_TARGETS.md](SUPPORTED_TARGETS.md) for the current platform/architecture matrix and support status.
+
 ### Add to your project
 
 **Via git:**
