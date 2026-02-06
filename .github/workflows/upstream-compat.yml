@@ -1,0 +1,60 @@
+name: Upstream Compatibility
+
+on:
+  schedule:
+    # Run every Monday at 09:00 UTC.
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+jobs:
+  bdk-ffi-head:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "3.10.0"
+
+      - name: Pin bdk-ffi to upstream HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          latest_sha="$(git ls-remote https://github.com/bitcoindevkit/bdk-ffi.git HEAD | awk '{print $1}')"
+          if [[ -z "$latest_sha" ]]; then
+            echo "Could not resolve upstream bdk-ffi HEAD SHA" >&2
+            exit 1
+          fi
+
+          sed -E -i "s#(bdk-ffi = \\{ package = \"bdk-ffi\", git = \"https://github.com/bitcoindevkit/bdk-ffi.git\", rev = \")[^\"]+(\" \\})#\\1${latest_sha}\\2#" native/Cargo.toml
+
+          if ! grep -q "$latest_sha" native/Cargo.toml; then
+            echo "Failed to update native/Cargo.toml with upstream SHA" >&2
+            exit 1
+          fi
+
+          echo "Testing against bdk-ffi commit: $latest_sha"
+          grep '^bdk-ffi = ' native/Cargo.toml
+
+      - name: Regenerate bindings against upstream
+        run: |
+          chmod +x scripts/generate_bindings.sh
+          ./scripts/generate_bindings.sh
+
+      - name: Check generated binding drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --exit-code -- lib/bdk.dart; then
+            echo "Bindings changed against upstream bdk-ffi HEAD." >&2
+            git --no-pager diff --stat -- lib/bdk.dart || true
+            exit 1
+          fi
+
+      - name: Run tests against upstream
+        run: dart test
