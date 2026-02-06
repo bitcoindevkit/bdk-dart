@@ -65,6 +65,7 @@ jobs:
 
   windows-smoke:
     runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -85,3 +86,35 @@ jobs:
 
       - name: Run tests
         run: dart test
+
+  android-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "3.10.0"
+
+      - name: Pub get (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter pub get
+
+      - name: Build Android debug APK (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter build apk --debug --target-platform android-arm64
