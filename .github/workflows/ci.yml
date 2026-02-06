@@ -62,3 +62,36 @@ jobs:
       - name: Run tests
         run: |
           dart test
+
+  windows-smoke:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "3.10.0"
+
+      - name: Generate bindings and native library
+        shell: bash
+        run: |
+          chmod +x scripts/generate_bindings.sh
+          ./scripts/generate_bindings.sh
+
+      - name: Ensure generated bindings exist
+        shell: bash
+        run: test -f lib/bdk.dart
+
+      - name: Pub get
+        run: dart pub get
+
+      - name: Analyze
+        run: dart analyze --fatal-infos --fatal-warnings lib test example
+
+      - name: Run tests
+        run: dart test
