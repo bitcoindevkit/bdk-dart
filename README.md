@@ -82,6 +82,25 @@ Dart test suite, which covers wallet creation, persistence, offline behavior, an
 dart test
 ```
 
+### Integration tests
+
+Integration tests are in `test/integration/` and are env-gated by default.
+Without the env vars below, integration tests are skipped.
+
+Run integration tests with:
+
+```bash
+BDK_DART_RUN_INTEGRATION=1 \
+BDK_DART_ELECTRUM_URL=ssl://electrum.blockstream.info:60002 \
+BDK_DART_ESPLORA_URL=https://blockstream.info/testnet/api \
+dart test test/integration
+```
+
+Optional env vars:
+
+- `BDK_DART_ELECTRUM_SOCKS5`
+- `BDK_DART_ESPLORA_PROXY`
+
 ## License
 
 The Rust crate and generated bindings are dual-licensed under MIT or Apache 2.0 per the
