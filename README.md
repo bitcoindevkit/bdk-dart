@@ -63,6 +63,8 @@ We currently pin git dependencies to specific commits for reproducibility (inclu
 
 ## Development
 
+For release operations, see [PUBDEV_RELEASE_CHECKLIST.md](PUBDEV_RELEASE_CHECKLIST.md).
+
 ### Generating bindings
 
 1. Modify the native Rust code and configuration files in `native/` as needed.
