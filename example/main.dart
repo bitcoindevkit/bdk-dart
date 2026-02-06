@@ -51,12 +51,10 @@ void main() {
   stdout.writeln('Persisted staged wallet changes: $persisted');
 
   // 5. Try a quick Electrum sync to fetch history/balances.
+  ElectrumClient? client;
   try {
     stdout.writeln('\nSyncing via Electrum (blockstream.info)…');
-    final client = ElectrumClient(
-      'ssl://electrum.blockstream.info:60002',
-      null,
-    );
+    client = ElectrumClient('ssl://electrum.blockstream.info:60002', null);
     final syncRequest = wallet.startSyncWithRevealedSpks().build();
     final update = client.sync_(syncRequest, 100, true);
 
@@ -66,13 +64,13 @@ void main() {
     final balance = wallet.balance();
     stdout.writeln('Confirmed balance: ${balance.confirmed.toSat()} sats');
     stdout.writeln('Total balance: ${balance.total.toSat()} sats');
-
-    client.dispose();
   } catch (error) {
     stdout.writeln(
       'Electrum sync failed: $error\n'
       'Ensure TLS-enabled Electrum access is available, or skip this step.',
     );
+  } finally {
+    client?.dispose();
   }
 
   // 6. Clean up FFI handles explicitly so long-lived examples don’t leak.
