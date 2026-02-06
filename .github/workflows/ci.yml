@@ -143,6 +143,10 @@ jobs:
         working-directory: bdk_demo
         run: flutter pub get
 
+      - name: Install CocoaPods deps (bdk_demo iOS)
+        working-directory: bdk_demo/ios
+        run: pod install
+
       - name: Build iOS simulator app (bdk_demo)
         working-directory: bdk_demo
         run: flutter build ios --simulator --no-codesign
