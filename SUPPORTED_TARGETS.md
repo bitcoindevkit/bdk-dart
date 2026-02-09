@@ -19,21 +19,21 @@ It is the source of truth for what is currently validated versus planned.
 
 | Platform | Architecture | Rust target triple | Status | CI coverage |
 | --- | --- | --- | --- | --- |
-| Android | `arm64-v8a` | `aarch64-linux-android` | Targeted | No |
+| Android | `arm64-v8a` | `aarch64-linux-android` | CI-validated | Yes (`ubuntu-latest`, `android-smoke`) |
 | Android | `x86_64` | `x86_64-linux-android` | Targeted | No |
 | Android | `armeabi-v7a` | `armv7-linux-androideabi` | Targeted | No |
 | iOS | `arm64` (device) | `aarch64-apple-ios` | Targeted | No |
-| iOS | `arm64` (simulator) | `aarch64-apple-ios-sim` | Targeted | No |
+| iOS | `arm64` (simulator) | `aarch64-apple-ios-sim` | CI-validated | Yes (`macos-latest`, `ios-smoke`) |
 | iOS | `x86_64` (simulator) | `x86_64-apple-ios` | Targeted | No |
 | macOS | `arm64` | `aarch64-apple-darwin` | CI-validated | Yes (`macos-latest`) |
 | macOS | `x86_64` | `x86_64-apple-darwin` | Targeted | No |
 | Linux | `x86_64` | `x86_64-unknown-linux-gnu` | CI-validated | Yes (`ubuntu-latest`) |
 | Linux | `arm64` | `aarch64-unknown-linux-gnu` | Targeted | No |
-| Windows | `x86_64` | `x86_64-pc-windows-msvc` | Targeted | No |
+| Windows | `x86_64` | `x86_64-pc-windows-msvc` | CI-validated | Yes (`windows-latest`, `windows-smoke`) |
 | Windows | `arm64` | `aarch64-pc-windows-msvc` | Targeted | No |
 | Web | n/a | n/a | Not supported | n/a |
 
 ## Notes
 
 - CI coverage above refers to the current workflow at `.github/workflows/ci.yml`.
-- Expanding CI coverage is tracked in issue `#25`.
+- CI-validated mobile targets are currently smoke builds (`android-smoke`, `ios-smoke`), not full runtime integration test jobs.
