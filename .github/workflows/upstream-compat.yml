@@ -31,7 +31,7 @@ jobs:
             exit 1
           fi
 
-          sed -E -i "s#(bdk-ffi = \\{ package = \"bdk-ffi\", git = \"https://github.com/bitcoindevkit/bdk-ffi.git\", rev = \")[^\"]+(\" \\})#\\1${latest_sha}\\2#" native/Cargo.toml
+          sed -E -i "s#^bdk-ffi = \\{.*git = \"https://github.com/bitcoindevkit/bdk-ffi.git\".*\\}\$#bdk-ffi = { package = \"bdk-ffi\", git = \"https://github.com/bitcoindevkit/bdk-ffi.git\", rev = \"${latest_sha}\" }#" native/Cargo.toml
 
           if ! grep -q "$latest_sha" native/Cargo.toml; then
             echo "Failed to update native/Cargo.toml with upstream SHA" >&2
