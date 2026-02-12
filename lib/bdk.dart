@@ -5615,9 +5615,17 @@ class FfiConverterChainPosition {
     final subview = Uint8List.view(buf.buffer, buf.offsetInBytes + 4);
     switch (index) {
       case 1:
-        return ConfirmedChainPosition.read(subview);
+        final lifted = ConfirmedChainPosition.read(subview);
+        return LiftRetVal<ChainPosition>(
+          lifted.value,
+          lifted.bytesRead - subview.offsetInBytes + 4,
+        );
       case 2:
-        return UnconfirmedChainPosition.read(subview);
+        final lifted = UnconfirmedChainPosition.read(subview);
+        return LiftRetVal<ChainPosition>(
+          lifted.value,
+          lifted.bytesRead - subview.offsetInBytes + 4,
+        );
       default:
         throw UniffiInternalError(
           UniffiInternalError.unexpectedEnumCase,
@@ -5635,7 +5643,7 @@ class FfiConverterChainPosition {
   }
 
   static int write(ChainPosition value, Uint8List buf) {
-    return value.write(buf);
+    return value.write(buf) - buf.offsetInBytes;
   }
 }
 
