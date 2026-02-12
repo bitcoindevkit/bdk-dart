@@ -8,7 +8,10 @@ void main() {
     test("read reports relative bytes from a non-zero buffer offset", () {
       final chainPosition = UnconfirmedChainPosition(1234567890);
       final encoded = Uint8List(chainPosition.allocationSize());
-      final encodedLength = FfiConverterChainPosition.write(chainPosition, encoded);
+      final encodedLength = FfiConverterChainPosition.write(
+        chainPosition,
+        encoded,
+      );
 
       expect(encodedLength, encoded.length);
 
