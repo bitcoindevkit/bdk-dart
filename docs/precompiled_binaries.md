@@ -60,7 +60,6 @@ dart run bin/build_tool.dart precompile-binaries \
   --crate-package="bdk_dart_ffi" \
   --repository="owner/repo" \
   --os=macos
-
 ```
 
 ## Troubleshooting & ops tips
