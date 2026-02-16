@@ -39,8 +39,7 @@ class PrecompiledBinaryRequiredException implements Exception {
   final String message;
 
   @override
-  String toString() =>
-      'PrecompiledBinaryRequiredException: $message';
+  String toString() => 'PrecompiledBinaryRequiredException: $message';
 }
 
 // Resolves config, downloads binary + signature, and verifies them.
