@@ -398,9 +398,9 @@ Future<void> _ensureReleaseExists({
     'create',
     tag,
     '--title',
+    'Precompiled binaries $crateHash',
     '--repo',
     repository,
-    'Precompiled binaries $crateHash',
     '--notes',
     'Precompiled binaries for crate hash $crateHash.',
   ]);
