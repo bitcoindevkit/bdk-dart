@@ -6,11 +6,11 @@ import 'test_constants.dart';
 Wallet _createWallet(Descriptor descriptor, Descriptor changeDescriptor) {
   final persister = Persister.newInMemory();
   return Wallet(
-    descriptor,
-    changeDescriptor,
-    Network.testnet,
-    persister,
-    defaultLookahead,
+    descriptor: descriptor,
+    changeDescriptor: changeDescriptor,
+    network: Network.testnet,
+    persister: persister,
+    lookahead: defaultLookahead,
   );
 }
 
@@ -50,10 +50,10 @@ void main() {
       final persister = Persister.newInMemory();
       expect(
         () => Wallet.createSingle(
-          buildBip86Descriptor(Network.testnet),
-          Network.testnet,
-          persister,
-          defaultLookahead,
+          descriptor: buildBip86Descriptor(Network.testnet),
+          network: Network.testnet,
+          persister: persister,
+          lookahead: defaultLookahead,
         ),
         returnsNormally,
       );
@@ -63,10 +63,13 @@ void main() {
       final persister = Persister.newInMemory();
       expect(
         () => Wallet.createFromTwoPathDescriptor(
-          buildDescriptor(multipathDescriptorString, Network.bitcoin),
-          Network.bitcoin,
-          persister,
-          defaultLookahead,
+          twoPathDescriptor: buildDescriptor(
+            multipathDescriptorString,
+            Network.bitcoin,
+          ),
+          network: Network.bitcoin,
+          persister: persister,
+          lookahead: defaultLookahead,
         ),
         returnsNormally,
       );
@@ -84,11 +87,11 @@ void main() {
       final persister = Persister.newInMemory();
       expect(
         () => Wallet(
-          buildNonExtendedDescriptor(0),
-          buildNonExtendedDescriptor(1),
-          Network.bitcoin,
-          persister,
-          defaultLookahead,
+          descriptor: buildNonExtendedDescriptor(0),
+          changeDescriptor: buildNonExtendedDescriptor(1),
+          network: Network.bitcoin,
+          persister: persister,
+          lookahead: defaultLookahead,
         ),
         throwsA(isA<CreateWithPersistException>()),
       );

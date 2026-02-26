@@ -35,33 +35,41 @@ const expectedOfflineAddress = "tb1qhjys9wxlfykmte7ftryptx975uqgd6kcm6a7z4";
 const expectedPersistedAddress = "tb1qan3lldunh37ma6c0afeywgjyjgnyc8uz975zl2";
 
 Descriptor buildDescriptor(String descriptor, Network network) =>
-    Descriptor(descriptor, network);
+    Descriptor(descriptor: descriptor, network: network);
 
-Descriptor buildBip84Descriptor(Network network) =>
-    Descriptor("wpkh($testExtendedPrivKey/$bip84TestReceivePath/*)", network);
+Descriptor buildBip84Descriptor(Network network) => Descriptor(
+  descriptor: "wpkh($testExtendedPrivKey/$bip84TestReceivePath/*)",
+  network: network,
+);
 
-Descriptor buildBip84ChangeDescriptor(Network network) =>
-    Descriptor("wpkh($testExtendedPrivKey/$bip84TestChangePath/*)", network);
+Descriptor buildBip84ChangeDescriptor(Network network) => Descriptor(
+  descriptor: "wpkh($testExtendedPrivKey/$bip84TestChangePath/*)",
+  network: network,
+);
 
-Descriptor buildBip86Descriptor(Network network) =>
-    Descriptor("tr($testExtendedPrivKey/$bip86TestReceivePath/*)", network);
+Descriptor buildBip86Descriptor(Network network) => Descriptor(
+  descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/*)",
+  network: network,
+);
 
-Descriptor buildBip86ChangeDescriptor(Network network) =>
-    Descriptor("tr($testExtendedPrivKey/$bip86TestChangePath/*)", network);
+Descriptor buildBip86ChangeDescriptor(Network network) => Descriptor(
+  descriptor: "tr($testExtendedPrivKey/$bip86TestChangePath/*)",
+  network: network,
+);
 
 Descriptor buildMainnetBip84Descriptor() => Descriptor(
-  "wpkh($mainnetExtendedPrivKey/$bip84MainnetReceivePath/*)",
-  Network.bitcoin,
+  descriptor: "wpkh($mainnetExtendedPrivKey/$bip84MainnetReceivePath/*)",
+  network: Network.bitcoin,
 );
 
 Descriptor buildMainnetBip86Descriptor() => Descriptor(
-  "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/*)",
-  Network.bitcoin,
+  descriptor: "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/*)",
+  network: Network.bitcoin,
 );
 
 Descriptor buildNonExtendedDescriptor(int index) => Descriptor(
-  "wpkh($testExtendedPrivKey/$bip84TestReceivePath/$index)",
-  Network.testnet,
+  descriptor: "wpkh($testExtendedPrivKey/$bip84TestReceivePath/$index)",
+  network: Network.testnet,
 );
 
 const defaultLookahead = 25;
