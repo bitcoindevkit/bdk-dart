@@ -37,25 +37,33 @@ Wallet _reloadWallet(
   Persister persister,
 ) {
   current.dispose();
-  return Wallet.load(descriptor, changeDescriptor, persister, defaultLookahead);
+  return Wallet.load(
+    descriptor: descriptor,
+    changeDescriptor: changeDescriptor,
+    persister: persister,
+    lookahead: defaultLookahead,
+  );
 }
 
 void _exerciseWalletOperation(Wallet wallet, Random random) {
   switch (random.nextInt(13)) {
     case 0:
-      wallet.revealNextAddress(KeychainKind.external_);
+      wallet.revealNextAddress(keychain: KeychainKind.external_);
       break;
     case 1:
-      wallet.revealNextAddress(KeychainKind.internal);
+      wallet.revealNextAddress(keychain: KeychainKind.internal);
       break;
     case 2:
-      wallet.peekAddress(KeychainKind.external_, random.nextInt(30));
+      wallet.peekAddress(
+        keychain: KeychainKind.external_,
+        index: random.nextInt(30),
+      );
       break;
     case 3:
-      wallet.nextUnusedAddress(KeychainKind.external_);
+      wallet.nextUnusedAddress(keychain: KeychainKind.external_);
       break;
     case 4:
-      wallet.listUnusedAddresses(KeychainKind.external_);
+      wallet.listUnusedAddresses(keychain: KeychainKind.external_);
       break;
     case 5:
       wallet.listOutput();
@@ -73,22 +81,24 @@ void _exerciseWalletOperation(Wallet wallet, Random random) {
       final txs = wallet.transactions();
       for (final tx in txs.take(5)) {
         final txid = tx.transaction.computeTxid();
-        wallet.txDetails(txid);
-        wallet.getTx(txid);
+        wallet.txDetails(txid: txid);
+        wallet.getTx(txid: txid);
       }
       break;
     case 10:
-      wallet.nextDerivationIndex(KeychainKind.external_);
-      wallet.nextDerivationIndex(KeychainKind.internal);
+      wallet.nextDerivationIndex(keychain: KeychainKind.external_);
+      wallet.nextDerivationIndex(keychain: KeychainKind.internal);
       break;
     case 11:
-      final index = wallet.nextDerivationIndex(KeychainKind.external_);
-      wallet.markUsed(KeychainKind.external_, index);
-      wallet.unmarkUsed(KeychainKind.external_, index);
+      final index = wallet.nextDerivationIndex(
+        keychain: KeychainKind.external_,
+      );
+      wallet.markUsed(keychain: KeychainKind.external_, index: index);
+      wallet.unmarkUsed(keychain: KeychainKind.external_, index: index);
       break;
     case 12:
       wallet.network();
-      wallet.publicDescriptor(KeychainKind.external_);
+      wallet.publicDescriptor(keychain: KeychainKind.external_);
       break;
   }
 }
@@ -99,17 +109,17 @@ void main() {
       final descriptor = buildBip84Descriptor(Network.testnet);
       final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
       final sqlitePath = _createTempSqlitePath();
-      final persister = Persister.newSqlite(sqlitePath);
+      final persister = Persister.newSqlite(path: sqlitePath);
       late Wallet wallet;
       var walletInitialized = false;
 
       try {
         wallet = Wallet(
-          descriptor,
-          changeDescriptor,
-          Network.testnet,
-          persister,
-          defaultLookahead,
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          network: Network.testnet,
+          persister: persister,
+          lookahead: defaultLookahead,
         );
         walletInitialized = true;
 
@@ -118,7 +128,7 @@ void main() {
           for (var step = 0; step < 80; step++) {
             _exerciseWalletOperation(wallet, random);
             if (step % 16 == 0) {
-              wallet.persist(persister);
+              wallet.persist(persister: persister);
             }
             if (step % 25 == 0) {
               wallet = _reloadWallet(
@@ -131,7 +141,7 @@ void main() {
           }
         }
 
-        final persisted = wallet.persist(persister);
+        final persisted = wallet.persist(persister: persister);
         expect(persisted, isA<bool>());
 
         final checkpointBeforeReload = wallet.latestCheckpoint();
@@ -144,11 +154,11 @@ void main() {
           equals(checkpointBeforeReloadHeight),
         );
         expect(
-          wallet.nextDerivationIndex(KeychainKind.external_),
+          wallet.nextDerivationIndex(keychain: KeychainKind.external_),
           greaterThanOrEqualTo(0),
         );
         expect(
-          wallet.nextDerivationIndex(KeychainKind.internal),
+          wallet.nextDerivationIndex(keychain: KeychainKind.internal),
           greaterThanOrEqualTo(0),
         );
       } finally {

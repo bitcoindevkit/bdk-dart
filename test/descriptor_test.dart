@@ -24,36 +24,36 @@ void main() {
     test('creates non-extended descriptors for all networks', () {
       expect(
         () => Descriptor(
-          "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          Network.regtest,
+          descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
+          network: Network.regtest,
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
-          "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          Network.testnet,
+          descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
+          network: Network.testnet,
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
-          "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          Network.testnet4,
+          descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
+          network: Network.testnet4,
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
-          "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          Network.signet,
+          descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
+          network: Network.signet,
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
-          "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/0)",
-          Network.bitcoin,
+          descriptor: "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/0)",
+          network: Network.bitcoin,
         ),
         returnsNormally,
       );
@@ -62,8 +62,8 @@ void main() {
     test('fails to create addr() descriptor', () {
       expect(
         () => Descriptor(
-          "addr(tb1qhjys9wxlfykmte7ftryptx975uqgd6kcm6a7z4)",
-          Network.testnet,
+          descriptor: "addr(tb1qhjys9wxlfykmte7ftryptx975uqgd6kcm6a7z4)",
+          network: Network.testnet,
         ),
         throwsA(isA<DescriptorException>()),
       );

@@ -70,17 +70,24 @@ void _exerciseWalletReadSurface(Wallet wallet) {
   final network = wallet.network();
   expect(network, isNotNull);
 
-  final nextExternalIndex = wallet.nextDerivationIndex(KeychainKind.external_);
+  final nextExternalIndex = wallet.nextDerivationIndex(
+    keychain: KeychainKind.external_,
+  );
   expect(nextExternalIndex, greaterThanOrEqualTo(0));
 
-  final peeked = wallet.peekAddress(KeychainKind.external_, nextExternalIndex);
+  final peeked = wallet.peekAddress(
+    keychain: KeychainKind.external_,
+    index: nextExternalIndex,
+  );
   expect(peeked.index, equals(nextExternalIndex));
   expect(peeked.address.scriptPubkey().toBytes(), isNotEmpty);
 
-  final nextUnused = wallet.nextUnusedAddress(KeychainKind.external_);
+  final nextUnused = wallet.nextUnusedAddress(keychain: KeychainKind.external_);
   expect(nextUnused.address.scriptPubkey().toBytes(), isNotEmpty);
 
-  final unusedAddresses = wallet.listUnusedAddresses(KeychainKind.external_);
+  final unusedAddresses = wallet.listUnusedAddresses(
+    keychain: KeychainKind.external_,
+  );
   for (final info in unusedAddresses.take(3)) {
     expect(info.address.scriptPubkey().toBytes(), isNotEmpty);
   }
@@ -92,12 +99,12 @@ void _exerciseWalletReadSurface(Wallet wallet) {
   final txs = wallet.transactions();
   for (final tx in txs.take(30)) {
     final txid = tx.transaction.computeTxid();
-    final canonical = wallet.getTx(txid);
+    final canonical = wallet.getTx(txid: txid);
     if (canonical != null) {
       expect(canonical.transaction.computeTxid().toString(), txid.toString());
     }
 
-    final details = wallet.txDetails(txid);
+    final details = wallet.txDetails(txid: txid);
     if (details != null) {
       expect(details.txid.toString(), equals(txid.toString()));
       expect(details.tx.computeTxid().toString(), equals(txid.toString()));
@@ -122,20 +129,20 @@ void main() {
           final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
           addDisposer(disposers, changeDescriptor.dispose);
 
-          final persister = Persister.newSqlite(sqlitePath);
+          final persister = Persister.newSqlite(path: sqlitePath);
           addDisposer(disposers, persister.dispose);
 
           final wallet = Wallet(
-            descriptor,
-            changeDescriptor,
-            Network.testnet,
-            persister,
-            defaultLookahead,
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            network: Network.testnet,
+            persister: persister,
+            lookahead: defaultLookahead,
           );
           addDisposer(disposers, wallet.dispose);
 
-          wallet.revealNextAddress(KeychainKind.external_);
-          wallet.persist(persister);
+          wallet.revealNextAddress(keychain: KeychainKind.external_);
+          wallet.persist(persister: persister);
           final checkpointBeforeSync = wallet.latestCheckpoint().height;
 
           final requestBuilder = wallet.startSyncWithRevealedSpks();
@@ -147,23 +154,27 @@ void main() {
           addDisposer(disposers, client.dispose);
           client.ping();
 
-          final update = client.sync_(request, 100, true);
+          final update = client.sync_(
+            request: request,
+            batchSize: 100,
+            fetchPrevTxouts: true,
+          );
           addDisposer(disposers, update.dispose);
 
-          final events = wallet.applyUpdateEvents(update);
+          final events = wallet.applyUpdateEvents(update: update);
           _exerciseWalletEventSurface(events);
           _exerciseWalletReadSurface(wallet);
 
-          wallet.persist(persister);
+          wallet.persist(persister: persister);
           final txCountBeforeReload = wallet.transactions().length;
 
-          final reloadedPersister = Persister.newSqlite(sqlitePath);
+          final reloadedPersister = Persister.newSqlite(path: sqlitePath);
           addDisposer(disposers, reloadedPersister.dispose);
           final reloadedWallet = Wallet.load(
-            descriptor,
-            changeDescriptor,
-            reloadedPersister,
-            defaultLookahead,
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            persister: reloadedPersister,
+            lookahead: defaultLookahead,
           );
           addDisposer(disposers, reloadedWallet.dispose);
 
@@ -198,20 +209,20 @@ void main() {
           final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
           addDisposer(disposers, changeDescriptor.dispose);
 
-          final persister = Persister.newSqlite(sqlitePath);
+          final persister = Persister.newSqlite(path: sqlitePath);
           addDisposer(disposers, persister.dispose);
 
           final wallet = Wallet(
-            descriptor,
-            changeDescriptor,
-            Network.testnet,
-            persister,
-            defaultLookahead,
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            network: Network.testnet,
+            persister: persister,
+            lookahead: defaultLookahead,
           );
           addDisposer(disposers, wallet.dispose);
 
-          wallet.revealNextAddress(KeychainKind.external_);
-          wallet.persist(persister);
+          wallet.revealNextAddress(keychain: KeychainKind.external_);
+          wallet.persist(persister: persister);
           final checkpointBeforeSync = wallet.latestCheckpoint().height;
 
           final requestBuilder = wallet.startSyncWithRevealedSpks();
@@ -223,23 +234,23 @@ void main() {
           addDisposer(disposers, client.dispose);
           expect(client.getHeight(), greaterThan(0));
 
-          final update = client.sync_(request, 4);
+          final update = client.sync_(request: request, parallelRequests: 4);
           addDisposer(disposers, update.dispose);
 
-          final events = wallet.applyUpdateEvents(update);
+          final events = wallet.applyUpdateEvents(update: update);
           _exerciseWalletEventSurface(events);
           _exerciseWalletReadSurface(wallet);
 
-          wallet.persist(persister);
+          wallet.persist(persister: persister);
           final txCountBeforeReload = wallet.transactions().length;
 
-          final reloadedPersister = Persister.newSqlite(sqlitePath);
+          final reloadedPersister = Persister.newSqlite(path: sqlitePath);
           addDisposer(disposers, reloadedPersister.dispose);
           final reloadedWallet = Wallet.load(
-            descriptor,
-            changeDescriptor,
-            reloadedPersister,
-            defaultLookahead,
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            persister: reloadedPersister,
+            lookahead: defaultLookahead,
           );
           addDisposer(disposers, reloadedWallet.dispose);
 

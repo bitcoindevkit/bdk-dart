@@ -51,22 +51,24 @@ void main() {
           final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
           addDisposer(disposers, changeDescriptor.dispose);
 
-          final persister = Persister.newSqlite(sqlitePath);
+          final persister = Persister.newSqlite(path: sqlitePath);
           addDisposer(disposers, persister.dispose);
 
           final wallet = Wallet(
-            descriptor,
-            changeDescriptor,
-            Network.testnet,
-            persister,
-            defaultLookahead,
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            network: Network.testnet,
+            persister: persister,
+            lookahead: defaultLookahead,
           );
           addDisposer(disposers, wallet.dispose);
 
-          final revealed = wallet.revealNextAddress(KeychainKind.external_);
+          final revealed = wallet.revealNextAddress(
+            keychain: KeychainKind.external_,
+          );
           addDisposer(disposers, revealed.address.dispose);
 
-          final persistedAddressReveal = wallet.persist(persister);
+          final persistedAddressReveal = wallet.persist(persister: persister);
           printOnFailure(
             'Persisted after reveal address: $persistedAddressReveal',
           );
@@ -91,11 +93,11 @@ void main() {
           printOnFailure('Esplora chain height: $chainHeight');
           expect(chainHeight, greaterThan(0));
 
-          final update = client.sync_(request, 4);
+          final update = client.sync_(request: request, parallelRequests: 4);
           addDisposer(disposers, update.dispose);
 
-          wallet.applyUpdate(update);
-          final persistedAfterSync = wallet.persist(persister);
+          wallet.applyUpdate(update: update);
+          final persistedAfterSync = wallet.persist(persister: persister);
           printOnFailure('Persisted after sync: $persistedAfterSync');
 
           final checkpointAfterSync = wallet.latestCheckpoint();
@@ -112,25 +114,25 @@ void main() {
           expect(checkpointAfterHeight, greaterThan(0));
 
           final persistedExternalIndex = wallet.nextDerivationIndex(
-            KeychainKind.external_,
+            keychain: KeychainKind.external_,
           );
           printOnFailure(
             'Persisted external derivation index: $persistedExternalIndex',
           );
 
-          final reloadedPersister = Persister.newSqlite(sqlitePath);
+          final reloadedPersister = Persister.newSqlite(path: sqlitePath);
           addDisposer(disposers, reloadedPersister.dispose);
 
           final reloadedWallet = Wallet.load(
-            descriptor,
-            changeDescriptor,
-            reloadedPersister,
-            defaultLookahead,
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            persister: reloadedPersister,
+            lookahead: defaultLookahead,
           );
           addDisposer(disposers, reloadedWallet.dispose);
 
           final reloadedExternalIndex = reloadedWallet.nextDerivationIndex(
-            KeychainKind.external_,
+            keychain: KeychainKind.external_,
           );
           expect(reloadedExternalIndex, equals(persistedExternalIndex));
 

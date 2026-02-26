@@ -43,21 +43,23 @@ void main() {
         persistenceChangeDescriptorString,
         Network.signet,
       );
-      final persister = Persister.newSqlite(dbPath);
+      final persister = Persister.newSqlite(path: dbPath);
       Wallet? wallet;
 
       try {
         wallet = Wallet.load(
-          descriptor,
-          changeDescriptor,
-          persister,
-          defaultLookahead,
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          persister: persister,
+          lookahead: defaultLookahead,
         );
 
-        final addressInfo = wallet.revealNextAddress(KeychainKind.external_);
+        final addressInfo = wallet.revealNextAddress(
+          keychain: KeychainKind.external_,
+        );
         final expectedAddress = Address(
-          expectedPersistedAddress,
-          Network.signet,
+          address: expectedPersistedAddress,
+          network: Network.signet,
         );
 
         expect(addressInfo.index, equals(7));
@@ -83,23 +85,25 @@ void main() {
         persistencePublicChangeDescriptorString,
         Network.signet,
       );
-      final persister = Persister.newSqlite(dbPath);
+      final persister = Persister.newSqlite(path: dbPath);
       Wallet? wallet;
 
       try {
         wallet = Wallet.load(
-          descriptor,
-          changeDescriptor,
-          persister,
-          defaultLookahead,
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          persister: persister,
+          lookahead: defaultLookahead,
         );
 
-        final addressInfo = wallet.revealNextAddress(KeychainKind.external_);
+        final addressInfo = wallet.revealNextAddress(
+          keychain: KeychainKind.external_,
+        );
 
         expect(addressInfo.index, equals(7));
         final expectedAddress = Address(
-          expectedPersistedAddress,
-          Network.signet,
+          address: expectedPersistedAddress,
+          network: Network.signet,
         );
         expect(
           addressInfo.address.scriptPubkey().toBytes(),

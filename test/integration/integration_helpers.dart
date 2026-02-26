@@ -52,14 +52,14 @@ ElectrumClient buildElectrumClientFromEnv({Map<String, String>? env}) {
   final environment = env ?? Platform.environment;
   final url = envOrThrow(electrumUrlEnv, env: environment);
   final socks5 = environment[electrumSocks5Env];
-  return ElectrumClient(url, socks5);
+  return ElectrumClient(url: url, socks5: socks5);
 }
 
 EsploraClient buildEsploraClientFromEnv({Map<String, String>? env}) {
   final environment = env ?? Platform.environment;
   final url = envOrThrow(esploraUrlEnv, env: environment);
   final proxy = environment[esploraProxyEnv];
-  return EsploraClient(url, proxy);
+  return EsploraClient(url: url, proxy: proxy);
 }
 
 void addDisposer(List<Disposer> disposers, Disposer disposer) {

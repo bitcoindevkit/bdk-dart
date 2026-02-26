@@ -6,11 +6,11 @@ import 'test_constants.dart';
 Wallet _buildTestWallet() {
   final persister = Persister.newInMemory();
   return Wallet(
-    buildBip84Descriptor(Network.testnet),
-    buildBip84ChangeDescriptor(Network.testnet),
-    Network.testnet,
-    persister,
-    defaultLookahead,
+    descriptor: buildBip84Descriptor(Network.testnet),
+    changeDescriptor: buildBip84ChangeDescriptor(Network.testnet),
+    network: Network.testnet,
+    persister: persister,
+    lookahead: defaultLookahead,
   );
 }
 
@@ -18,13 +18,30 @@ void main() {
   group('Wallet behaviour', () {
     test('produces addresses valid for expected networks', () {
       final wallet = _buildTestWallet();
-      final addressInfo = wallet.revealNextAddress(KeychainKind.external_);
+      final addressInfo = wallet.revealNextAddress(
+        keychain: KeychainKind.external_,
+      );
 
-      expect(addressInfo.address.isValidForNetwork(Network.testnet), isTrue);
-      expect(addressInfo.address.isValidForNetwork(Network.testnet4), isTrue);
-      expect(addressInfo.address.isValidForNetwork(Network.signet), isTrue);
-      expect(addressInfo.address.isValidForNetwork(Network.regtest), isFalse);
-      expect(addressInfo.address.isValidForNetwork(Network.bitcoin), isFalse);
+      expect(
+        addressInfo.address.isValidForNetwork(network: Network.testnet),
+        isTrue,
+      );
+      expect(
+        addressInfo.address.isValidForNetwork(network: Network.testnet4),
+        isTrue,
+      );
+      expect(
+        addressInfo.address.isValidForNetwork(network: Network.signet),
+        isTrue,
+      );
+      expect(
+        addressInfo.address.isValidForNetwork(network: Network.regtest),
+        isFalse,
+      );
+      expect(
+        addressInfo.address.isValidForNetwork(network: Network.bitcoin),
+        isFalse,
+      );
     });
 
     test('starts with zero balance before sync', () {
@@ -37,14 +54,20 @@ void main() {
       () {
         final persister = Persister.newInMemory();
         final wallet = Wallet.createSingle(
-          buildBip84Descriptor(Network.testnet),
-          Network.testnet,
-          persister,
-          defaultLookahead,
+          descriptor: buildBip84Descriptor(Network.testnet),
+          network: Network.testnet,
+          persister: persister,
+          lookahead: defaultLookahead,
         );
 
-        final externalAddress = wallet.peekAddress(KeychainKind.external_, 0);
-        final internalAddress = wallet.peekAddress(KeychainKind.internal, 0);
+        final externalAddress = wallet.peekAddress(
+          keychain: KeychainKind.external_,
+          index: 0,
+        );
+        final internalAddress = wallet.peekAddress(
+          keychain: KeychainKind.internal,
+          index: 0,
+        );
 
         expect(
           externalAddress.address.scriptPubkey().toBytes(),
