@@ -43,16 +43,25 @@ class StorageService {
     WalletRecord record,
     WalletSecrets secrets,
   ) async {
+    final secretsKey = _SecureKeys.secrets(record.id);
+
+    await _secure.write(key: secretsKey, value: jsonEncode(secrets.toJson()));
+
     final records = getWalletRecords();
     records.add(record);
-    await _prefs.setString(
-      _PrefKeys.walletRecords,
-      WalletRecord.encodeList(records),
-    );
-    await _secure.write(
-      key: _SecureKeys.secrets(record.id),
-      value: jsonEncode(secrets.toJson()),
-    );
+
+    try {
+      final didPersist = await _prefs.setString(
+        _PrefKeys.walletRecords,
+        WalletRecord.encodeList(records),
+      );
+      if (!didPersist) {
+        throw StateError('Failed to persist wallet metadata.');
+      }
+    } catch (_) {
+      await _secure.delete(key: secretsKey);
+      rethrow;
+    }
   }
 
   Future<WalletSecrets?> getSecrets(String walletId) async {
