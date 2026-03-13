@@ -1,30 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:bdk_demo/main.dart';
+import 'package:bdk_demo/app/app.dart';
+import 'package:bdk_demo/providers/settings_providers.dart';
+import 'package:bdk_demo/services/storage_service.dart';
 
 void main() {
-  testWidgets('BDK bindings demo test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App builds and shows WalletChoicePage', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
 
-    // Verify initial state shows the prompt message.
-    expect(find.text('Press the button to load bindings'), findsOneWidget);
-    expect(find.text('BDK bindings status'), findsOneWidget);
-    expect(find.byIcon(Icons.network_check), findsOneWidget);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          storageServiceProvider.overrideWithValue(
+            StorageService(prefs: prefs),
+          ),
+        ],
+        child: const App(),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-    // Verify the button exists.
-    expect(find.text('Load Dart binding'), findsOneWidget);
-    expect(find.byIcon(Icons.play_circle_fill), findsOneWidget);
+    expect(find.byType(MaterialApp), findsOneWidget);
+    expect(find.text('Use an Active Wallet'), findsOneWidget);
+    expect(find.text('Create a New Wallet'), findsOneWidget);
+    expect(find.text('Recover an Existing Wallet'), findsOneWidget);
+  });
 
-    // Tap the 'Load Dart binding' button and trigger a frame.
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pump();
+  testWidgets('Theme defaults to light mode', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
 
-    // Verify that the network and descriptor are displayed.
-    expect(find.textContaining('Network:'), findsOneWidget);
-    expect(find.textContaining('testnet'), findsOneWidget);
-    expect(find.textContaining('Descriptor sample:'), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          storageServiceProvider.overrideWithValue(
+            StorageService(prefs: prefs),
+          ),
+        ],
+        child: const App(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(materialApp.themeMode, ThemeMode.light);
   });
 }
