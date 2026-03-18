@@ -4,27 +4,38 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:bdk_demo/main.dart';
 
 void main() {
-  testWidgets('BDK bindings demo test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('BDK demo shows onboarding copy and UI states', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
 
-    // Verify initial state shows the prompt message.
-    expect(find.text('Press the button to load bindings'), findsOneWidget);
-    expect(find.text('BDK bindings status'), findsOneWidget);
-    expect(find.byIcon(Icons.network_check), findsOneWidget);
+    expect(find.text('BDK Dart Reference Demo'), findsOneWidget);
+    expect(find.text('Ready to run the demo'), findsOneWidget);
+    expect(find.text('Idle'), findsOneWidget);
+    expect(
+      find.textContaining('constructs an example testnet descriptor in memory'),
+      findsOneWidget,
+    );
+    expect(find.text('Load example testnet data'), findsOneWidget);
+    expect(find.byIcon(Icons.info_outline), findsOneWidget);
 
-    // Verify the button exists.
-    expect(find.text('Load Dart binding'), findsOneWidget);
-    expect(find.byIcon(Icons.play_circle_fill), findsOneWidget);
-
-    // Tap the 'Load Dart binding' button and trigger a frame.
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(FilledButton));
     await tester.pump();
 
-    // Verify that the network and descriptor are displayed.
-    expect(find.textContaining('Network:'), findsOneWidget);
-    expect(find.textContaining('testnet'), findsOneWidget);
-    expect(find.textContaining('Descriptor sample:'), findsOneWidget);
+    expect(find.text('Loading'), findsOneWidget);
+    expect(find.text('Loading example wallet data'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('Success'), findsOneWidget);
+    expect(find.text('Demo data loaded'), findsOneWidget);
+    expect(find.text('Network'), findsOneWidget);
+    expect(find.text('testnet'), findsOneWidget);
+    expect(find.text('Descriptor preview'), findsOneWidget);
+    expect(find.textContaining('wpkh('), findsOneWidget);
+    expect(find.text('Status message'), findsOneWidget);
+    expect(find.text('Reload demo data'), findsOneWidget);
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
   });
 }

@@ -1,16 +1,27 @@
 # bdk_demo
 
-A new Flutter project.
+`bdk_demo` is a small Flutter reference app for `bdk_dart`.
 
-## Getting Started
+It is intentionally scoped to one screen that helps you verify the bindings are
+wired up correctly from Flutter. The demo:
 
-This project is a starting point for a Flutter application.
+- explains what the example is doing before you run it
+- loads an example testnet descriptor through `bdk_dart`
+- shows clear idle, loading, success, and error states
+- presents the returned network and descriptor preview in a readable way
 
-A few resources to get you started if this is your first Flutter project:
+This app is not a full wallet UI. It does not add send/receive flows, wallet
+setup, or persistence. The goal is to provide a simple onboarding example you
+can use as a reference when integrating `bdk_dart` into a Flutter app.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Run the demo
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+From this directory:
+
+```sh
+flutter pub get
+flutter run
+```
+
+Tap the primary action on the home screen to load the example demo data and
+inspect the returned state.
