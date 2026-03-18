@@ -1,6 +1,9 @@
 name: bdk_dart
 description: Dart bindings for bdk-ffi
 version: 2.3.0-alpha.0
+homepage: https://github.com/bitcoindevkit/bdk-dart
+repository: https://github.com/bitcoindevkit/bdk-dart
+issue_tracker: https://github.com/bitcoindevkit/bdk-dart/issues
 
 environment:
   sdk: "^3.10.0"
