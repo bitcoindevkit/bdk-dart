@@ -1,8 +1,7 @@
 import 'dart:convert';
+import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/wallet_record.dart';
 
 abstract final class _PrefKeys {
   static const introDone = 'intro_done';
