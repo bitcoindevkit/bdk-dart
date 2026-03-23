@@ -1,10 +1,10 @@
 # BDK-Dart Wallet (Flutter)
 
-The _BDK-Dart Wallet_ is a wallet built as a reference app for the [bitcoindevkit](https://github.com/bitcoindevkit) on Flutter using [bdk-dart](https://github.com/bitcoindevkit/bdk-dart). This repository is not intended to produce a production-ready wallet, the app only works on Signet, Testnet 3, and Regtest.
+The _BDK-Dart Wallet_ is a Flutter reference app for [bitcoindevkit](https://github.com/bitcoindevkit) using [bdk-dart](https://github.com/bitcoindevkit/bdk-dart). It is intentionally a demo and scaffold, not a production-ready wallet, and currently targets Signet, Testnet 3, and Regtest.
 
 The demo app is built with the following goals in mind:
 1. Be a reference application for the `bdk_dart` API on Flutter (iOS & Android).
-2. Showcase the core features of the bitcoindevkit library: wallet creation, recovery, Esplora/Electrum sync, send, receive, and transaction history.
+2. Sketch the wallet creation, recovery, sync, send, receive, and transaction-history flows the app can grow into over time.
 3. Demonstrate a clean, testable Flutter architecture using Riverpod and GoRouter.
 
 ## Features
@@ -19,11 +19,13 @@ The demo app is built with the following goals in mind:
 | Wallet balance (BTC / sats toggle) | - |
 | Receive (address generation + QR) | - |
 | Send (single recipient + fee rate) | - |
-| Transaction history | - |
+| Transaction history | Scaffolded placeholder UI |
 | Transaction detail | - |
 | Recovery data viewer | - |
 | Theme toggle (light / dark) | - |
 | In-app log viewer | - |
+
+Today the active-wallet flow is deliberately small: it loads a wallet scaffold, shows placeholder wallet metadata, and renders placeholder transaction rows. No real wallet sync or transaction fetching is implemented yet.
 
 ## Architecture
 
@@ -42,9 +44,9 @@ lib/
 **Note:**
 - **State management:** Riverpod
 - **Navigation:** GoRouter
-- **Domain objects:** Uses `bdk_dart` types directly
-- **Secure storage:** `flutter_secure_storage` for mnemonics and descriptors
-- **BDK threading:** `Isolate.run()` for heavy sync operations
+- **Domain objects:** Uses app-local scaffold models with room to grow into fuller `bdk_dart` integrations
+- **Secure storage:** Planned for mnemonic and descriptor handling as wallet flows land
+- **Heavy sync work:** Planned to move off the UI isolate when real sync is added
 
 ## Getting Started
 

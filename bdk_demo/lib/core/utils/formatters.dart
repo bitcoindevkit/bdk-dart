@@ -32,8 +32,8 @@ abstract final class Formatters {
     return '$month ${dt.day} ${dt.year} $hour:$minute';
   }
 
-  static String abbreviateTxid(String txid) => txid.length > 16
-      ? '${txid.substring(0, 8)}...${txid.substring(txid.length - 8)}'
+  static String abbreviateTxid(String txid) => txid.length > 10
+      ? '${txid.substring(0, 6)}...${txid.substring(txid.length - 4)}'
       : txid;
 }
 

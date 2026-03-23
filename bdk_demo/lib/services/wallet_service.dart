@@ -1,20 +1,55 @@
 import 'package:bdk_dart/bdk.dart';
 import 'package:uuid/uuid.dart';
 import 'package:bdk_demo/core/constants/app_constants.dart';
+import 'package:bdk_demo/models/tx_details.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_network_mapper.dart';
 
 typedef WalletDisposer = void Function(Wallet wallet);
 
+class DemoWalletInfo {
+  final String title;
+  final WalletNetwork network;
+  final String descriptor;
+  final String descriptorLabel;
+
+  const DemoWalletInfo({
+    required this.title,
+    required this.network,
+    required this.descriptor,
+    this.descriptorLabel = 'External descriptor',
+  });
+}
+
 class WalletService {
-  final StorageService _storage;
-  final Uuid _uuid;
+  final StorageService? _storage;
+  final Uuid? _uuid;
   final WalletDisposer _walletDisposer;
 
+  static const _placeholderDescriptor =
+      'wpkh([demo/84h/1h/0h]tpubReferenceScaffold/0/*)#scafld00';
+  static const _placeholderTransactions = <TxDetails>[
+    TxDetails(
+      txid: '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd',
+      sent: 0,
+      received: 42000,
+      balanceDelta: 42000,
+      pending: false,
+      blockHeight: 120,
+    ),
+    TxDetails(
+      txid: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+      sent: 1600,
+      received: 0,
+      balanceDelta: -1600,
+      pending: true,
+    ),
+  ];
+
   WalletService({
-    required StorageService storage,
-    required Uuid uuid,
+    StorageService? storage,
+    Uuid? uuid,
     WalletDisposer? walletDisposer,
   }) : _storage = storage,
        _uuid = uuid,
@@ -22,17 +57,35 @@ class WalletService {
 
   static void _defaultDisposer(Wallet wallet) => wallet.dispose();
 
+  StorageService get _requiredStorage {
+    final storage = _storage;
+    if (storage == null) {
+      throw StateError('WalletService requires StorageService for this action.');
+    }
+    return storage;
+  }
+
+  Uuid get _requiredUuid {
+    final uuid = _uuid;
+    if (uuid == null) {
+      throw StateError('WalletService requires Uuid for this action.');
+    }
+    return uuid;
+  }
+
   Future<(WalletRecord, Wallet)> createWallet(
     String name,
     WalletNetwork walletNetwork,
     ScriptType scriptType,
   ) async {
+    final storage = _requiredStorage;
+    final uuid = _requiredUuid;
     final trimmedName = name.trim();
     if (trimmedName.isEmpty) {
       throw ArgumentError('Wallet name must not be empty.');
     }
 
-    final existing = _storage.getWalletRecords();
+    final existing = storage.getWalletRecords();
     final duplicate = existing.any(
       (r) => r.name.toLowerCase() == trimmedName.toLowerCase(),
     );
@@ -72,7 +125,7 @@ class WalletService {
     );
 
     final record = WalletRecord(
-      id: _uuid.v4(),
+      id: uuid.v4(),
       name: trimmedName,
       network: walletNetwork,
       scriptType: scriptType,
@@ -85,7 +138,7 @@ class WalletService {
     );
 
     try {
-      await _storage.addWalletRecord(record, secrets);
+      await storage.addWalletRecord(record, secrets);
     } catch (_) {
       _walletDisposer(wallet);
       rethrow;
@@ -95,7 +148,8 @@ class WalletService {
   }
 
   Future<Wallet> loadWalletFromRecord(WalletRecord record) async {
-    final secrets = await _storage.getSecrets(record.id);
+    final storage = _requiredStorage;
+    final secrets = await storage.getSecrets(record.id);
     if (secrets == null) {
       throw StateError(
         'No secrets found for wallet "${record.name}" (${record.id}). '
@@ -123,6 +177,24 @@ class WalletService {
       lookahead: AppConstants.walletLookahead,
     );
   }
+
+  Future<DemoWalletInfo> loadReferenceWallet() async {
+    await Future<void>.delayed(const Duration(milliseconds: 150));
+
+    return const DemoWalletInfo(
+      title: 'Reference Wallet Scaffold',
+      network: WalletNetwork.testnet,
+      descriptor: _placeholderDescriptor,
+      descriptorLabel: 'Placeholder descriptor',
+    );
+  }
+
+  Future<List<TxDetails>> loadTransactions() async {
+    await Future<void>.delayed(const Duration(milliseconds: 150));
+    return _placeholderTransactions;
+  }
+
+  void dispose() {}
 
   Descriptor _deriveDescriptor(
     DescriptorSecretKey secretKey,
