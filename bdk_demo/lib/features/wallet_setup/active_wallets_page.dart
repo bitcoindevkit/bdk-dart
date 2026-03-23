@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:bdk_demo/core/theme/app_theme.dart';
 import 'package:bdk_demo/core/utils/formatters.dart';
@@ -93,6 +94,13 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
   String _descriptorPreview(String descriptor) {
     if (descriptor.length <= 48) return descriptor;
     return '${descriptor.substring(0, 24)}...${descriptor.substring(descriptor.length - 18)}';
+  }
+
+  void _openTransactionDetail(TxDetails transaction) {
+    context.pushNamed(
+      'transactionDetail',
+      pathParameters: {'txid': transaction.txid},
+    );
   }
 
   @override
@@ -289,7 +297,11 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
                         index < _transactions.length;
                         index++
                       ) ...[
-                        _TransactionRow(transaction: _transactions[index]),
+                        _TransactionRow(
+                          transaction: _transactions[index],
+                          onTap: () =>
+                              _openTransactionDetail(_transactions[index]),
+                        ),
                         if (index < _transactions.length - 1)
                           const SizedBox(height: 12),
                       ],
@@ -464,8 +476,9 @@ class _DetailRow extends StatelessWidget {
 
 class _TransactionRow extends StatelessWidget {
   final TxDetails transaction;
+  final VoidCallback onTap;
 
-  const _TransactionRow({required this.transaction});
+  const _TransactionRow({required this.transaction, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -485,46 +498,54 @@ class _TransactionRow extends StatelessWidget {
         ? 'Confirmed'
         : 'Block ${transaction.blockHeight}';
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+        onTap: onTap,
+        child: Ink(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: theme.colorScheme.outlineVariant),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  amountLabel,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: accentColor,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      amountLabel,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: accentColor,
+                      ),
+                    ),
                   ),
+                  const SizedBox(width: 12),
+                  _StatusChip(status: transaction.statusLabel),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                transaction.shortTxid,
+                style: AppTheme.monoStyle.copyWith(
+                  fontSize: 13,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-              _StatusChip(status: transaction.statusLabel),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withAlpha(170),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            transaction.shortTxid,
-            style: AppTheme.monoStyle.copyWith(
-              fontSize: 13,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withAlpha(170),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

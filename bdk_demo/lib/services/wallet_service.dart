@@ -29,7 +29,7 @@ class WalletService {
 
   static const _placeholderDescriptor =
       'wpkh([demo/84h/1h/0h]tpubReferenceScaffold/0/*)#scafld00';
-  static const _placeholderTransactions = <TxDetails>[
+  static final _placeholderTransactions = <TxDetails>[
     TxDetails(
       txid: '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd',
       sent: 0,
@@ -37,6 +37,7 @@ class WalletService {
       balanceDelta: 42000,
       pending: false,
       blockHeight: 120,
+      confirmationTime: DateTime(2024, 1, 2, 3, 4),
     ),
     TxDetails(
       txid: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
@@ -192,6 +193,16 @@ class WalletService {
   Future<List<TxDetails>> loadTransactions() async {
     await Future<void>.delayed(const Duration(milliseconds: 150));
     return _placeholderTransactions;
+  }
+
+  Future<TxDetails?> loadTransactionByTxid(String txid) async {
+    final transactions = await loadTransactions();
+
+    for (final transaction in transactions) {
+      if (transaction.txid == txid) return transaction;
+    }
+
+    return null;
   }
 
   void dispose() {}

@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
 import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
+import 'package:bdk_demo/features/wallet_setup/transaction_detail_page.dart';
 import 'package:bdk_demo/features/wallet_setup/wallet_choice_page.dart';
 
 abstract final class AppRoutes {
@@ -72,7 +73,7 @@ GoRouter createRouter() => GoRouter(
       name: 'transactionDetail',
       builder: (context, state) {
         final txid = state.pathParameters['txid'] ?? '';
-        return PlaceholderPage(title: 'Transaction $txid');
+        return TransactionDetailPage(txid: txid);
       },
     ),
 
