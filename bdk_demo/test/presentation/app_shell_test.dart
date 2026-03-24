@@ -190,6 +190,61 @@ void main() {
     },
   );
 
+  testWidgets('Transaction detail page refreshes when txid changes', (
+    tester,
+  ) async {
+    final fakeWalletService = FakeWalletService(
+      walletInfo: _testWalletInfo,
+      transactions: _placeholderTransactions,
+    );
+
+    Future<void> pumpDetail(String txid) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            walletServiceProvider.overrideWithValue(fakeWalletService),
+          ],
+          child: MaterialApp(
+            home: TransactionDetailPage(
+              key: const ValueKey('detail-page'),
+              txid: txid,
+            ),
+          ),
+        ),
+      );
+    }
+
+    await pumpDetail(_placeholderTransactions.first.txid);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('January 2 2024 03:04'), findsOneWidget);
+
+    await pumpDetail(_placeholderTransactions.last.txid);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('-1600 sat'), findsNWidgets(2));
+    expect(find.text('pending'), findsNWidgets(2));
+    expect(
+      find.text(
+        '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd',
+      ),
+      findsNothing,
+    );
+    expect(find.text('January 2 2024 03:04'), findsNothing);
+  });
+
   testWidgets('Transaction detail page handles a missing tx gracefully', (
     tester,
   ) async {

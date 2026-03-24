@@ -19,14 +19,27 @@ class TransactionDetailPage extends ConsumerStatefulWidget {
 }
 
 class _TransactionDetailPageState extends ConsumerState<TransactionDetailPage> {
-  late final Future<TxDetails?> _transactionFuture;
+  late Future<TxDetails?> _transactionFuture;
+
+  void _loadTransactionFuture() {
+    _transactionFuture = ref
+        .read(walletServiceProvider)
+        .loadTransactionByTxid(widget.txid);
+  }
 
   @override
   void initState() {
     super.initState();
-    _transactionFuture = ref
-        .read(walletServiceProvider)
-        .loadTransactionByTxid(widget.txid);
+    _loadTransactionFuture();
+  }
+
+  @override
+  void didUpdateWidget(covariant TransactionDetailPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.txid != widget.txid) {
+      _loadTransactionFuture();
+    }
   }
 
   String _formatAmount(TxDetails transaction) {
