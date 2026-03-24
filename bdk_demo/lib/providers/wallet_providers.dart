@@ -1,9 +1,14 @@
 import 'package:bdk_demo/models/wallet_record.dart';
+import 'package:bdk_demo/services/wallet_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdk_dart/bdk.dart';
+import 'package:uuid/uuid.dart';
 import 'settings_providers.dart';
 
-typedef WalletDisposer = void Function(Wallet wallet);
+final walletServiceProvider = Provider<WalletService>((ref) {
+  final storage = ref.read(storageServiceProvider);
+  return WalletService(storage: storage, uuid: const Uuid());
+});
 
 final walletDisposerProvider = Provider<WalletDisposer>(
   (ref) =>
