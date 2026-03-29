@@ -245,4 +245,3 @@ class _FailingStorageService extends StorageService {
     throw StateError('Forced persistence failure for test.');
   }
 }
-
