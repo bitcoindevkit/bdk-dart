@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
@@ -5,6 +6,7 @@ import 'package:bdk_demo/providers/settings_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_service.dart';
+import 'package:bdk_dart/bdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -198,5 +200,83 @@ void main() {
       expect(find.text('Home'), findsNothing);
       expect(find.byType(ActiveWalletsPage), findsOneWidget);
     });
+
+    testWidgets(
+      'disposes loaded wallet if page unmounts before await returns',
+      (tester) async {
+        storageService = await initStorage();
+
+        const record = WalletRecord(
+          id: 'pending-load-id',
+          name: 'Pending Load Wallet',
+          network: WalletNetwork.signet,
+          scriptType: ScriptType.p2tr,
+        );
+
+        await storageService.addWalletRecord(
+          record,
+          const WalletSecrets(
+            descriptor: 'dummy-desc',
+            changeDescriptor: 'dummy-change',
+          ),
+        );
+
+        final realWalletService = WalletService(
+          storage: storageService,
+          uuid: const Uuid(),
+        );
+        final (_, wallet) = await realWalletService.createWallet(
+          'Load Candidate',
+          WalletNetwork.signet,
+          ScriptType.p2tr,
+        );
+
+        final completer = Completer<Wallet>();
+        final delayedService = _DelayedLoadWalletService(
+          storage: storageService,
+          completer: completer,
+        );
+
+        var disposeCalls = 0;
+        final container = ProviderContainer(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            walletServiceProvider.overrideWithValue(delayedService),
+            walletDisposerProvider.overrideWithValue((wallet) {
+              disposeCalls += 1;
+              wallet.dispose();
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await pumpActiveWalletsPage(tester, container);
+
+        await tester.tap(find.text('Pending Load Wallet'));
+        await tester.pump();
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+
+        completer.complete(wallet);
+        await tester.pumpAndSettle();
+
+        expect(disposeCalls, 1);
+        expect(container.read(activeWalletProvider), isNull);
+        expect(container.read(activeWalletRecordProvider), isNull);
+      },
+    );
   });
+}
+
+class _DelayedLoadWalletService extends WalletService {
+  _DelayedLoadWalletService({required super.storage, required this.completer})
+    : super(uuid: const Uuid());
+
+  final Completer<Wallet> completer;
+
+  @override
+  Future<Wallet> loadWalletFromRecord(WalletRecord record) {
+    return completer.future;
+  }
 }

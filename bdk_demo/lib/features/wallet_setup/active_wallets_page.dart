@@ -20,13 +20,17 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
     if (_loadingWalletId != null) return;
 
     setState(() => _loadingWalletId = record.id);
+    final walletDisposer = ref.read(walletDisposerProvider);
 
     try {
       final wallet = await ref
           .read(walletServiceProvider)
           .loadWalletFromRecord(record);
 
-      if (!mounted) return;
+      if (!mounted) {
+        walletDisposer(wallet);
+        return;
+      }
 
       ref.read(activeWalletProvider.notifier).set(wallet);
       ref.read(activeWalletRecordProvider.notifier).set(record);

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
@@ -164,6 +165,58 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets(
+      'disposes created wallet if page unmounts before await returns',
+      (tester) async {
+        final storage = await initStorage();
+        final walletService = WalletService(
+          storage: storage,
+          uuid: const Uuid(),
+        );
+        final (record, wallet) = await walletService.createWallet(
+          'Pending Wallet',
+          WalletNetwork.signet,
+          ScriptType.p2tr,
+        );
+
+        final completer = Completer<(WalletRecord, Wallet)>();
+        final delayedService = _DelayedCreateWalletService(
+          storage: storage,
+          completer: completer,
+        );
+
+        var disposeCalls = 0;
+        final container = ProviderContainer(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storage),
+            walletServiceProvider.overrideWithValue(delayedService),
+            walletDisposerProvider.overrideWithValue((wallet) {
+              disposeCalls += 1;
+              wallet.dispose();
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await pumpCreateWalletPage(tester, container);
+
+        await tester.enterText(find.byType(TextField), 'Will Unmount');
+        await tester.pump();
+        await tester.tap(find.widgetWithText(FilledButton, 'Create Wallet'));
+        await tester.pump();
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+
+        completer.complete((record, wallet));
+        await tester.pumpAndSettle();
+
+        expect(disposeCalls, 1);
+        expect(container.read(activeWalletProvider), isNull);
+        expect(container.read(activeWalletRecordProvider), isNull);
+      },
+    );
   });
 }
 
@@ -194,5 +247,21 @@ class _FailingWalletService extends WalletService {
     ScriptType scriptType,
   ) async {
     throw Exception('forced failure');
+  }
+}
+
+class _DelayedCreateWalletService extends WalletService {
+  _DelayedCreateWalletService({required super.storage, required this.completer})
+    : super(uuid: const Uuid());
+
+  final Completer<(WalletRecord, Wallet)> completer;
+
+  @override
+  Future<(WalletRecord, Wallet)> createWallet(
+    String name,
+    WalletNetwork walletNetwork,
+    ScriptType scriptType,
+  ) {
+    return completer.future;
   }
 }

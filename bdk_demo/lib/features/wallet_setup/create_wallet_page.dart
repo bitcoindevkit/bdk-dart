@@ -44,13 +44,17 @@ class _CreateWalletPageState extends ConsumerState<CreateWalletPage> {
     }
 
     setState(() => _isCreating = true);
+    final walletDisposer = ref.read(walletDisposerProvider);
 
     try {
       final (record, wallet) = await ref
           .read(walletServiceProvider)
           .createWallet(trimmedName, _selectedNetwork, _selectedScriptType);
 
-      if (!mounted) return;
+      if (!mounted) {
+        walletDisposer(wallet);
+        return;
+      }
 
       ref.read(activeWalletProvider.notifier).set(wallet);
       ref.read(activeWalletRecordProvider.notifier).set(record);
