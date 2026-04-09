@@ -63,7 +63,7 @@ If you have the Rust toolchain installed, the native library will be automatical
 As a user of the package, you don't need to worry about building the native library or bindings yourself.
 Only if you want to contribute to the bindings or modify the native code yourself, you can follow the instructions in [development](#development) below.
 The first build can take several minutes depending on your machine and network (subsequent builds are faster).
-We pin git dependencies to immutable refs for reproducibility. `bdk-ffi` tracks the upstream release tag, while `uniffi-dart` remains pinned to a commit until tagged releases are available upstream.
+We pin git dependencies to immutable refs for reproducibility. `bdk-ffi` and `uniffi-dart` both track upstream release tags.
 
 ## Development
 
