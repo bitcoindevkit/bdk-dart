@@ -61,7 +61,9 @@ class WalletService {
   StorageService get _requiredStorage {
     final storage = _storage;
     if (storage == null) {
-      throw StateError('WalletService requires StorageService for this action.');
+      throw StateError(
+        'WalletService requires StorageService for this action.',
+      );
     }
     return storage;
   }
