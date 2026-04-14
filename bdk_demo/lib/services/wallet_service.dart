@@ -1,4 +1,4 @@
-import 'package:bdk_dart/bdk.dart';
+import 'package:bdk_dart/bdk.dart' hide TxDetails;
 import 'package:uuid/uuid.dart';
 import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/models/tx_details.dart';
