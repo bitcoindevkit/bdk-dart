@@ -1,3 +1,5 @@
+import 'package:bdk_demo/core/utils/formatters.dart';
+
 class TxDetails {
   final String txid;
   final int sent;
@@ -23,9 +25,7 @@ class TxDetails {
 
   int get netAmount => balanceDelta ?? (received - sent);
 
-  String get shortTxid => txid.length > 10
-      ? '${txid.substring(0, 6)}...${txid.substring(txid.length - 4)}'
-      : txid;
+  String get shortTxid => Formatters.abbreviateTxid(txid);
 
   String get statusLabel => pending ? 'pending' : 'confirmed';
 }

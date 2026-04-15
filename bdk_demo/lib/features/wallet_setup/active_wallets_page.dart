@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:bdk_demo/core/theme/app_theme.dart';
 import 'package:bdk_demo/core/utils/formatters.dart';
 import 'package:bdk_demo/features/shared/widgets/secondary_app_bar.dart';
+import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
 import 'package:bdk_demo/models/currency_unit.dart';
 import 'package:bdk_demo/models/tx_details.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
@@ -62,8 +63,6 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
       });
       return;
     }
-
-    await Future<void>.delayed(Duration.zero);
 
     try {
       final transactions = await walletService.loadTransactions();
@@ -192,16 +191,18 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
 
   Widget _buildWalletSection(ThemeData theme) {
     return switch (_walletState) {
-      _LoadState.idle => _InfoCard(
+      _LoadState.idle => WalletStateCard(
         icon: Icons.info_outline,
         title: 'Wallet not loaded yet',
         message: _statusMessage,
       ),
-      _LoadState.loading => const _LoadingCard(
+      _LoadState.loading => const WalletStateCard(
+        icon: Icons.hourglass_bottom,
         title: 'Loading wallet',
         message: 'Preparing placeholder wallet details...',
+        showSpinner: true,
       ),
-      _LoadState.error => _InfoCard(
+      _LoadState.error => WalletStateCard(
         icon: Icons.error_outline,
         title: 'Wallet load failed',
         message: _walletError ?? _statusMessage,
@@ -213,20 +214,20 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _DetailRow(label: 'Wallet', value: _walletInfo!.title),
+              WalletDetailRow(label: 'Wallet', value: _walletInfo!.title),
               const SizedBox(height: 12),
-              _DetailRow(
+              WalletDetailRow(
                 label: 'Network',
                 value: _walletInfo!.network.displayName,
               ),
               const SizedBox(height: 12),
-              _DetailRow(
+              WalletDetailRow(
                 label: _walletInfo!.descriptorLabel,
                 value: _descriptorPreview(_walletInfo!.descriptor),
                 monospace: true,
               ),
               const SizedBox(height: 12),
-              _DetailRow(label: 'Status', value: _statusMessage),
+              WalletDetailRow(label: 'Status', value: _statusMessage),
             ],
           ),
         ),
@@ -236,7 +237,7 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
 
   Widget _buildTransactionsSection(ThemeData theme) {
     if (_walletState == _LoadState.idle) {
-      return const _InfoCard(
+      return const WalletStateCard(
         icon: Icons.receipt_long_outlined,
         title: 'Transactions will appear here',
         message:
@@ -245,14 +246,16 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
     }
 
     if (_walletState == _LoadState.loading) {
-      return const _LoadingCard(
+      return const WalletStateCard(
+        icon: Icons.hourglass_bottom,
         title: 'Waiting for wallet',
         message: 'Transaction UI becomes available after the scaffold loads.',
+        showSpinner: true,
       );
     }
 
     if (_walletState == _LoadState.error) {
-      return const _InfoCard(
+      return const WalletStateCard(
         icon: Icons.receipt_long_outlined,
         title: 'Transactions unavailable',
         message:
@@ -261,17 +264,19 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
     }
 
     return switch (_transactionState) {
-      _LoadState.idle => const _InfoCard(
+      _LoadState.idle => const WalletStateCard(
         icon: Icons.receipt_long_outlined,
         title: 'Transactions not loaded yet',
         message:
             'Placeholder transaction rows will appear after the scaffold finishes loading.',
       ),
-      _LoadState.loading => const _LoadingCard(
+      _LoadState.loading => const WalletStateCard(
+        icon: Icons.hourglass_bottom,
         title: 'Loading placeholder transactions...',
         message: 'Preparing scaffolded transaction rows.',
+        showSpinner: true,
       ),
-      _LoadState.error => _InfoCard(
+      _LoadState.error => WalletStateCard(
         icon: Icons.error_outline,
         title: 'Placeholder transactions failed',
         message:
@@ -281,7 +286,7 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
       ),
       _LoadState.success =>
         _transactions.isEmpty
-            ? const _InfoCard(
+            ? const WalletStateCard(
                 icon: Icons.history_toggle_off,
                 title: 'No transactions yet',
                 message:
@@ -344,136 +349,6 @@ class _SectionHeading extends StatelessWidget {
   }
 }
 
-class _InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String message;
-  final Color? accentColor;
-
-  const _InfoCard({
-    required this.icon,
-    required this.title,
-    required this.message,
-    this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = accentColor ?? theme.colorScheme.primary;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(message, style: theme.textTheme.bodyMedium),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LoadingCard extends StatelessWidget {
-  final String title;
-  final String message;
-
-  const _LoadingCard({required this.title, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(message, style: theme.textTheme.bodyMedium),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DetailRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool monospace;
-
-  const _DetailRow({
-    required this.label,
-    required this.value,
-    this.monospace = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.labelLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withAlpha(170),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: monospace
-              ? AppTheme.monoStyle.copyWith(
-                  fontSize: 13,
-                  color: theme.colorScheme.onSurface,
-                )
-              : theme.textTheme.bodyLarge,
-        ),
-      ],
-    );
-  }
-}
-
 class _TransactionRow extends StatelessWidget {
   final TxDetails transaction;
   final VoidCallback onTap;
@@ -525,7 +400,7 @@ class _TransactionRow extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  _StatusChip(status: transaction.statusLabel),
+                  WalletStatusChip(status: transaction.statusLabel),
                 ],
               ),
               const SizedBox(height: 8),
@@ -545,37 +420,6 @@ class _TransactionRow extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  final String status;
-
-  const _StatusChip({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isPending = status == 'pending';
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: isPending
-            ? theme.colorScheme.secondaryContainer
-            : theme.colorScheme.primaryContainer,
-      ),
-      child: Text(
-        status,
-        style: theme.textTheme.labelMedium?.copyWith(
-          color: isPending
-              ? theme.colorScheme.onSecondaryContainer
-              : theme.colorScheme.onPrimaryContainer,
-          fontWeight: FontWeight.w600,
         ),
       ),
     );
