@@ -1,53 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:bdk_demo/core/theme/app_theme.dart';
 import 'package:bdk_demo/core/utils/formatters.dart';
 import 'package:bdk_demo/features/shared/widgets/secondary_app_bar.dart';
 import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
+import 'package:bdk_demo/features/transactions/models/demo_tx_details.dart';
+import 'package:bdk_demo/features/transactions/transactions_controller.dart';
 import 'package:bdk_demo/models/currency_unit.dart';
-import 'package:bdk_demo/models/tx_details.dart';
-import 'package:bdk_demo/providers/wallet_providers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TransactionDetailPage extends ConsumerStatefulWidget {
+class TransactionDetailPage extends ConsumerWidget {
   final String txid;
 
   const TransactionDetailPage({super.key, required this.txid});
 
-  @override
-  ConsumerState<TransactionDetailPage> createState() =>
-      _TransactionDetailPageState();
-}
-
-class _TransactionDetailPageState extends ConsumerState<TransactionDetailPage> {
-  late Future<TxDetails?> _transactionFuture;
-
-  void _loadTransactionFuture() {
-    _transactionFuture = ref
-        .read(walletServiceProvider)
-        .loadTransactionByTxid(widget.txid);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTransactionFuture();
-  }
-
-  @override
-  void didUpdateWidget(covariant TransactionDetailPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.txid != widget.txid) {
-      _loadTransactionFuture();
-    }
-  }
-
-  String _formatAmount(TxDetails transaction) {
+  String _formatAmount(DemoTxDetails transaction) {
     final amount = transaction.netAmount;
     final prefix = amount >= 0 ? '+' : '-';
     final value = Formatters.formatBalance(amount.abs(), CurrencyUnit.satoshi);
-
     return '$prefix$value';
   }
 
@@ -57,43 +26,35 @@ class _TransactionDetailPageState extends ConsumerState<TransactionDetailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final transactionAsync = ref.watch(transactionDetailsProvider(txid));
 
     return Scaffold(
       appBar: const SecondaryAppBar(title: 'Transaction Detail'),
       body: SafeArea(
-        child: FutureBuilder<TxDetails?>(
-          future: _transactionFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const WalletStateCard(
-                icon: Icons.hourglass_bottom,
-                title: 'Loading transaction',
-                message: 'Preparing placeholder transaction details...',
-                showSpinner: true,
-                centered: true,
-              );
-            }
-
-            if (snapshot.hasError) {
-              return WalletStateCard(
-                icon: Icons.error_outline,
-                title: 'Transaction unavailable',
-                message:
-                    'The scaffold could not load placeholder transaction details.',
-                accentColor: theme.colorScheme.error,
-                centered: true,
-              );
-            }
-
-            final transaction = snapshot.data;
+        child: transactionAsync.when(
+          loading: () => const WalletStateCard(
+            icon: Icons.hourglass_bottom,
+            title: 'Loading transaction',
+            message: 'Preparing placeholder transaction details...',
+            showSpinner: true,
+            centered: true,
+          ),
+          error: (_, __) => WalletStateCard(
+            icon: Icons.error_outline,
+            title: 'Transaction unavailable',
+            message: 'The demo could not load placeholder transaction details.',
+            accentColor: theme.colorScheme.error,
+            centered: true,
+          ),
+          data: (transaction) {
             if (transaction == null) {
               return WalletStateCard(
                 icon: Icons.search_off,
                 title: 'Transaction not found',
                 message:
-                    'No placeholder transaction was found for this txid.\n\n${widget.txid}',
+                    'No placeholder transaction was found for this txid.\n\n$txid',
                 centered: true,
               );
             }
@@ -122,7 +83,7 @@ class _TransactionDetailPageState extends ConsumerState<TransactionDetailPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Scaffolded placeholder detail view for the selected transaction.',
+                          'Standalone transaction detail view for the selected placeholder transaction.',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withAlpha(170),
                           ),

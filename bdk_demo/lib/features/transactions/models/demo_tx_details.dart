@@ -1,29 +1,23 @@
 import 'package:bdk_demo/core/utils/formatters.dart';
 
-class TxDetails {
+class DemoTxDetails {
   final String txid;
   final int sent;
   final int received;
-  final int fee;
-  final double? feeRate;
-  final int? balanceDelta;
   final bool pending;
   final int? blockHeight;
   final DateTime? confirmationTime;
 
-  const TxDetails({
+  const DemoTxDetails({
     required this.txid,
     required this.sent,
     required this.received,
-    this.fee = 0,
-    this.feeRate,
-    this.balanceDelta,
     this.pending = true,
     this.blockHeight,
     this.confirmationTime,
   });
 
-  int get netAmount => balanceDelta ?? (received - sent);
+  int get netAmount => received - sent;
 
   String get shortTxid => Formatters.abbreviateTxid(txid);
 

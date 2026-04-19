@@ -1,148 +1,283 @@
+import 'dart:async';
+
+import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
-import 'package:bdk_demo/models/tx_details.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
+import 'package:bdk_demo/providers/settings_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
+import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_service.dart';
+import 'package:bdk_dart/bdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-const _testWalletInfo = DemoWalletInfo(
-  title: 'Reference Wallet Scaffold',
-  network: WalletNetwork.testnet,
-  descriptor: 'wpkh([demo/84h/1h/0h]tpubReferenceScaffold/0/*)#demo1234',
-  descriptorLabel: 'Placeholder descriptor',
-);
-
-final _placeholderTransactions = <TxDetails>[
-  TxDetails(
-    txid: '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd',
-    sent: 0,
-    received: 42000,
-    balanceDelta: 42000,
-    pending: false,
-    blockHeight: 120,
-    confirmationTime: DateTime(2024, 1, 2, 3, 4),
-  ),
-  TxDetails(
-    txid: 'abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-    sent: 1600,
-    received: 0,
-    balanceDelta: -1600,
-    pending: true,
-  ),
-];
-
-class _FakeWalletService extends WalletService {
-  final DemoWalletInfo walletInfo;
-  final List<TxDetails> transactions;
-
-  _FakeWalletService({required this.walletInfo, required this.transactions});
-
-  @override
-  Future<DemoWalletInfo> loadReferenceWallet() async => walletInfo;
-
-  @override
-  Future<List<TxDetails>> loadTransactions() async => transactions;
-}
-
-Future<void> _pumpPage(
-  WidgetTester tester, {
-  required WalletService walletService,
-}) async {
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [walletServiceProvider.overrideWithValue(walletService)],
-      child: const MaterialApp(home: ActiveWalletsPage()),
-    ),
-  );
-  await tester.pumpAndSettle();
-}
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('shows scaffold intro before loading', (tester) async {
-    await _pumpPage(
-      tester,
-      walletService: _FakeWalletService(
-        walletInfo: _testWalletInfo,
-        transactions: _placeholderTransactions,
-      ),
+  late StorageService storageService;
+
+  Future<StorageService> initStorage() async {
+    SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    return StorageService(prefs: prefs);
+  }
+
+  GoRouter testRouter() {
+    return GoRouter(
+      initialLocation: AppRoutes.activeWallets,
+      routes: [
+        GoRoute(
+          path: AppRoutes.activeWallets,
+          builder: (context, state) => const ActiveWalletsPage(),
+        ),
+        GoRoute(
+          path: AppRoutes.createWallet,
+          builder: (context, state) =>
+              const Scaffold(body: Text('Create Wallet Page')),
+        ),
+        GoRoute(
+          path: AppRoutes.home,
+          builder: (context, state) => const Scaffold(body: Text('Home')),
+        ),
+      ],
     );
+  }
 
-    expect(find.text('Reference Wallet Scaffold'), findsNWidgets(2));
-    expect(find.text('Load Reference Scaffold'), findsOneWidget);
-    expect(find.text('Wallet not loaded yet'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.text('Transactions will appear here'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('Transactions will appear here'), findsOneWidget);
-  });
-
-  testWidgets('loads and renders placeholder transactions', (tester) async {
-    await _pumpPage(
-      tester,
-      walletService: _FakeWalletService(
-        walletInfo: _testWalletInfo,
-        transactions: _placeholderTransactions,
-      ),
-    );
-
-    await tester.tap(find.text('Load Reference Scaffold'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Wallet Snapshot'), findsOneWidget);
-    expect(find.text('Testnet 3'), findsOneWidget);
-    expect(find.text('Placeholder descriptor'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.text('confirmed'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('+42000 sat'), findsOneWidget);
-    expect(find.text('-1600 sat'), findsOneWidget);
-    expect(find.text('123456...abcd'), findsOneWidget);
-    expect(find.text('abcdef...7890'), findsOneWidget);
-    expect(find.text('confirmed'), findsOneWidget);
-    expect(find.text('pending'), findsOneWidget);
-  });
-
-  testWidgets('shows empty transaction state when no rows are returned', (
-    tester,
+  Future<void> pumpActiveWalletsPage(
+    WidgetTester tester,
+    ProviderContainer container,
   ) async {
-    await _pumpPage(
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp.router(routerConfig: testRouter()),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  group('ActiveWalletsPage empty state', () {
+    testWidgets('shows empty state and navigates to create wallet', (
       tester,
-      walletService: _FakeWalletService(
-        walletInfo: _testWalletInfo,
-        transactions: const [],
-      ),
-    );
+    ) async {
+      storageService = await initStorage();
+      final container = ProviderContainer(
+        overrides: [storageServiceProvider.overrideWithValue(storageService)],
+      );
+      addTearDown(container.dispose);
 
-    await tester.tap(find.text('Load Reference Scaffold'));
-    await tester.pumpAndSettle();
+      await pumpActiveWalletsPage(tester, container);
 
-    await tester.scrollUntilVisible(
-      find.text('No transactions yet'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
+      expect(find.text('No wallets yet'), findsOneWidget);
+      expect(find.text('Create a Wallet'), findsOneWidget);
 
-    expect(find.text('No transactions yet'), findsOneWidget);
-    expect(
-      find.text(
-        'The scaffold loaded successfully, but no placeholder transactions are configured yet.',
-      ),
-      findsOneWidget,
+      await tester.tap(find.text('Create a Wallet'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Create Wallet Page'), findsOneWidget);
+    });
+  });
+
+  group('ActiveWalletsPage with wallets', () {
+    testWidgets('renders wallet cards with name and chips', (tester) async {
+      storageService = await initStorage();
+
+      final container = ProviderContainer(
+        overrides: [storageServiceProvider.overrideWithValue(storageService)],
+      );
+      addTearDown(container.dispose);
+
+      await storageService.addWalletRecord(
+        WalletRecord(
+          id: 'w1',
+          name: 'Testnet Wallet',
+          network: WalletNetwork.testnet,
+          scriptType: ScriptType.p2wpkh,
+        ),
+        WalletSecrets(
+          descriptor: 'dummy-desc',
+          changeDescriptor: 'dummy-change',
+        ),
+      );
+      await storageService.addWalletRecord(
+        WalletRecord(
+          id: 'w2',
+          name: 'Signet Taproot',
+          network: WalletNetwork.signet,
+          scriptType: ScriptType.p2tr,
+        ),
+        WalletSecrets(
+          descriptor: 'dummy-desc-2',
+          changeDescriptor: 'dummy-change-2',
+        ),
+      );
+
+      await pumpActiveWalletsPage(tester, container);
+
+      expect(find.text('Testnet Wallet'), findsOneWidget);
+      expect(find.text('Testnet 3'), findsOneWidget);
+      expect(find.text('P2WPKH'), findsOneWidget);
+
+      expect(find.text('Signet Taproot'), findsOneWidget);
+      expect(find.text('Signet'), findsOneWidget);
+      expect(find.text('P2TR'), findsOneWidget);
+    });
+
+    testWidgets('successful load sets active providers and navigates home', (
+      tester,
+    ) async {
+      storageService = await initStorage();
+      final walletService = WalletService(
+        storage: storageService,
+        uuid: const Uuid(),
+      );
+
+      final (record, createdWallet) = await walletService.createWallet(
+        'Load Me',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      createdWallet.dispose();
+
+      final container = ProviderContainer(
+        overrides: [storageServiceProvider.overrideWithValue(storageService)],
+      );
+      addTearDown(container.dispose);
+
+      await pumpActiveWalletsPage(tester, container);
+
+      await tester.tap(find.text('Load Me'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Home'), findsOneWidget);
+      expect(container.read(activeWalletRecordProvider)?.id, record.id);
+
+      final activeWallet = container.read(activeWalletProvider);
+      expect(activeWallet, isNotNull);
+    });
+
+    testWidgets('missing secrets shows error and does not navigate', (
+      tester,
+    ) async {
+      storageService = await initStorage();
+
+      const record = WalletRecord(
+        id: 'missing-secrets-id',
+        name: 'Missing Secrets Wallet',
+        network: WalletNetwork.testnet,
+        scriptType: ScriptType.p2wpkh,
+      );
+
+      await storageService.addWalletRecord(
+        record,
+        const WalletSecrets(
+          descriptor: 'dummy-desc',
+          changeDescriptor: 'dummy-change',
+        ),
+      );
+
+      await const FlutterSecureStorage().delete(
+        key: 'wallet_secrets_${record.id}',
+      );
+      expect(await storageService.getSecrets(record.id), isNull);
+
+      final container = ProviderContainer(
+        overrides: [storageServiceProvider.overrideWithValue(storageService)],
+      );
+      addTearDown(container.dispose);
+
+      await pumpActiveWalletsPage(tester, container);
+
+      await tester.tap(find.text('Missing Secrets Wallet'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Secrets not found for this wallet'), findsOneWidget);
+      expect(find.text('Home'), findsNothing);
+      expect(find.byType(ActiveWalletsPage), findsOneWidget);
+    });
+
+    testWidgets(
+      'disposes loaded wallet if page unmounts before await returns',
+      (tester) async {
+        storageService = await initStorage();
+
+        const record = WalletRecord(
+          id: 'pending-load-id',
+          name: 'Pending Load Wallet',
+          network: WalletNetwork.signet,
+          scriptType: ScriptType.p2tr,
+        );
+
+        await storageService.addWalletRecord(
+          record,
+          const WalletSecrets(
+            descriptor: 'dummy-desc',
+            changeDescriptor: 'dummy-change',
+          ),
+        );
+
+        final realWalletService = WalletService(
+          storage: storageService,
+          uuid: const Uuid(),
+        );
+        final (_, wallet) = await realWalletService.createWallet(
+          'Load Candidate',
+          WalletNetwork.signet,
+          ScriptType.p2tr,
+        );
+
+        final completer = Completer<Wallet>();
+        final delayedService = _DelayedLoadWalletService(
+          storage: storageService,
+          completer: completer,
+        );
+
+        var disposeCalls = 0;
+        final container = ProviderContainer(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            walletServiceProvider.overrideWithValue(delayedService),
+            walletDisposerProvider.overrideWithValue((wallet) {
+              disposeCalls += 1;
+              wallet.dispose();
+            }),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await pumpActiveWalletsPage(tester, container);
+
+        await tester.tap(find.text('Pending Load Wallet'));
+        await tester.pump();
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+
+        completer.complete(wallet);
+        await tester.pumpAndSettle();
+
+        expect(disposeCalls, 1);
+        expect(container.read(activeWalletProvider), isNull);
+        expect(container.read(activeWalletRecordProvider), isNull);
+      },
     );
   });
+}
+
+class _DelayedLoadWalletService extends WalletService {
+  _DelayedLoadWalletService({required super.storage, required this.completer})
+    : super(uuid: const Uuid());
+
+  final Completer<Wallet> completer;
+
+  @override
+  Future<Wallet> loadWalletFromRecord(WalletRecord record) {
+    return completer.future;
+  }
 }

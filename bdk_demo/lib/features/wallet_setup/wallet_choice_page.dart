@@ -40,9 +40,16 @@ class WalletChoicePage extends StatelessWidget {
                 _ChoiceCard(
                   icon: Icons.account_balance_wallet,
                   title: 'Use an Active Wallet',
-                  subtitle:
-                      'Open the reference scaffold and inspect placeholder state',
+                  subtitle: 'Load a previously created wallet',
                   onTap: () => context.push(AppRoutes.activeWallets),
+                ),
+                const SizedBox(height: 16),
+                _ChoiceCard(
+                  icon: Icons.receipt_long_outlined,
+                  title: 'Preview Transactions',
+                  subtitle:
+                      'Browse the standalone transaction list and detail demo',
+                  onTap: () => context.push(AppRoutes.transactionHistory),
                 ),
                 const SizedBox(height: 16),
                 _ChoiceCard(
