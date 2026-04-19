@@ -45,6 +45,14 @@ class WalletChoicePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _ChoiceCard(
+                  icon: Icons.receipt_long_outlined,
+                  title: 'Preview Transactions',
+                  subtitle:
+                      'Browse the standalone transaction list and detail demo',
+                  onTap: () => context.push(AppRoutes.transactionHistory),
+                ),
+                const SizedBox(height: 16),
+                _ChoiceCard(
                   icon: Icons.add_circle_outline,
                   title: 'Create a New Wallet',
                   subtitle: 'Generate a new wallet with a fresh mnemonic',

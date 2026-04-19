@@ -1,19 +1,17 @@
-class TxDetails {
+import 'package:bdk_demo/core/utils/formatters.dart';
+
+class DemoTxDetails {
   final String txid;
   final int sent;
   final int received;
-  final int fee;
-  final double? feeRate;
   final bool pending;
   final int? blockHeight;
   final DateTime? confirmationTime;
 
-  const TxDetails({
+  const DemoTxDetails({
     required this.txid,
     required this.sent,
     required this.received,
-    this.fee = 0,
-    this.feeRate,
     this.pending = true,
     this.blockHeight,
     this.confirmationTime,
@@ -21,7 +19,7 @@ class TxDetails {
 
   int get netAmount => received - sent;
 
-  String get shortTxid => txid.length > 16
-      ? '${txid.substring(0, 8)}...${txid.substring(txid.length - 8)}'
-      : txid;
+  String get shortTxid => Formatters.abbreviateTxid(txid);
+
+  String get statusLabel => pending ? 'pending' : 'confirmed';
 }

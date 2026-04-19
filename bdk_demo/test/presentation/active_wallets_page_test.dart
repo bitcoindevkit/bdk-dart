@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
+
 import 'package:bdk_demo/core/router/app_router.dart';
+import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/settings_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
