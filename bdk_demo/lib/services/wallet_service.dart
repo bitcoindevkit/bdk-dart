@@ -1,6 +1,7 @@
 import 'package:bdk_dart/bdk.dart';
 import 'package:uuid/uuid.dart';
 import 'package:bdk_demo/core/constants/app_constants.dart';
+import 'package:bdk_demo/core/constants/bip39_wordlist.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_network_mapper.dart';
@@ -21,6 +22,36 @@ class WalletService {
        _walletDisposer = walletDisposer ?? _defaultDisposer;
 
   static void _defaultDisposer(Wallet wallet) => wallet.dispose();
+
+  String validateRecoveryPhrase(String phrase) {
+    final normalized = phrase.trim().toLowerCase().split(RegExp(r'\s+')).join(' ');
+    if (normalized.isEmpty) {
+      throw ArgumentError('Recovery phrase cannot be empty.');
+    }
+
+    final words = normalized.split(' ');
+    if (words.length != 12 && words.length != 24) {
+      throw ArgumentError(
+        'Recovery phrase must be 12 or 24 words (got ${words.length}).',
+      );
+    }
+
+    for (var i = 0; i < words.length; i++) {
+      if (!Bip39Wordlist.words.contains(words[i])) {
+        throw ArgumentError(
+          'Word ${i + 1} ("${words[i]}") is not a valid BIP-39 word.',
+        );
+      }
+    }
+
+    try {
+      Mnemonic.fromString(mnemonic: normalized);
+    } on Bip39Exception catch (error) {
+      throw ArgumentError(_bip39ErrorMessage(error));
+    }
+
+    return normalized;
+  }
 
   Future<(WalletRecord, Wallet)> createWallet(
     String name,
@@ -144,6 +175,18 @@ class WalletService {
       ScriptType.unknown => throw ArgumentError(
         'Unsupported script type: $scriptType',
       ),
+    };
+  }
+
+  String _bip39ErrorMessage(Bip39Exception error) {
+    return switch (error) {
+      BadWordCountBip39Exception(wordCount: final wordCount) =>
+        'Recovery phrase must be 12 or 24 words (got $wordCount).',
+      UnknownWordBip39Exception(index: final index) =>
+        'Recovery phrase contains an unknown word at position ${index + 1}.',
+      InvalidChecksumBip39Exception() =>
+        'Recovery phrase checksum is invalid. Please double-check the phrase.',
+      _ => 'Recovery phrase validation failed. Please verify the phrase and try again.',
     };
   }
 }
