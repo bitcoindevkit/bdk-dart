@@ -59,18 +59,7 @@ class WalletService {
     WalletNetwork walletNetwork,
     ScriptType scriptType,
   ) async {
-    final trimmedName = name.trim();
-    if (trimmedName.isEmpty) {
-      throw ArgumentError('Wallet name must not be empty.');
-    }
-
-    final existing = _storage.getWalletRecords();
-    final duplicate = existing.any(
-      (r) => r.name.toLowerCase() == trimmedName.toLowerCase(),
-    );
-    if (duplicate) {
-      throw StateError('A wallet named "$trimmedName" already exists.');
-    }
+    final trimmedName = _validateNewWalletName(name);
 
     final bdkNetwork = walletNetwork.toBdkNetwork();
 
@@ -94,36 +83,17 @@ class WalletService {
       scriptType,
     );
 
-    final persister = Persister.newInMemory();
-    final wallet = Wallet(
-      descriptor: descriptor,
-      changeDescriptor: changeDescriptor,
-      network: bdkNetwork,
-      persister: persister,
-      lookahead: AppConstants.walletLookahead,
-    );
-
-    final record = WalletRecord(
-      id: _uuid.v4(),
+    return _buildAndPersistWallet(
       name: trimmedName,
       network: walletNetwork,
       scriptType: scriptType,
-    );
-
-    final secrets = WalletSecrets(
-      descriptor: descriptor.toStringWithSecret(),
-      changeDescriptor: changeDescriptor.toStringWithSecret(),
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      persistedDescriptor: descriptor.toStringWithSecret(),
+      persistedChangeDescriptor: changeDescriptor.toStringWithSecret(),
+      bdkNetwork: bdkNetwork,
       recoveryPhrase: mnemonic.toString(),
     );
-
-    try {
-      await _storage.addWalletRecord(record, secrets);
-    } catch (_) {
-      _walletDisposer(wallet);
-      rethrow;
-    }
-
-    return (record, wallet);
   }
 
   Future<Wallet> loadWalletFromRecord(WalletRecord record) async {
@@ -177,6 +147,69 @@ class WalletService {
         'Unsupported script type: $scriptType',
       ),
     };
+  }
+
+  Future<(WalletRecord, Wallet)> _buildAndPersistWallet({
+    required String name,
+    required WalletNetwork network,
+    required ScriptType scriptType,
+    required Descriptor descriptor,
+    required Descriptor changeDescriptor,
+    required String persistedDescriptor,
+    required String persistedChangeDescriptor,
+    required Network bdkNetwork,
+    String recoveryPhrase = '',
+  }) async {
+    final trimmedName = _validateNewWalletName(name);
+
+    final persister = Persister.newInMemory();
+    final wallet = Wallet(
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      network: bdkNetwork,
+      persister: persister,
+      lookahead: AppConstants.walletLookahead,
+    );
+
+    final record = WalletRecord(
+      id: _uuid.v4(),
+      name: trimmedName,
+      network: network,
+      scriptType: scriptType,
+      fullScanCompleted: false,
+    );
+
+    final secrets = WalletSecrets(
+      descriptor: persistedDescriptor,
+      changeDescriptor: persistedChangeDescriptor,
+      recoveryPhrase: recoveryPhrase,
+    );
+
+    try {
+      await _storage.addWalletRecord(record, secrets);
+    } catch (_) {
+      _walletDisposer(wallet);
+      rethrow;
+    }
+
+    return (record, wallet);
+  }
+
+  String _validateNewWalletName(String name) {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
+      throw ArgumentError('Wallet name must not be empty.');
+    }
+
+    final existing = _storage.getWalletRecords();
+    final duplicate = existing.any(
+      (record) => record.name.toLowerCase() == trimmedName.toLowerCase(),
+    );
+    if (duplicate) {
+      throw StateError('A wallet named "$trimmedName" already exists.');
+    }
+
+    return trimmedName;
   }
 
   String _bip39ErrorMessage(Bip39Exception error) {
