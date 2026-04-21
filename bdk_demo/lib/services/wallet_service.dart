@@ -24,7 +24,11 @@ class WalletService {
   static void _defaultDisposer(Wallet wallet) => wallet.dispose();
 
   String validateRecoveryPhrase(String phrase) {
-    final normalized = phrase.trim().toLowerCase().split(RegExp(r'\s+')).join(' ');
+    final normalized = phrase
+        .trim()
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .join(' ');
     if (normalized.isEmpty) {
       throw ArgumentError('Recovery phrase cannot be empty.');
     }
@@ -219,7 +223,8 @@ class WalletService {
         'Recovery phrase contains an unknown word at position ${index + 1}.',
       InvalidChecksumBip39Exception() =>
         'Recovery phrase checksum is invalid. Please double-check the phrase.',
-      _ => 'Recovery phrase validation failed. Please verify the phrase and try again.',
+      _ =>
+        'Recovery phrase validation failed. Please verify the phrase and try again.',
     };
   }
 }
