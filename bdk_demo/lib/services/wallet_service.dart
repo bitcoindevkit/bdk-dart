@@ -100,6 +100,88 @@ class WalletService {
     );
   }
 
+  Future<(WalletRecord, Wallet)> recoverFromPhrase(
+    String name,
+    WalletNetwork walletNetwork,
+    ScriptType scriptType,
+    String phrase,
+  ) async {
+    if (scriptType == ScriptType.unknown) {
+      throw ArgumentError(
+        'Script type must be known for phrase recovery (got $scriptType).',
+      );
+    }
+
+    final normalized = validateRecoveryPhrase(phrase);
+    final bdkNetwork = walletNetwork.toBdkNetwork();
+    final mnemonic = Mnemonic.fromString(mnemonic: normalized);
+    final secretKey = DescriptorSecretKey(
+      network: bdkNetwork,
+      mnemonic: mnemonic,
+      password: null,
+    );
+
+    final descriptor = _deriveDescriptor(
+      secretKey,
+      KeychainKind.external_,
+      bdkNetwork,
+      scriptType,
+    );
+    final changeDescriptor = _deriveDescriptor(
+      secretKey,
+      KeychainKind.internal,
+      bdkNetwork,
+      scriptType,
+    );
+
+    return _buildAndPersistWallet(
+      name: name,
+      network: walletNetwork,
+      scriptType: scriptType,
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      persistedDescriptor: descriptor.toStringWithSecret(),
+      persistedChangeDescriptor: changeDescriptor.toStringWithSecret(),
+      bdkNetwork: bdkNetwork,
+      recoveryPhrase: normalized,
+    );
+  }
+
+  Future<(WalletRecord, Wallet)> recoverFromDescriptors(
+    String name,
+    WalletNetwork walletNetwork,
+    String descriptorStr,
+    String changeDescriptorStr,
+  ) async {
+    final trimmedExternal = descriptorStr.trim();
+    final trimmedChange = changeDescriptorStr.trim();
+    if (trimmedExternal.isEmpty || trimmedChange.isEmpty) {
+      throw ArgumentError('Descriptor strings must not be empty.');
+    }
+
+    final bdkNetwork = walletNetwork.toBdkNetwork();
+    final descriptor = Descriptor(
+      descriptor: trimmedExternal,
+      network: bdkNetwork,
+    );
+    final changeDescriptor = Descriptor(
+      descriptor: trimmedChange,
+      network: bdkNetwork,
+    );
+
+    return _buildAndPersistWallet(
+      name: name,
+      network: walletNetwork,
+      scriptType: ScriptType.unknown,
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      persistedDescriptor: trimmedExternal,
+      persistedChangeDescriptor: trimmedChange,
+      bdkNetwork: bdkNetwork,
+      recoveryPhrase: '',
+    );
+  }
+
   Future<Wallet> loadWalletFromRecord(WalletRecord record) async {
     final secrets = await _storage.getSecrets(record.id);
     if (secrets == null) {
