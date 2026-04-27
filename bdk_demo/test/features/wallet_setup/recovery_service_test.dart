@@ -200,75 +200,79 @@ void main() {
     });
 
     group('recoverFromDescriptors', () {
-      test('success path persists trimmed descriptors and unknown script type',
-          () async {
-        final (genRecord, genWallet) = await walletService.createWallet(
-          'Generator',
-          WalletNetwork.testnet,
-          ScriptType.p2wpkh,
-        );
-        genWallet.dispose();
+      test(
+        'success path persists trimmed descriptors and unknown script type',
+        () async {
+          final (genRecord, genWallet) = await walletService.createWallet(
+            'Generator',
+            WalletNetwork.testnet,
+            ScriptType.p2wpkh,
+          );
+          genWallet.dispose();
 
-        final generated = await storageService.getSecrets(genRecord.id);
-        expect(generated, isNotNull);
+          final generated = await storageService.getSecrets(genRecord.id);
+          expect(generated, isNotNull);
 
-        final external = '  ${generated!.descriptor}  ';
-        final change = '  ${generated.changeDescriptor}  ';
+          final external = '  ${generated!.descriptor}  ';
+          final change = '  ${generated.changeDescriptor}  ';
 
-        final (record, wallet) = await walletService.recoverFromDescriptors(
-          'Descriptor Recover',
-          WalletNetwork.testnet,
-          external,
-          change,
-        );
+          final (record, wallet) = await walletService.recoverFromDescriptors(
+            'Descriptor Recover',
+            WalletNetwork.testnet,
+            external,
+            change,
+          );
 
-        expect(record.name, 'Descriptor Recover');
-        expect(record.scriptType, ScriptType.unknown);
-        expect(record.fullScanCompleted, isFalse);
+          expect(record.name, 'Descriptor Recover');
+          expect(record.scriptType, ScriptType.unknown);
+          expect(record.fullScanCompleted, isFalse);
 
-        final secrets = await storageService.getSecrets(record.id);
-        expect(secrets, isNotNull);
-        expect(secrets!.recoveryPhrase, isEmpty);
-        expect(secrets.descriptor, generated.descriptor);
-        expect(secrets.changeDescriptor, generated.changeDescriptor);
+          final secrets = await storageService.getSecrets(record.id);
+          expect(secrets, isNotNull);
+          expect(secrets!.recoveryPhrase, isEmpty);
+          expect(secrets.descriptor, generated.descriptor);
+          expect(secrets.changeDescriptor, generated.changeDescriptor);
 
-        wallet.dispose();
-      });
+          wallet.dispose();
+        },
+      );
 
-      test('watch-only descriptors round-trip through recovery and reload',
-          () async {
-        final (external, change) = _publicBip84Descriptors(
-          WalletNetwork.testnet,
-          _valid12WordPhrase,
-        );
+      test(
+        'watch-only descriptors round-trip through recovery and reload',
+        () async {
+          final (external, change) = _publicBip84Descriptors(
+            WalletNetwork.testnet,
+            _valid12WordPhrase,
+          );
 
-        expect(external, isNot(contains('tprv')));
-        expect(change, isNot(contains('tprv')));
+          expect(external, isNot(contains('tprv')));
+          expect(change, isNot(contains('tprv')));
 
-        final (record, wallet) = await walletService.recoverFromDescriptors(
-          'Watch Only Descriptor Recover',
-          WalletNetwork.testnet,
-          '  $external  ',
-          '  $change  ',
-        );
-        wallet.dispose();
+          final (record, wallet) = await walletService.recoverFromDescriptors(
+            'Watch Only Descriptor Recover',
+            WalletNetwork.testnet,
+            '  $external  ',
+            '  $change  ',
+          );
+          wallet.dispose();
 
-        expect(record.scriptType, ScriptType.unknown);
-        expect(record.fullScanCompleted, isFalse);
+          expect(record.scriptType, ScriptType.unknown);
+          expect(record.fullScanCompleted, isFalse);
 
-        final secrets = await storageService.getSecrets(record.id);
-        expect(secrets, isNotNull);
-        expect(secrets!.recoveryPhrase, isEmpty);
-        expect(secrets.descriptor, external);
-        expect(secrets.changeDescriptor, change);
+          final secrets = await storageService.getSecrets(record.id);
+          expect(secrets, isNotNull);
+          expect(secrets!.recoveryPhrase, isEmpty);
+          expect(secrets.descriptor, external);
+          expect(secrets.changeDescriptor, change);
 
-        final loaded = await walletService.loadWalletFromRecord(record);
-        final addressInfo = loaded.nextUnusedAddress(
-          keychain: KeychainKind.external_,
-        );
-        expect(addressInfo.address.toString(), isNotEmpty);
-        loaded.dispose();
-      });
+          final loaded = await walletService.loadWalletFromRecord(record);
+          final addressInfo = loaded.nextUnusedAddress(
+            keychain: KeychainKind.external_,
+          );
+          expect(addressInfo.address.toString(), isNotEmpty);
+          loaded.dispose();
+        },
+      );
 
       test('malformed descriptor throws DescriptorException', () async {
         expect(
