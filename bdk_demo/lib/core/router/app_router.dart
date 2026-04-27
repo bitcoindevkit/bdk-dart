@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
 import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
+import 'package:bdk_demo/features/wallet_setup/recover_wallet_page.dart';
 import 'package:bdk_demo/features/wallet_setup/wallet_choice_page.dart';
 
 abstract final class AppRoutes {
@@ -42,8 +43,7 @@ GoRouter createRouter() => GoRouter(
     GoRoute(
       path: AppRoutes.recoverWallet,
       name: 'recoverWallet',
-      builder: (context, state) =>
-          const PlaceholderPage(title: 'Recover Wallet'),
+      builder: (context, state) => const RecoverWalletPage(),
     ),
 
     GoRoute(
