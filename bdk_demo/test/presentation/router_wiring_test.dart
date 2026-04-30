@@ -1,4 +1,5 @@
 import 'package:bdk_demo/core/router/app_router.dart';
+import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
 import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
@@ -36,6 +37,10 @@ void main() {
           path: AppRoutes.activeWallets,
           builder: (context, state) => const ActiveWalletsPage(),
         ),
+        GoRoute(
+          path: AppRoutes.transactionHistory,
+          builder: (context, state) => const TransactionsListPage(),
+        ),
       ],
     );
 
@@ -60,6 +65,15 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ActiveWalletsPage), findsOneWidget);
+    expect(find.byType(PlaceholderPage), findsNothing);
+  });
+
+  testWidgets('/transactions resolves to TransactionsListPage', (tester) async {
+    final app = await buildRouterApp(AppRoutes.transactionHistory);
+    await tester.pumpWidget(app);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TransactionsListPage), findsOneWidget);
     expect(find.byType(PlaceholderPage), findsNothing);
   });
 }

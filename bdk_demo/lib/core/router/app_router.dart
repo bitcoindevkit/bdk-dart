@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:bdk_demo/features/transactions/transaction_detail_page.dart';
+import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
 import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
@@ -64,15 +66,14 @@ GoRouter createRouter() => GoRouter(
     GoRoute(
       path: AppRoutes.transactionHistory,
       name: 'transactionHistory',
-      builder: (context, state) =>
-          const PlaceholderPage(title: 'Transaction History'),
+      builder: (context, state) => const TransactionsListPage(),
     ),
     GoRoute(
       path: AppRoutes.transactionDetail,
       name: 'transactionDetail',
       builder: (context, state) {
         final txid = state.pathParameters['txid'] ?? '';
-        return PlaceholderPage(title: 'Transaction $txid');
+        return TransactionDetailPage(txid: txid);
       },
     ),
 
