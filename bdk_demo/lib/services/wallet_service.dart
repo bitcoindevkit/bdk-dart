@@ -2,6 +2,7 @@ import 'package:bdk_dart/bdk.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:bdk_demo/core/constants/app_constants.dart';
+import 'package:bdk_demo/core/constants/bip39_wordlist.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_network_mapper.dart';
@@ -23,23 +24,46 @@ class WalletService {
 
   static void _defaultDisposer(Wallet wallet) => wallet.dispose();
 
+  String validateRecoveryPhrase(String phrase) {
+    final normalized = phrase
+        .trim()
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .join(' ');
+    if (normalized.isEmpty) {
+      throw ArgumentError('Recovery phrase cannot be empty.');
+    }
+
+    final words = normalized.split(' ');
+    if (words.length != 12 && words.length != 24) {
+      throw ArgumentError(
+        'Recovery phrase must be 12 or 24 words (got ${words.length}).',
+      );
+    }
+
+    for (var i = 0; i < words.length; i++) {
+      if (!Bip39Wordlist.words.contains(words[i])) {
+        throw ArgumentError(
+          'Word ${i + 1} ("${words[i]}") is not a valid BIP-39 word.',
+        );
+      }
+    }
+
+    try {
+      Mnemonic.fromString(mnemonic: normalized);
+    } on Bip39Exception catch (error) {
+      throw ArgumentError(_bip39ErrorMessage(error));
+    }
+
+    return normalized;
+  }
+
   Future<(WalletRecord, Wallet)> createWallet(
     String name,
     WalletNetwork walletNetwork,
     ScriptType scriptType,
   ) async {
-    final trimmedName = name.trim();
-    if (trimmedName.isEmpty) {
-      throw ArgumentError('Wallet name must not be empty.');
-    }
-
-    final existing = _storage.getWalletRecords();
-    final duplicate = existing.any(
-      (r) => r.name.toLowerCase() == trimmedName.toLowerCase(),
-    );
-    if (duplicate) {
-      throw StateError('A wallet named "$trimmedName" already exists.');
-    }
+    final trimmedName = _validateNewWalletName(name);
 
     final bdkNetwork = walletNetwork.toBdkNetwork();
 
@@ -63,36 +87,99 @@ class WalletService {
       scriptType,
     );
 
-    final persister = Persister.newInMemory();
-    final wallet = Wallet(
-      descriptor: descriptor,
-      changeDescriptor: changeDescriptor,
-      network: bdkNetwork,
-      persister: persister,
-      lookahead: AppConstants.walletLookahead,
-    );
-
-    final record = WalletRecord(
-      id: _uuid.v4(),
+    return _buildAndPersistWallet(
       name: trimmedName,
       network: walletNetwork,
       scriptType: scriptType,
-    );
-
-    final secrets = WalletSecrets(
-      descriptor: descriptor.toStringWithSecret(),
-      changeDescriptor: changeDescriptor.toStringWithSecret(),
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      persistedDescriptor: descriptor.toStringWithSecret(),
+      persistedChangeDescriptor: changeDescriptor.toStringWithSecret(),
+      bdkNetwork: bdkNetwork,
       recoveryPhrase: mnemonic.toString(),
     );
+  }
 
-    try {
-      await _storage.addWalletRecord(record, secrets);
-    } catch (_) {
-      _walletDisposer(wallet);
-      rethrow;
+  Future<(WalletRecord, Wallet)> recoverFromPhrase(
+    String name,
+    WalletNetwork walletNetwork,
+    ScriptType scriptType,
+    String phrase,
+  ) async {
+    if (scriptType == ScriptType.unknown) {
+      throw ArgumentError(
+        'Script type must be known for phrase recovery (got $scriptType).',
+      );
     }
 
-    return (record, wallet);
+    final normalized = validateRecoveryPhrase(phrase);
+    final bdkNetwork = walletNetwork.toBdkNetwork();
+    final mnemonic = Mnemonic.fromString(mnemonic: normalized);
+    final secretKey = DescriptorSecretKey(
+      network: bdkNetwork,
+      mnemonic: mnemonic,
+      password: null,
+    );
+
+    final descriptor = _deriveDescriptor(
+      secretKey,
+      KeychainKind.external_,
+      bdkNetwork,
+      scriptType,
+    );
+    final changeDescriptor = _deriveDescriptor(
+      secretKey,
+      KeychainKind.internal,
+      bdkNetwork,
+      scriptType,
+    );
+
+    return _buildAndPersistWallet(
+      name: name,
+      network: walletNetwork,
+      scriptType: scriptType,
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      persistedDescriptor: descriptor.toStringWithSecret(),
+      persistedChangeDescriptor: changeDescriptor.toStringWithSecret(),
+      bdkNetwork: bdkNetwork,
+      recoveryPhrase: normalized,
+    );
+  }
+
+  Future<(WalletRecord, Wallet)> recoverFromDescriptors(
+    String name,
+    WalletNetwork walletNetwork,
+    String descriptorStr,
+    String changeDescriptorStr,
+  ) async {
+    final trimmedExternal = descriptorStr.trim();
+    final trimmedChange = changeDescriptorStr.trim();
+    if (trimmedExternal.isEmpty || trimmedChange.isEmpty) {
+      throw ArgumentError('Descriptor strings must not be empty.');
+    }
+
+    final bdkNetwork = walletNetwork.toBdkNetwork();
+    final descriptor = Descriptor(
+      descriptor: trimmedExternal,
+      network: bdkNetwork,
+    );
+    final changeDescriptor = Descriptor(
+      descriptor: trimmedChange,
+      network: bdkNetwork,
+    );
+
+    return _buildAndPersistWallet(
+      name: name,
+      network: walletNetwork,
+      scriptType: ScriptType.unknown,
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      persistedDescriptor: trimmedExternal,
+      persistedChangeDescriptor: trimmedChange,
+      bdkNetwork: bdkNetwork,
+      recoveryPhrase: '',
+    );
   }
 
   Future<Wallet> loadWalletFromRecord(WalletRecord record) async {
@@ -145,6 +232,82 @@ class WalletService {
       ScriptType.unknown => throw ArgumentError(
         'Unsupported script type: $scriptType',
       ),
+    };
+  }
+
+  Future<(WalletRecord, Wallet)> _buildAndPersistWallet({
+    required String name,
+    required WalletNetwork network,
+    required ScriptType scriptType,
+    required Descriptor descriptor,
+    required Descriptor changeDescriptor,
+    required String persistedDescriptor,
+    required String persistedChangeDescriptor,
+    required Network bdkNetwork,
+    String recoveryPhrase = '',
+  }) async {
+    final trimmedName = _validateNewWalletName(name);
+
+    final persister = Persister.newInMemory();
+    final wallet = Wallet(
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      network: bdkNetwork,
+      persister: persister,
+      lookahead: AppConstants.walletLookahead,
+    );
+
+    final record = WalletRecord(
+      id: _uuid.v4(),
+      name: trimmedName,
+      network: network,
+      scriptType: scriptType,
+      fullScanCompleted: false,
+    );
+
+    final secrets = WalletSecrets(
+      descriptor: persistedDescriptor,
+      changeDescriptor: persistedChangeDescriptor,
+      recoveryPhrase: recoveryPhrase,
+    );
+
+    try {
+      await _storage.addWalletRecord(record, secrets);
+    } catch (_) {
+      _walletDisposer(wallet);
+      rethrow;
+    }
+
+    return (record, wallet);
+  }
+
+  String _validateNewWalletName(String name) {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
+      throw ArgumentError('Wallet name must not be empty.');
+    }
+
+    final existing = _storage.getWalletRecords();
+    final duplicate = existing.any(
+      (record) => record.name.toLowerCase() == trimmedName.toLowerCase(),
+    );
+    if (duplicate) {
+      throw StateError('A wallet named "$trimmedName" already exists.');
+    }
+
+    return trimmedName;
+  }
+
+  String _bip39ErrorMessage(Bip39Exception error) {
+    return switch (error) {
+      BadWordCountBip39Exception(wordCount: final wordCount) =>
+        'Recovery phrase must be 12 or 24 words (got $wordCount).',
+      UnknownWordBip39Exception(index: final index) =>
+        'Recovery phrase contains an unknown word at position ${index + 1}.',
+      InvalidChecksumBip39Exception() =>
+        'Recovery phrase checksum is invalid. Please double-check the phrase.',
+      _ =>
+        'Recovery phrase validation failed. Please verify the phrase and try again.',
     };
   }
 }
