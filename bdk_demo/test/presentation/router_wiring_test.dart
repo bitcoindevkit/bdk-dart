@@ -45,4 +45,19 @@ void main() {
     expect(find.byType(ActiveWalletsPage), findsOneWidget);
     expect(find.byType(PlaceholderPage), findsNothing);
   });
+
+  testWidgets('/transactions resolves to TransactionsListPage', (tester) async {
+    await pumpRouterAt(tester, AppRoutes.transactionHistory);
+
+    expect(find.byType(TransactionsListPage), findsOneWidget);
+    expect(find.byType(PlaceholderPage), findsNothing);
+  });
+
+  testWidgets('/recover-wallet resolves to RecoverWalletPage', (tester) async {
+    await pumpRouterAt(tester, AppRoutes.recoverWallet);
+
+    expect(find.byType(RecoverWalletPage), findsOneWidget);
+    expect(find.byType(PlaceholderPage), findsNothing);
+    expect(find.text('Recover Wallet'), findsOneWidget);
+  });
 }
