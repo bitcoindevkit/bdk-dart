@@ -1,28 +1,103 @@
+import 'dart:io';
 import 'package:bdk_dart/bdk.dart';
 import 'package:uuid/uuid.dart';
-
 import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/constants/bip39_wordlist.dart';
+import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_network_mapper.dart';
 
 typedef WalletDisposer = void Function(Wallet wallet);
 
-class WalletService {
-  final StorageService _storage;
-  final Uuid _uuid;
-  final WalletDisposer _walletDisposer;
+typedef WalletPersistRunner =
+    Future<bool> Function(Wallet wallet, Persister persister);
+typedef WalletLoadRunner =
+    Wallet Function({
+      required Descriptor descriptor,
+      required Descriptor changeDescriptor,
+      required Persister persister,
+      required int lookahead,
+    });
 
+class WalletService {
   WalletService({
     required StorageService storage,
     required Uuid uuid,
     WalletDisposer? walletDisposer,
+    WalletPersistRunner? persistRunner,
+    WalletLoadRunner? walletLoadRunner,
   }) : _storage = storage,
        _uuid = uuid,
-       _walletDisposer = walletDisposer ?? _defaultDisposer;
+       _walletDisposer = walletDisposer ?? _defaultDisposer,
+       _persistRunner = persistRunner ?? _defaultPersistRunner,
+       _walletLoadRunner = walletLoadRunner ?? _defaultWalletLoadRunner;
+
+  final StorageService _storage;
+  final Uuid _uuid;
+  final WalletDisposer _walletDisposer;
+  final WalletPersistRunner _persistRunner;
+  final WalletLoadRunner _walletLoadRunner;
+
+  static Future<bool> _defaultPersistRunner(
+    Wallet wallet,
+    Persister persister,
+  ) async => wallet.persist(persister: persister);
+
+  static Wallet _defaultWalletLoadRunner({
+    required Descriptor descriptor,
+    required Descriptor changeDescriptor,
+    required Persister persister,
+    required int lookahead,
+  }) {
+    return Wallet.load(
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      persister: persister,
+      lookahead: lookahead,
+    );
+  }
 
   static void _defaultDisposer(Wallet wallet) => wallet.dispose();
+
+  Future<void> _ensureWalletPersistedToSqlite(
+    Wallet wallet,
+    Persister persister,
+    Descriptor descriptor,
+    Descriptor changeDescriptor,
+    String dbPath,
+  ) async {
+    final persisted = await _persistRunner(wallet, persister);
+    if (persisted) return;
+    if (await _verifySqliteCanBeReopened(
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      dbPath: dbPath,
+    )) {
+      return;
+    }
+    throw StateError('Wallet SQLite persistence returned false.');
+  }
+
+  Future<bool> _verifySqliteCanBeReopened({
+    required Descriptor descriptor,
+    required Descriptor changeDescriptor,
+    required String dbPath,
+  }) async {
+    try {
+      final verifierPersister = Persister.newSqlite(path: dbPath);
+      final verifierWallet = _walletLoadRunner(
+        descriptor: descriptor,
+        changeDescriptor: changeDescriptor,
+        persister: verifierPersister,
+        lookahead: AppConstants.walletLookahead,
+      );
+      verifierWallet.dispose();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 
   String validateRecoveryPhrase(String phrase) {
     final normalized = phrase
@@ -202,14 +277,101 @@ class WalletService {
       network: bdkNetwork,
     );
 
-    final persister = Persister.newInMemory();
-    return Wallet(
+    final dbPath = await WalletStoragePaths.sqlitePathForWallet(record.id);
+    final sqliteFile = File(dbPath);
+    if (await sqliteFile.exists()) {
+      try {
+        final persister = Persister.newSqlite(path: dbPath);
+        final wallet = _walletLoadRunner(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          persister: persister,
+          lookahead: AppConstants.walletLookahead,
+        );
+        return wallet;
+      } catch (_) {
+        return _reseedWalletToFallbackSqlite(
+          walletId: record.id,
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          bdkNetwork: bdkNetwork,
+        );
+      }
+    }
+
+    return _reseedWalletToPrimarySqlite(
+      walletId: record.id,
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      bdkNetwork: bdkNetwork,
+    );
+  }
+
+  Future<Wallet> _reseedWalletToPrimarySqlite({
+    required String walletId,
+    required Descriptor descriptor,
+    required Descriptor changeDescriptor,
+    required Network bdkNetwork,
+  }) async {
+    final dbPath = await WalletStoragePaths.sqlitePathForWallet(walletId);
+    final persister = Persister.newSqlite(path: dbPath);
+    final wallet = Wallet(
       descriptor: descriptor,
       changeDescriptor: changeDescriptor,
       network: bdkNetwork,
       persister: persister,
       lookahead: AppConstants.walletLookahead,
     );
+    try {
+      await _ensureWalletPersistedToSqlite(
+        wallet,
+        persister,
+        descriptor,
+        changeDescriptor,
+        dbPath,
+      );
+    } catch (_) {
+      _walletDisposer(wallet);
+      await WalletStoragePaths.deleteWalletData(walletId);
+      rethrow;
+    }
+    return wallet;
+  }
+
+  Future<Wallet> _reseedWalletToFallbackSqlite({
+    required String walletId,
+    required Descriptor descriptor,
+    required Descriptor changeDescriptor,
+    required Network bdkNetwork,
+  }) async {
+    await WalletStoragePaths.deleteFallbackWalletData(walletId);
+    final fallbackDbPath = await WalletStoragePaths.sqliteFallbackPathForWallet(
+      walletId,
+    );
+    final fallbackPersister = Persister.newSqlite(path: fallbackDbPath);
+    final wallet = Wallet(
+      descriptor: descriptor,
+      changeDescriptor: changeDescriptor,
+      network: bdkNetwork,
+      persister: fallbackPersister,
+      lookahead: AppConstants.walletLookahead,
+    );
+
+    try {
+      await _ensureWalletPersistedToSqlite(
+        wallet,
+        fallbackPersister,
+        descriptor,
+        changeDescriptor,
+        fallbackDbPath,
+      );
+      await WalletStoragePaths.replaceWalletDataWithFallback(walletId);
+      return wallet;
+    } catch (_) {
+      _walletDisposer(wallet);
+      await WalletStoragePaths.deleteFallbackWalletData(walletId);
+      rethrow;
+    }
   }
 
   Descriptor _deriveDescriptor(
@@ -248,15 +410,6 @@ class WalletService {
   }) async {
     final trimmedName = _validateNewWalletName(name);
 
-    final persister = Persister.newInMemory();
-    final wallet = Wallet(
-      descriptor: descriptor,
-      changeDescriptor: changeDescriptor,
-      network: bdkNetwork,
-      persister: persister,
-      lookahead: AppConstants.walletLookahead,
-    );
-
     final record = WalletRecord(
       id: _uuid.v4(),
       name: trimmedName,
@@ -271,10 +424,32 @@ class WalletService {
       recoveryPhrase: recoveryPhrase,
     );
 
+    Wallet? wallet;
     try {
+      final dbPath = await WalletStoragePaths.sqlitePathForWallet(record.id);
+      final persister = Persister.newSqlite(path: dbPath);
+      wallet = Wallet(
+        descriptor: descriptor,
+        changeDescriptor: changeDescriptor,
+        network: bdkNetwork,
+        persister: persister,
+        lookahead: AppConstants.walletLookahead,
+      );
+
+      await _ensureWalletPersistedToSqlite(
+        wallet,
+        persister,
+        descriptor,
+        changeDescriptor,
+        dbPath,
+      );
+
       await _storage.addWalletRecord(record, secrets);
     } catch (_) {
-      _walletDisposer(wallet);
+      if (wallet != null) {
+        _walletDisposer(wallet);
+      }
+      await WalletStoragePaths.deleteWalletData(record.id);
       rethrow;
     }
 
