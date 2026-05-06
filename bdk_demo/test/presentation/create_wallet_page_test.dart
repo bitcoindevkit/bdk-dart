@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bdk_demo/core/router/app_router.dart';
+import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/settings_providers.dart';
@@ -15,8 +17,47 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
+const _testExtendedPrivKey =
+    'tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B';
+
+Wallet _createTestWallet({Network network = Network.signet}) {
+  final descriptor = Descriptor(
+    descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/0/*)',
+    network: network,
+  );
+  final changeDescriptor = Descriptor(
+    descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/1/*)',
+    network: network,
+  );
+  return Wallet(
+    descriptor: descriptor,
+    changeDescriptor: changeDescriptor,
+    network: network,
+    persister: Persister.newInMemory(),
+    lookahead: 25,
+  );
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  Directory? walletDocsRoot;
+
+  setUp(() async {
+    walletDocsRoot = await Directory.systemTemp.createTemp(
+      'create_wallet_page_wallet_',
+    );
+    WalletStoragePaths.setDocumentsRootOverride(walletDocsRoot);
+  });
+
+  tearDown(() async {
+    WalletStoragePaths.setDocumentsRootOverride(null);
+    final root = walletDocsRoot;
+    walletDocsRoot = null;
+    if (root != null && root.existsSync()) {
+      await root.delete(recursive: true);
+    }
+  });
 
   Future<StorageService> initStorage() async {
     SharedPreferences.setMockInitialValues({});
@@ -74,8 +115,14 @@ void main() {
       tester,
     ) async {
       final storage = await initStorage();
+      final successfulService = _SuccessfulCreateWalletService(
+        storage: storage,
+      );
       final container = ProviderContainer(
-        overrides: [storageServiceProvider.overrideWithValue(storage)],
+        overrides: [
+          storageServiceProvider.overrideWithValue(storage),
+          walletServiceProvider.overrideWithValue(successfulService),
+        ],
       );
       addTearDown(container.dispose);
 
@@ -170,14 +217,12 @@ void main() {
       'disposes created wallet if page unmounts before await returns',
       (tester) async {
         final storage = await initStorage();
-        final walletService = WalletService(
-          storage: storage,
-          uuid: const Uuid(),
-        );
-        final (record, wallet) = await walletService.createWallet(
-          'Pending Wallet',
-          WalletNetwork.signet,
-          ScriptType.p2tr,
+        final wallet = _createTestWallet();
+        const record = WalletRecord(
+          id: 'pending-wallet-id',
+          name: 'Pending Wallet',
+          network: WalletNetwork.signet,
+          scriptType: ScriptType.p2tr,
         );
 
         final completer = Completer<(WalletRecord, Wallet)>();
@@ -247,6 +292,34 @@ class _FailingWalletService extends WalletService {
     ScriptType scriptType,
   ) async {
     throw Exception('forced failure');
+  }
+}
+
+class _SuccessfulCreateWalletService extends WalletService {
+  _SuccessfulCreateWalletService({required super.storage})
+    : super(uuid: const Uuid());
+
+  @override
+  Future<(WalletRecord, Wallet)> createWallet(
+    String name,
+    WalletNetwork walletNetwork,
+    ScriptType scriptType,
+  ) async {
+    return (
+      WalletRecord(
+        id: 'created-wallet-id',
+        name: name,
+        network: walletNetwork,
+        scriptType: scriptType,
+      ),
+      _createTestWallet(
+        network: switch (walletNetwork) {
+          WalletNetwork.signet => Network.signet,
+          WalletNetwork.testnet => Network.testnet,
+          WalletNetwork.regtest => Network.regtest,
+        },
+      ),
+    );
   }
 }
 

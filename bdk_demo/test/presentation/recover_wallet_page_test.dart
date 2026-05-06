@@ -24,6 +24,27 @@ const _invalidChecksumPhrase =
     'abandon abandon abandon abandon abandon abandon abandon abandon '
     'abandon abandon abandon ability';
 
+const _testExtendedPrivKey =
+    'tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B';
+
+Wallet _createTestWallet({Network network = Network.signet}) {
+  final descriptor = Descriptor(
+    descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/0/*)',
+    network: network,
+  );
+  final changeDescriptor = Descriptor(
+    descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/1/*)',
+    network: network,
+  );
+  return Wallet(
+    descriptor: descriptor,
+    changeDescriptor: changeDescriptor,
+    network: network,
+    persister: Persister.newInMemory(),
+    lookahead: 25,
+  );
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -68,20 +89,6 @@ void main() {
     await tester.ensureVisible(button);
     await tester.pump();
     await tester.tap(button);
-  }
-
-  Future<(String, String)> descriptorsFromGeneratedWallet(
-    StorageService storage,
-  ) async {
-    final service = WalletService(storage: storage, uuid: const Uuid());
-    final (record, wallet) = await service.createWallet(
-      'Descriptor Generator',
-      WalletNetwork.signet,
-      ScriptType.p2wpkh,
-    );
-    wallet.dispose();
-    final secrets = await storage.getSecrets(record.id);
-    return (secrets!.descriptor, secrets.changeDescriptor);
   }
 
   group('RecoverWalletPage', () {
@@ -190,11 +197,12 @@ void main() {
       tester,
     ) async {
       final storage = await initStorage();
-      final service = WalletService(storage: storage, uuid: const Uuid());
-      final (activeRecord, activeWallet) = await service.createWallet(
-        'Already Active',
-        WalletNetwork.signet,
-        ScriptType.p2tr,
+      final activeWallet = _createTestWallet();
+      const activeRecord = WalletRecord(
+        id: 'already-active-id',
+        name: 'Already Active',
+        network: WalletNetwork.signet,
+        scriptType: ScriptType.p2tr,
       );
       final container = ProviderContainer(
         overrides: [storageServiceProvider.overrideWithValue(storage)],
@@ -232,8 +240,15 @@ void main() {
       tester,
     ) async {
       final storage = await initStorage();
+      final service = _SuccessfulPhraseRecoveryService(
+        storage: storage,
+        storageRef: storage,
+      );
       final container = ProviderContainer(
-        overrides: [storageServiceProvider.overrideWithValue(storage)],
+        overrides: [
+          storageServiceProvider.overrideWithValue(storage),
+          walletServiceProvider.overrideWithValue(service),
+        ],
       );
       addTearDown(container.dispose);
 
@@ -391,9 +406,15 @@ void main() {
       tester,
     ) async {
       final storage = await initStorage();
-      final (external, change) = await descriptorsFromGeneratedWallet(storage);
+      final service = _SuccessfulDescriptorRecoveryService(
+        storage: storage,
+        storageRef: storage,
+      );
       final container = ProviderContainer(
-        overrides: [storageServiceProvider.overrideWithValue(storage)],
+        overrides: [
+          storageServiceProvider.overrideWithValue(storage),
+          walletServiceProvider.overrideWithValue(service),
+        ],
       );
       addTearDown(container.dispose);
 
@@ -407,11 +428,11 @@ void main() {
       );
       await tester.enterText(
         find.widgetWithText(TextField, 'External Descriptor'),
-        external,
+        'descriptor-external',
       );
       await tester.enterText(
         find.widgetWithText(TextField, 'Change Descriptor'),
-        change,
+        'descriptor-change',
       );
       await tester.pump();
 
@@ -437,12 +458,12 @@ void main() {
       'disposes recovered wallet if page unmounts before await returns',
       (tester) async {
         final storage = await initStorage();
-        final service = WalletService(storage: storage, uuid: const Uuid());
-        final (record, wallet) = await service.recoverFromPhrase(
-          'Pending Recovered Wallet',
-          WalletNetwork.signet,
-          ScriptType.p2tr,
-          _valid12WordPhrase,
+        final wallet = _createTestWallet();
+        const record = WalletRecord(
+          id: 'pending-recovered-id',
+          name: 'Pending Recovered Wallet',
+          network: WalletNetwork.signet,
+          scriptType: ScriptType.p2tr,
         );
 
         final completer = Completer<(WalletRecord, Wallet)>();
@@ -538,5 +559,87 @@ class _DelayedPhraseRecoveryService extends WalletService {
     String phrase,
   ) {
     return completer.future;
+  }
+}
+
+class _SuccessfulPhraseRecoveryService extends WalletService {
+  _SuccessfulPhraseRecoveryService({
+    required this.storageRef,
+    required super.storage,
+  }) : super(uuid: const Uuid());
+
+  final StorageService storageRef;
+
+  @override
+  Future<(WalletRecord, Wallet)> recoverFromPhrase(
+    String name,
+    WalletNetwork walletNetwork,
+    ScriptType scriptType,
+    String phrase,
+  ) async {
+    final record = WalletRecord(
+      id: 'recovered-phrase-id',
+      name: name,
+      network: walletNetwork,
+      scriptType: scriptType,
+    );
+    await storageRef.addWalletRecord(
+      record,
+      const WalletSecrets(
+        descriptor: 'dummy-desc',
+        changeDescriptor: 'dummy-change',
+      ),
+    );
+    return (
+      record,
+      _createTestWallet(
+        network: switch (walletNetwork) {
+          WalletNetwork.signet => Network.signet,
+          WalletNetwork.testnet => Network.testnet,
+          WalletNetwork.regtest => Network.regtest,
+        },
+      ),
+    );
+  }
+}
+
+class _SuccessfulDescriptorRecoveryService extends WalletService {
+  _SuccessfulDescriptorRecoveryService({
+    required this.storageRef,
+    required super.storage,
+  }) : super(uuid: const Uuid());
+
+  final StorageService storageRef;
+
+  @override
+  Future<(WalletRecord, Wallet)> recoverFromDescriptors(
+    String name,
+    WalletNetwork walletNetwork,
+    String descriptorStr,
+    String changeDescriptorStr,
+  ) async {
+    final record = WalletRecord(
+      id: 'recovered-descriptor-id',
+      name: name,
+      network: walletNetwork,
+      scriptType: ScriptType.unknown,
+    );
+    await storageRef.addWalletRecord(
+      record,
+      const WalletSecrets(
+        descriptor: 'dummy-desc',
+        changeDescriptor: 'dummy-change',
+      ),
+    );
+    return (
+      record,
+      _createTestWallet(
+        network: switch (walletNetwork) {
+          WalletNetwork.signet => Network.signet,
+          WalletNetwork.testnet => Network.testnet,
+          WalletNetwork.regtest => Network.regtest,
+        },
+      ),
+    );
   }
 }
