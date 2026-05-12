@@ -7,4 +7,6 @@ extension WalletNetworkX on WalletNetwork {
     WalletNetwork.testnet => Network.testnet,
     WalletNetwork.regtest => Network.regtest,
   };
+
+  NetworkKind toBdkNetworkKind() => NetworkKind.test;
 }
