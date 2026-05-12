@@ -34,42 +34,45 @@ const privateMultipathDescriptorString =
 const expectedOfflineAddress = "tb1qhjys9wxlfykmte7ftryptx975uqgd6kcm6a7z4";
 const expectedPersistedAddress = "tb1qan3lldunh37ma6c0afeywgjyjgnyc8uz975zl2";
 
+NetworkKind networkKindFor(Network network) =>
+    network == Network.bitcoin ? NetworkKind.main : NetworkKind.test;
+
 Descriptor buildDescriptor(String descriptor, Network network) =>
-    Descriptor(descriptor: descriptor, network: network);
+    Descriptor(descriptor: descriptor, networkKind: networkKindFor(network));
 
 Descriptor buildBip84Descriptor(Network network) => Descriptor(
   descriptor: "wpkh($testExtendedPrivKey/$bip84TestReceivePath/*)",
-  network: network,
+  networkKind: networkKindFor(network),
 );
 
 Descriptor buildBip84ChangeDescriptor(Network network) => Descriptor(
   descriptor: "wpkh($testExtendedPrivKey/$bip84TestChangePath/*)",
-  network: network,
+  networkKind: networkKindFor(network),
 );
 
 Descriptor buildBip86Descriptor(Network network) => Descriptor(
   descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/*)",
-  network: network,
+  networkKind: networkKindFor(network),
 );
 
 Descriptor buildBip86ChangeDescriptor(Network network) => Descriptor(
   descriptor: "tr($testExtendedPrivKey/$bip86TestChangePath/*)",
-  network: network,
+  networkKind: networkKindFor(network),
 );
 
 Descriptor buildMainnetBip84Descriptor() => Descriptor(
   descriptor: "wpkh($mainnetExtendedPrivKey/$bip84MainnetReceivePath/*)",
-  network: Network.bitcoin,
+  networkKind: NetworkKind.main,
 );
 
 Descriptor buildMainnetBip86Descriptor() => Descriptor(
   descriptor: "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/*)",
-  network: Network.bitcoin,
+  networkKind: NetworkKind.main,
 );
 
 Descriptor buildNonExtendedDescriptor(int index) => Descriptor(
   descriptor: "wpkh($testExtendedPrivKey/$bip84TestReceivePath/$index)",
-  network: Network.testnet,
+  networkKind: NetworkKind.test,
 );
 
 const defaultLookahead = 25;

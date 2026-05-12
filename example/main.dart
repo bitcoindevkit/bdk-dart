@@ -9,6 +9,9 @@ import 'package:bdk_dart/bdk.dart';
 ///  * If you update native bindings, run `bash ./scripts/generate_bindings.sh`.
 void main() {
   final network = Network.testnet;
+  final networkKind = network == Network.bitcoin
+      ? NetworkKind.main
+      : NetworkKind.test;
 
   // 1. Create fresh seed material.
   final mnemonic = Mnemonic(wordCount: WordCount.words12);
@@ -16,19 +19,19 @@ void main() {
 
   // 2. Turn the mnemonic into descriptor keys for external/change paths.
   final rootKey = DescriptorSecretKey(
-    network: network,
+    networkKind: networkKind,
     mnemonic: mnemonic,
     password: null,
   );
   final externalDescriptor = Descriptor.newBip84(
     secretKey: rootKey,
     keychainKind: KeychainKind.external_,
-    network: network,
+    networkKind: networkKind,
   );
   final changeDescriptor = Descriptor.newBip84(
     secretKey: rootKey,
     keychainKind: KeychainKind.internal,
-    network: network,
+    networkKind: networkKind,
   );
 
   stdout
@@ -61,6 +64,7 @@ void main() {
     client = ElectrumClient(
       url: 'ssl://electrum.blockstream.info:60002',
       socks5: null,
+      validateDomain: true,
     );
     final syncRequest = wallet.startSyncWithRevealedSpks().build();
     final update = client.sync_(
