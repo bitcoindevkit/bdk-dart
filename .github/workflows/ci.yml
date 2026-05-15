@@ -69,4 +69,5 @@ jobs:
     permissions:
       contents: write
     uses: ./.github/workflows/precompile_binaries.yml
-    secrets: inherit
+    secrets:
+      PRECOMPILED_PRIVATE_KEY: ${{ secrets.PRECOMPILED_PRIVATE_KEY }}
