@@ -24,6 +24,10 @@ To use this package you need:
 - Rust toolchain with `cargo` and the native targets you intend to build. You can install Rust via [rustup](https://rustup.rs/).
 - Flutter SDK if you plan to use the package in a Flutter app or run the [Flutter demo](bdk_demo/).
 
+## Supported targets
+
+See [SUPPORTED_TARGETS.md](SUPPORTED_TARGETS.md) for the current platform/architecture matrix and support status.
+
 ### Add to your project
 
 **Via git:**
@@ -58,6 +62,8 @@ dart run example/main.dart
 If you have the Rust toolchain installed, the native library will be automatically built by Dart's Native Assets system.
 As a user of the package, you don't need to worry about building the native library or bindings yourself.
 Only if you want to contribute to the bindings or modify the native code yourself, you can follow the instructions in [development](#development) below.
+The first build can take several minutes depending on your machine and network (subsequent builds are faster).
+We pin git dependencies to immutable refs for reproducibility. `bdk-ffi` and `uniffi-dart` both track upstream release tags.
 
 ## Precompiled binaries
 
@@ -83,6 +89,8 @@ bdk_dart:
 
 ## Development
 
+For release operations, see [PUBDEV_RELEASE_CHECKLIST.md](PUBDEV_RELEASE_CHECKLIST.md).
+
 ### Generating bindings
 
 1. Modify the native Rust code and configuration files in `native/` as needed.
@@ -102,6 +110,25 @@ Dart test suite, which covers wallet creation, persistence, offline behavior, an
 dart test
 ```
 
+### Integration tests
+
+Integration tests are in `test/integration/` and are env-gated by default.
+Without the env vars below, integration tests are skipped.
+
+Run integration tests with:
+
+```bash
+BDK_DART_RUN_INTEGRATION=1 \
+BDK_DART_ELECTRUM_URL=ssl://electrum.blockstream.info:60002 \
+BDK_DART_ESPLORA_URL=https://blockstream.info/testnet/api \
+dart test test/integration
+```
+
+Optional env vars:
+
+- `BDK_DART_ELECTRUM_SOCKS5`
+- `BDK_DART_ESPLORA_PROXY`
+
 ### Precompiled binaries (maintainers)
 
 See `docs/precompiled_binaries.md` for CI details, manual release steps, and configuration.
@@ -109,5 +136,5 @@ See `docs/precompiled_binaries.md` for CI details, manual release steps, and con
 ## License
 
 The Rust crate and generated bindings are dual-licensed under MIT or Apache 2.0 per the
-`license = "MIT OR Apache-2.0"` entry in `Cargo.toml`. You may choose either license when
+`license = "MIT OR Apache-2.0"` entry in `native/Cargo.toml`. You may choose either license when
 using the library in your project.
