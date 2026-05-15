@@ -5,17 +5,18 @@ void main() {
   group('Mnemonic', () {
     test('produces expected BIP86 descriptor', () {
       final mnemonic = Mnemonic.fromString(
-        "space echo position wrist orient erupt relief museum myself grain wisdom tumble",
+        mnemonic:
+            "space echo position wrist orient erupt relief museum myself grain wisdom tumble",
       );
       final descriptorSecretKey = DescriptorSecretKey(
-        Network.testnet,
-        mnemonic,
-        null,
+        network: Network.testnet,
+        mnemonic: mnemonic,
+        password: null,
       );
       final descriptor = Descriptor.newBip86(
-        descriptorSecretKey,
-        KeychainKind.external_,
-        Network.testnet,
+        secretKey: descriptorSecretKey,
+        keychainKind: KeychainKind.external_,
+        network: Network.testnet,
       );
 
       expect(

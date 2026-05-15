@@ -1,0 +1,146 @@
+name: bdk-ffi Release Watch
+
+on:
+  schedule:
+    # Run every Monday at 09:30 UTC.
+    - cron: "30 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: bdk-ffi-release-watch
+  cancel-in-progress: false
+
+jobs:
+  open-update-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check latest bdk-ffi release and open issue
+        uses: actions/github-script@v7
+        env:
+          UPSTREAM_REPO: bitcoindevkit/bdk-ffi
+          DEPENDENCY_FILE: native/Cargo.toml
+        with:
+          script: |
+            const fs = require('node:fs');
+
+            const dependencyFile = process.env.DEPENDENCY_FILE;
+            const upstreamRepo = process.env.UPSTREAM_REPO;
+            const [upstreamOwner, upstreamName] = upstreamRepo.split('/');
+
+            if (!upstreamOwner || !upstreamName) {
+              core.setFailed(`Invalid UPSTREAM_REPO: ${upstreamRepo}`);
+              return;
+            }
+
+            const cargoToml = fs.readFileSync(dependencyFile, 'utf8');
+            const pinMatch = cargoToml.match(/^\s*bdk-ffi\s*=\s*\{[^}]*\btag\s*=\s*"([^"]+)"/ms);
+            if (!pinMatch) {
+              core.setFailed(`Could not find a tag-pinned bdk-ffi dependency in ${dependencyFile}`);
+              return;
+            }
+
+            const currentTag = pinMatch[1];
+
+            function parseSemver(tag) {
+              const match = String(tag).trim().match(/^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+.*)?$/);
+              if (!match) return null;
+              return {
+                major: Number(match[1]),
+                minor: Number(match[2]),
+                patch: Number(match[3]),
+                prerelease: match[4] ?? null,
+              };
+            }
+
+            function compareSemver(aTag, bTag) {
+              const a = parseSemver(aTag);
+              const b = parseSemver(bTag);
+              if (!a || !b) return null;
+
+              for (const key of ['major', 'minor', 'patch']) {
+                if (a[key] > b[key]) return 1;
+                if (a[key] < b[key]) return -1;
+              }
+
+              if (a.prerelease && !b.prerelease) return -1;
+              if (!a.prerelease && b.prerelease) return 1;
+              if (!a.prerelease && !b.prerelease) return 0;
+
+              if (a.prerelease > b.prerelease) return 1;
+              if (a.prerelease < b.prerelease) return -1;
+              return 0;
+            }
+
+            let latestRelease;
+            try {
+              latestRelease = await github.rest.repos.getLatestRelease({
+                owner: upstreamOwner,
+                repo: upstreamName,
+              });
+            } catch (error) {
+              if (error.status === 404) {
+                core.info(`No stable GitHub release found for ${upstreamRepo}; skipping.`);
+                return;
+              }
+              throw error;
+            }
+
+            const latestTag = latestRelease.data.tag_name;
+            const cmp = compareSemver(latestTag, currentTag);
+
+            core.info(`Current pinned bdk-ffi tag: ${currentTag}`);
+            core.info(`Latest upstream bdk-ffi release: ${latestTag}`);
+
+            if (currentTag === latestTag) {
+              core.info('Pinned tag is already at the latest release.');
+              return;
+            }
+
+            if (cmp !== null && cmp <= 0) {
+              core.info('Pinned tag is not older than the latest stable release; skipping.');
+              return;
+            }
+
+            const issueTitle = `chore: update bdk-ffi to ${latestTag}`;
+            const searchQuery = `repo:${context.repo.owner}/${context.repo.repo} is:open "${issueTitle}"`;
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: searchQuery,
+              per_page: 10,
+            });
+
+            const existingMatch = existing.data.items.find((item) => item.title === issueTitle);
+            if (existingMatch) {
+              core.info(`Open issue or PR already exists: #${existingMatch.number}`);
+              return;
+            }
+
+            const issueBody = [
+              '<!-- bdk-ffi-release-watch -->',
+              '',
+              'A new upstream `bdk-ffi` release is available.',
+              '',
+              `- Current pinned tag in \`${dependencyFile}\`: \`${currentTag}\``,
+              `- Latest upstream release: \`${latestTag}\``,
+              `- Release notes: ${latestRelease.data.html_url}`,
+              '',
+              'Suggested follow-up:',
+              '1. Update the `bdk-ffi` tag in `native/Cargo.toml`.',
+              '2. Regenerate bindings with `./scripts/generate_bindings.sh`.',
+              '3. Run `dart test` (and CI) before merging.',
+            ].join('\n');
+
+            const created = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: issueTitle,
+              body: issueBody,
+            });
+
+            core.info(`Created issue #${created.data.number}: ${created.data.html_url}`);
