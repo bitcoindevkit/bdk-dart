@@ -7,6 +7,7 @@ import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_network_mapper.dart';
+import 'package:bdk_demo/services/wallet_sqlite_persistence.dart';
 
 typedef WalletDisposer = void Function(Wallet wallet);
 
@@ -67,36 +68,15 @@ class WalletService {
     Descriptor changeDescriptor,
     String dbPath,
   ) async {
-    final persisted = await _persistRunner(wallet, persister);
-    if (persisted) return;
-    if (await _verifySqliteCanBeReopened(
+    await persistWalletSqliteWithReopenVerify(
+      wallet: wallet,
+      persister: persister,
       descriptor: descriptor,
       changeDescriptor: changeDescriptor,
       dbPath: dbPath,
-    )) {
-      return;
-    }
-    throw StateError('Wallet SQLite persistence returned false.');
-  }
-
-  Future<bool> _verifySqliteCanBeReopened({
-    required Descriptor descriptor,
-    required Descriptor changeDescriptor,
-    required String dbPath,
-  }) async {
-    try {
-      final verifierPersister = Persister.newSqlite(path: dbPath);
-      final verifierWallet = _walletLoadRunner(
-        descriptor: descriptor,
-        changeDescriptor: changeDescriptor,
-        persister: verifierPersister,
-        lookahead: AppConstants.walletLookahead,
-      );
-      verifierWallet.dispose();
-      return true;
-    } catch (_) {
-      return false;
-    }
+      persistRunner: _persistRunner,
+      loadRunner: _walletLoadRunner,
+    );
   }
 
   String validateRecoveryPhrase(String phrase) {

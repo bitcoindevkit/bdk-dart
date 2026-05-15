@@ -9,6 +9,10 @@ abstract final class AppConstants {
 
   static const syncParallelRequests = 4;
 
+  static const electrumSyncBatchSize = 10;
+
+  static const electrumFetchPrevTxouts = false;
+
   static const maxRecipients = 4;
 
   static const maxLogEntries = 5000;
