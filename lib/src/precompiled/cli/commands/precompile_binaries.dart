@@ -138,9 +138,7 @@ Options:
 
   // Required for GitHub release creation/upload.
   final ghToken =
-      Platform.environment['GH_TOKEN'] ??
-      Platform.environment['GITHUB_TOKEN'] ??
-      Platform.environment['GITHUB_TOKEN'.toUpperCase()];
+      Platform.environment['GH_TOKEN'] ?? Platform.environment['GITHUB_TOKEN'];
   if (ghToken == null || ghToken.trim().isEmpty) {
     stderr.writeln('Missing GH_TOKEN/GITHUB_TOKEN for GitHub release upload');
     exitCode = 2;
@@ -158,15 +156,8 @@ Options:
     return;
   }
 
-  String? abiForTarget(String t) => switch (t) {
-    'armv7-linux-androideabi' => 'armeabi-v7a',
-    'aarch64-linux-android' => 'arm64-v8a',
-    'x86_64-linux-android' => 'x86_64',
-    _ => null,
-  };
-
   final buildableTargets = normalizedOs == 'android'
-      ? targets.where((t) => abiForTarget(t) != null).toList(growable: false)
+      ? targets.where((t) => _abiForTarget(t) != null).toList(growable: false)
       : List<String>.from(targets);
 
   // If release already contains assets, avoid duplicate builds.
@@ -242,15 +233,8 @@ Options:
     final buildOut = Directory(p.join(buildDirAbs.path, 'android'));
     buildOut.createSync(recursive: true);
 
-    String? abiForTarget(String t) => switch (t) {
-      'armv7-linux-androideabi' => 'armeabi-v7a',
-      'aarch64-linux-android' => 'arm64-v8a',
-      'x86_64-linux-android' => 'x86_64',
-      _ => null,
-    };
-
     for (final target in buildableTargets) {
-      final abi = abiForTarget(target)!;
+      final abi = _abiForTarget(target)!;
       if (verbose)
         stderr.writeln('Building Android target: $target (abi=$abi)');
 
@@ -385,6 +369,13 @@ Options:
     '--clobber',
   ], verbose: verbose);
 }
+
+String? _abiForTarget(String t) => switch (t) {
+  'armv7-linux-androideabi' => 'armeabi-v7a',
+  'aarch64-linux-android' => 'arm64-v8a',
+  'x86_64-linux-android' => 'x86_64',
+  _ => null,
+};
 
 Future<void> _ensureReleaseExists({
   required String tag,
