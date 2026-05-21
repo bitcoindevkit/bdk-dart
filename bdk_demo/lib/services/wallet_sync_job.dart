@@ -29,33 +29,15 @@ class WalletSyncResult {
     required this.walletId,
     required this.performedFullScan,
     this.errorMessage,
-    this.immatureSat = 0,
-    this.trustedPendingSat = 0,
-    this.untrustedPendingSat = 0,
-    this.confirmedSat = 0,
-    this.trustedSpendableSat = 0,
-    this.totalSat = 0,
   });
 
   factory WalletSyncResult.success({
     required String walletId,
     required bool performedFullScan,
-    required int immatureSat,
-    required int trustedPendingSat,
-    required int untrustedPendingSat,
-    required int confirmedSat,
-    required int trustedSpendableSat,
-    required int totalSat,
   }) => WalletSyncResult._(
     success: true,
     walletId: walletId,
     performedFullScan: performedFullScan,
-    immatureSat: immatureSat,
-    trustedPendingSat: trustedPendingSat,
-    untrustedPendingSat: untrustedPendingSat,
-    confirmedSat: confirmedSat,
-    trustedSpendableSat: trustedSpendableSat,
-    totalSat: totalSat,
   );
 
   factory WalletSyncResult.failure({
@@ -73,12 +55,6 @@ class WalletSyncResult {
   final String walletId;
   final bool performedFullScan;
   final String? errorMessage;
-  final int immatureSat;
-  final int trustedPendingSat;
-  final int untrustedPendingSat;
-  final int confirmedSat;
-  final int trustedSpendableSat;
-  final int totalSat;
 }
 
 typedef WalletSyncJobRunner =
@@ -283,16 +259,9 @@ Future<WalletSyncResult> executeWalletSync(
       loadRunner: loadRunner,
     );
 
-    final balance = wallet.balance();
     return WalletSyncResult.success(
       walletId: req.walletId,
       performedFullScan: performedFullScan,
-      immatureSat: balance.immature.toSat(),
-      trustedPendingSat: balance.trustedPending.toSat(),
-      untrustedPendingSat: balance.untrustedPending.toSat(),
-      confirmedSat: balance.confirmed.toSat(),
-      trustedSpendableSat: balance.trustedSpendable.toSat(),
-      totalSat: balance.total.toSat(),
     );
   } catch (e, st) {
     return WalletSyncResult.failure(

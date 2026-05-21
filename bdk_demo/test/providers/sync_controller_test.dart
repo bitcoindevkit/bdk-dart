@@ -78,12 +78,6 @@ void main() {
             return WalletSyncResult.success(
               walletId: req.walletId,
               performedFullScan: !req.fullScanCompleted,
-              immatureSat: 0,
-              trustedPendingSat: 0,
-              untrustedPendingSat: 0,
-              confirmedSat: 21,
-              trustedSpendableSat: 21,
-              totalSat: 21,
             );
           }),
         ]);
@@ -114,49 +108,48 @@ void main() {
       },
     );
 
-    test('idle -> syncing -> synced and balance snapshot updated', () async {
-      final container = await _createContainer([
-        walletSyncJobRunnerProvider.overrideWithValue((
-          WalletSyncRequest req,
-        ) async {
-          return WalletSyncResult.success(
-            walletId: req.walletId,
-            performedFullScan: true,
-            immatureSat: 0,
-            trustedPendingSat: 0,
-            untrustedPendingSat: 0,
-            confirmedSat: 50_000,
-            trustedSpendableSat: 50_000,
-            totalSat: 50_000,
-          );
-        }),
-      ]);
-      final storage = container.read(storageServiceProvider);
-      final walletService = container.read(walletServiceProvider);
+    test(
+      'idle -> syncing -> synced and balance snapshot comes from reloaded wallet',
+      () async {
+        final container = await _createContainer([
+          walletSyncJobRunnerProvider.overrideWithValue((
+            WalletSyncRequest req,
+          ) async {
+            return WalletSyncResult.success(
+              walletId: req.walletId,
+              performedFullScan: true,
+            );
+          }),
+        ]);
+        final storage = container.read(storageServiceProvider);
+        final walletService = container.read(walletServiceProvider);
 
-      final (record, wallet) = await walletService.createWallet(
-        'Sync A',
-        WalletNetwork.testnet,
-        ScriptType.p2wpkh,
-      );
+        final (record, wallet) = await walletService.createWallet(
+          'Sync A',
+          WalletNetwork.testnet,
+          ScriptType.p2wpkh,
+        );
 
-      container.read(walletRecordsProvider.notifier).refresh();
-      container.read(activeWalletRecordProvider.notifier).set(record);
-      container.read(activeWalletProvider.notifier).set(wallet);
+        container.read(walletRecordsProvider.notifier).refresh();
+        container.read(activeWalletRecordProvider.notifier).set(record);
+        container.read(activeWalletProvider.notifier).set(wallet);
 
-      await container.read(syncControllerProvider.notifier).syncActiveWallet();
+        await container
+            .read(syncControllerProvider.notifier)
+            .syncActiveWallet();
 
-      expect(container.read(syncStatusProvider), SyncStatus.synced);
-      final snap = container.read(balanceSnapshotProvider);
-      expect(snap, isNotNull);
-      expect(snap!.walletId, record.id);
-      expect(snap.confirmedSat, 0);
+        expect(container.read(syncStatusProvider), SyncStatus.synced);
+        final snap = container.read(balanceSnapshotProvider);
+        expect(snap, isNotNull);
+        expect(snap!.walletId, record.id);
+        expect(snap.confirmedSat, 0);
 
-      final updated = storage.getWalletRecords().firstWhere(
-        (r) => r.id == record.id,
-      );
-      expect(updated.fullScanCompleted, isTrue);
-    });
+        final updated = storage.getWalletRecords().firstWhere(
+          (r) => r.id == record.id,
+        );
+        expect(updated.fullScanCompleted, isTrue);
+      },
+    );
 
     test('switching wallets clears snapshot for previous wallet', () async {
       final container = await _createContainer([
@@ -166,12 +159,6 @@ void main() {
           return WalletSyncResult.success(
             walletId: req.walletId,
             performedFullScan: true,
-            immatureSat: 0,
-            trustedPendingSat: 0,
-            untrustedPendingSat: 0,
-            confirmedSat: 50_000,
-            trustedSpendableSat: 50_000,
-            totalSat: 50_000,
           );
         }),
       ]);
@@ -309,16 +296,7 @@ void main() {
       container.read(activeWalletProvider.notifier).set(walletB);
 
       completer.complete(
-        WalletSyncResult.success(
-          walletId: recordA.id,
-          performedFullScan: true,
-          immatureSat: 0,
-          trustedPendingSat: 0,
-          untrustedPendingSat: 0,
-          confirmedSat: 99,
-          trustedSpendableSat: 99,
-          totalSat: 99,
-        ),
+        WalletSyncResult.success(walletId: recordA.id, performedFullScan: true),
       );
 
       await syncFuture;
