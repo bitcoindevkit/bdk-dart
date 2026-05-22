@@ -8,6 +8,13 @@ issue_tracker: https://github.com/bitcoindevkit/bdk-dart/issues
 environment:
   sdk: "^3.10.0"
 
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  windows:
+
 dependencies:
   ffi: ^2.1.4
   hooks: ^1.0.0
