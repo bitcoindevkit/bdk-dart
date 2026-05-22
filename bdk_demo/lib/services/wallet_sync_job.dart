@@ -215,6 +215,9 @@ Future<WalletSyncResult> executeWalletSync(
 }) async {
   Wallet? wallet;
   WalletSyncBackend? backend;
+  Descriptor? descriptor;
+  Descriptor? changeDescriptor;
+  Persister? persister;
 
   final performedFullScan = !req.fullScanCompleted;
 
@@ -224,16 +227,16 @@ Future<WalletSyncResult> executeWalletSync(
     final loadRunner = walletLoadRunner ?? _defaultWalletLoadRunner;
     final effectivePersistRunner = persistRunner ?? _defaultPersistRunner;
 
-    final descriptor = Descriptor(
+    descriptor = Descriptor(
       descriptor: req.descriptor,
       network: bdkNetwork,
     );
-    final changeDescriptor = Descriptor(
+    changeDescriptor = Descriptor(
       descriptor: req.changeDescriptor,
       network: bdkNetwork,
     );
 
-    final persister = Persister.newSqlite(path: req.sqlitePath);
+    persister = Persister.newSqlite(path: req.sqlitePath);
     wallet = loadRunner(
       descriptor: descriptor,
       changeDescriptor: changeDescriptor,
@@ -272,5 +275,8 @@ Future<WalletSyncResult> executeWalletSync(
   } finally {
     wallet?.dispose();
     backend?.dispose();
+    persister?.dispose();
+    descriptor?.dispose();
+    changeDescriptor?.dispose();
   }
 }

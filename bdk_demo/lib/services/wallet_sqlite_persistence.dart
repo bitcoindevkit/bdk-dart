@@ -40,18 +40,22 @@ Future<bool> _verifySqliteCanBeReopened({
   required String dbPath,
   required SqliteLoadRunner loadRunner,
 }) async {
+  Persister? verifierPersister;
+  Wallet? verifierWallet;
   try {
-    final verifierPersister = Persister.newSqlite(path: dbPath);
-    final verifierWallet = loadRunner(
+    verifierPersister = Persister.newSqlite(path: dbPath);
+    verifierWallet = loadRunner(
       descriptor: descriptor,
       changeDescriptor: changeDescriptor,
       persister: verifierPersister,
       lookahead: AppConstants.walletLookahead,
     );
-    verifierWallet.dispose();
     return true;
   } catch (_) {
     return false;
+  } finally {
+    verifierWallet?.dispose();
+    verifierPersister?.dispose();
   }
 }
 
