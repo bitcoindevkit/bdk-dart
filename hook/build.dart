@@ -5,6 +5,7 @@ void main(List<String> args) async {
   await build(args, (input, output) async {
     await const RustBuilder(
       assetName: 'uniffi:bdk_dart_ffi',
+      extraCargoBuildArgs: ['--locked'],
     ).run(input: input, output: output);
   });
 }
