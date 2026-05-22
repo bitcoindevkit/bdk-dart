@@ -376,7 +376,7 @@ void main() {
     );
 
     test(
-      'failed reseed preserves existing SQLite data until replacement succeeds',
+      'ambiguous load failure preserves existing SQLite data and does not reseed',
       () async {
         final (record, originalWallet) = await walletService.createWallet(
           'Preserve Existing Db',
@@ -402,7 +402,6 @@ void main() {
                 required persister,
                 required lookahead,
               }) => throw StateError('Forced load failure for test.'),
-          persistRunner: (wallet, persister) async => false,
         );
 
         await expectLater(
@@ -411,7 +410,7 @@ void main() {
             isA<StateError>().having(
               (e) => e.message,
               'message',
-              contains('SQLite persistence'),
+              contains('Preserving the current DB'),
             ),
           ),
         );

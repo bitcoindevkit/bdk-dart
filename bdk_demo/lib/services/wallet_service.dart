@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bdk_dart/bdk.dart';
+import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:uuid/uuid.dart';
 import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/constants/bip39_wordlist.dart';
@@ -20,6 +21,8 @@ typedef WalletLoadRunner =
       required Persister persister,
       required int lookahead,
     });
+
+enum _SqliteHealth { valid, corrupt, unknown }
 
 class WalletService {
   WalletService({
@@ -61,6 +64,25 @@ class WalletService {
 
   static void _defaultDisposer(Wallet wallet) => wallet.dispose();
 
+  static const List<int> _sqliteHeader = <int>[
+    0x53,
+    0x51,
+    0x4c,
+    0x69,
+    0x74,
+    0x65,
+    0x20,
+    0x66,
+    0x6f,
+    0x72,
+    0x6d,
+    0x61,
+    0x74,
+    0x20,
+    0x33,
+    0x00,
+  ];
+
   Future<void> _ensureWalletPersistedToSqlite(
     Wallet wallet,
     Persister persister,
@@ -77,6 +99,43 @@ class WalletService {
       persistRunner: _persistRunner,
       loadRunner: _walletLoadRunner,
     );
+  }
+
+  Future<_SqliteHealth> _probeSqliteHealth(File sqliteFile) async {
+    final RandomAccessFile handle;
+    try {
+      handle = await sqliteFile.open(mode: FileMode.read);
+    } catch (_) {
+      return _SqliteHealth.unknown;
+    }
+
+    try {
+      final header = await handle.read(_sqliteHeader.length);
+      if (header.length < _sqliteHeader.length) {
+        return _SqliteHealth.corrupt;
+      }
+      for (var i = 0; i < _sqliteHeader.length; i++) {
+        if (header[i] != _sqliteHeader[i]) {
+          return _SqliteHealth.corrupt;
+        }
+      }
+    } catch (_) {
+      return _SqliteHealth.unknown;
+    } finally {
+      await handle.close();
+    }
+
+    sqlite.Database? db;
+    try {
+      db = sqlite.sqlite3.open(sqliteFile.path, mode: sqlite.OpenMode.readOnly);
+      final rows = db.select('PRAGMA integrity_check;');
+      final result = rows.isNotEmpty ? rows.first['integrity_check'] : null;
+      return result == 'ok' ? _SqliteHealth.valid : _SqliteHealth.corrupt;
+    } catch (_) {
+      return _SqliteHealth.unknown;
+    } finally {
+      db?.close();
+    }
   }
 
   String validateRecoveryPhrase(String phrase) {
@@ -264,6 +323,16 @@ class WalletService {
     final dbPath = await WalletStoragePaths.sqlitePathForWallet(record.id);
     final sqliteFile = File(dbPath);
     if (await sqliteFile.exists()) {
+      final sqliteHealth = await _probeSqliteHealth(sqliteFile);
+      if (sqliteHealth == _SqliteHealth.corrupt) {
+        return _reseedWalletToFallbackSqlite(
+          walletId: record.id,
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          bdkNetwork: bdkNetwork,
+        );
+      }
+
       try {
         final persister = Persister.newSqlite(path: dbPath);
         final wallet = _walletLoadRunner(
@@ -273,12 +342,11 @@ class WalletService {
           lookahead: AppConstants.walletLookahead,
         );
         return wallet;
-      } catch (_) {
-        return _reseedWalletToFallbackSqlite(
-          walletId: record.id,
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          bdkNetwork: bdkNetwork,
+      } catch (error) {
+        throw StateError(
+          'Failed to load existing SQLite wallet at "$dbPath". '
+          'Preserving the current DB because it was not proven corrupt. '
+          'Original error: $error',
         );
       }
     }
