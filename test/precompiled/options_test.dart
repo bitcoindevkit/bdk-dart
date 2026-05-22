@@ -76,7 +76,10 @@ bdk_dart:
         pluginConfigKey: 'bdk_dart',
       );
       expect(options.precompiledBinaries, isNotNull);
-      expect(options.precompiledBinaries!.artifactHost, 'bitcoindevkit/bdk-dart');
+      expect(
+        options.precompiledBinaries!.artifactHost,
+        'bitcoindevkit/bdk-dart',
+      );
     });
 
     test('loadModeOverride honors invoker pubspec mode overrides', () {
