@@ -227,10 +227,7 @@ Future<WalletSyncResult> executeWalletSync(
     final loadRunner = walletLoadRunner ?? _defaultWalletLoadRunner;
     final effectivePersistRunner = persistRunner ?? _defaultPersistRunner;
 
-    descriptor = Descriptor(
-      descriptor: req.descriptor,
-      network: bdkNetwork,
-    );
+    descriptor = Descriptor(descriptor: req.descriptor, network: bdkNetwork);
     changeDescriptor = Descriptor(
       descriptor: req.changeDescriptor,
       network: bdkNetwork,
