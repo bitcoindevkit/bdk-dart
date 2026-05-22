@@ -1,0 +1,19 @@
+AGENTS.md
+PUBDEV_RELEASE_CHECKLIST.md
+justfile
+scripts/
+docs/
+
+# Local build and generated tool output
+**/build/
+**/.dart_tool/
+native/target/
+
+# Native libraries are built per consumer by Dart Native Assets.
+*.dylib
+*.so
+*.dll
+
+# The Flutter reference app is maintained in the repository, but is not needed
+# in the published package archive.
+bdk_demo/
