@@ -18,12 +18,16 @@ path = "uniffi-bindgen.rs"
 
 [dependencies]
 bdk-ffi = { package = "bdk-ffi", git = "https://github.com/bitcoindevkit/bdk-ffi.git", tag = "v2.3.1" }
+# TODO: Bump UniFFI after a release includes mozilla/uniffi-rs#2873.
+# UniFFI 0.31.1 predates the deterministic uniffi_traits ordering fix merged on 2026-04-16.
 uniffi = { version = "=0.31.1", features = ["cli"] }
-uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.0+v0.31.1" }
+# TODO: Switch this rev pin back to a release tag after a tag includes Uniffi-Dart/uniffi-dart#134.
+# The latest release tag, v0.2.0+v0.31.1, predates deterministic Dart helper ordering merged on 2026-05-04.
+uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", rev = "379a0e35dfa50ea79172a478d1e4a75a15e8168a" }
 camino = "1.2"
 
 [build-dependencies]
 uniffi = { version = "=0.31.1", features = ["build"] }
-uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.0+v0.31.1", features = [
+uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", rev = "379a0e35dfa50ea79172a478d1e4a75a15e8168a", features = [
     "build",
 ] }

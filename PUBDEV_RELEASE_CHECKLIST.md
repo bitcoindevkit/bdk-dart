@@ -14,8 +14,12 @@ Use this checklist before publishing `bdk_dart` to pub.dev.
 ## 2. Source and generated bindings
 
 - [ ] Native and bindings changes are finalized.
-- [ ] `lib/bdk.dart` is regenerated if needed.
+- [ ] `native/Cargo.lock` changes are intentional and reviewed when native dependencies change.
+- [ ] Release native builds use the pinned Rust toolchain from `native/rust-toolchain.toml`.
+- [ ] `lib/bdk.dart` is regenerated if needed and the working tree remains clean for generated bindings.
 - [ ] `scripts/generate_bindings.sh` succeeds on a clean checkout.
+- [ ] `scripts/check_reproducibility.sh` passes for deterministic binding generation and native build input hygiene.
+- [ ] Native binary hash enforcement is enabled only after the UniFFI trait-ordering fix is available in the native dependency stack.
 
 ## 3. Local quality gates
 

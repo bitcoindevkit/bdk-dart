@@ -3,6 +3,7 @@
 native/target/
 **/*.rs.bk
 Cargo.lock
+!native/Cargo.lock
 
 # Flutter/Dart
 **/build/

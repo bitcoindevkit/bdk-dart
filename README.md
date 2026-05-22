@@ -63,7 +63,13 @@ If you have the Rust toolchain installed, the native library will be automatical
 As a user of the package, you don't need to worry about building the native library or bindings yourself.
 Only if you want to contribute to the bindings or modify the native code yourself, you can follow the instructions in [development](#development) below.
 The first build can take several minutes depending on your machine and network (subsequent builds are faster).
-We pin git dependencies to immutable refs for reproducibility. `bdk-ffi` and `uniffi-dart` both track upstream release tags.
+We pin git dependencies to immutable refs for reproducibility. `bdk-ffi` tracks an upstream release
+tag; `uniffi-dart` is temporarily pinned to an immutable merge commit until a release tag includes
+the deterministic Dart helper ordering fix.
+The native Rust crate also commits `native/Cargo.lock` and uses the pinned Rust toolchain in
+`native/rust-toolchain.toml` for deterministic binding generation and native build input hygiene.
+The native hash comparison is reported as hygiene until the upstream UniFFI trait-ordering fix is
+available through the native dependency stack.
 
 ## Development
 
@@ -77,6 +83,12 @@ For release operations, see [PUBDEV_RELEASE_CHECKLIST.md](PUBDEV_RELEASE_CHECKLI
 
    ```bash
    bash ./scripts/generate_bindings.sh
+   ```
+
+3. Before release-oriented changes, verify generated bindings and native build input hygiene:
+
+   ```bash
+   bash ./scripts/check_reproducibility.sh
    ```
 
 ### Testing
