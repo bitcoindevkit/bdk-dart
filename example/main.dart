@@ -65,6 +65,8 @@ void main() {
       url: 'ssl://electrum.blockstream.info:60002',
       socks5: null,
       validateDomain: true,
+      timeout: null,
+      retry: null,
     );
     final syncRequest = wallet.startSyncWithRevealedSpks().build();
     final update = client.sync_(
