@@ -63,6 +63,10 @@ jobs:
         run: |
           dart test
 
+      - name: Run tests (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter test
+
   windows-smoke:
     runs-on: windows-latest
 

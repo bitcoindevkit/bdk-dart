@@ -38,6 +38,11 @@ generate-bindings:
 demo-analyze:
   cd bdk_demo && flutter analyze
 
+[group("Demo")]
+[doc("Run Flutter tests for the demo app.")]
+demo-test *ARGS:
+  cd bdk_demo && flutter test {{ if ARGS == "" { "" } else { ARGS } }}
+
 [group("CI")]
 [doc("Run the same checks as CI.")]
 ci:
@@ -45,6 +50,7 @@ ci:
   just analyze
   just test
   just demo-analyze
+  just demo-test
 
 [group("Dart")]
 [doc("Remove build and tool artifacts to start fresh.")]
