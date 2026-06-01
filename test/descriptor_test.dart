@@ -25,35 +25,35 @@ void main() {
       expect(
         () => Descriptor(
           descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          network: Network.regtest,
+          networkKind: networkKindFor(Network.regtest),
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
           descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          network: Network.testnet,
+          networkKind: networkKindFor(Network.testnet),
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
           descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          network: Network.testnet4,
+          networkKind: networkKindFor(Network.testnet4),
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
           descriptor: "tr($testExtendedPrivKey/$bip86TestReceivePath/0)",
-          network: Network.signet,
+          networkKind: networkKindFor(Network.signet),
         ),
         returnsNormally,
       );
       expect(
         () => Descriptor(
           descriptor: "tr($mainnetExtendedPrivKey/$bip86MainnetReceivePath/0)",
-          network: Network.bitcoin,
+          networkKind: networkKindFor(Network.bitcoin),
         ),
         returnsNormally,
       );
@@ -63,7 +63,7 @@ void main() {
       expect(
         () => Descriptor(
           descriptor: "addr(tb1qhjys9wxlfykmte7ftryptx975uqgd6kcm6a7z4)",
-          network: Network.testnet,
+          networkKind: networkKindFor(Network.testnet),
         ),
         throwsA(isA<DescriptorException>()),
       );

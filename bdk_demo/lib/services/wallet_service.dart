@@ -66,10 +66,11 @@ class WalletService {
     final trimmedName = _validateNewWalletName(name);
 
     final bdkNetwork = walletNetwork.toBdkNetwork();
+    final bdkNetworkKind = walletNetwork.toBdkNetworkKind();
 
     final mnemonic = Mnemonic(wordCount: WordCount.words12);
     final secretKey = DescriptorSecretKey(
-      network: bdkNetwork,
+      networkKind: bdkNetworkKind,
       mnemonic: mnemonic,
       password: null,
     );
@@ -77,13 +78,13 @@ class WalletService {
     final descriptor = _deriveDescriptor(
       secretKey,
       KeychainKind.external_,
-      bdkNetwork,
+      bdkNetworkKind,
       scriptType,
     );
     final changeDescriptor = _deriveDescriptor(
       secretKey,
       KeychainKind.internal,
-      bdkNetwork,
+      bdkNetworkKind,
       scriptType,
     );
 
@@ -114,9 +115,10 @@ class WalletService {
 
     final normalized = validateRecoveryPhrase(phrase);
     final bdkNetwork = walletNetwork.toBdkNetwork();
+    final bdkNetworkKind = walletNetwork.toBdkNetworkKind();
     final mnemonic = Mnemonic.fromString(mnemonic: normalized);
     final secretKey = DescriptorSecretKey(
-      network: bdkNetwork,
+      networkKind: bdkNetworkKind,
       mnemonic: mnemonic,
       password: null,
     );
@@ -124,13 +126,13 @@ class WalletService {
     final descriptor = _deriveDescriptor(
       secretKey,
       KeychainKind.external_,
-      bdkNetwork,
+      bdkNetworkKind,
       scriptType,
     );
     final changeDescriptor = _deriveDescriptor(
       secretKey,
       KeychainKind.internal,
-      bdkNetwork,
+      bdkNetworkKind,
       scriptType,
     );
 
@@ -160,13 +162,14 @@ class WalletService {
     }
 
     final bdkNetwork = walletNetwork.toBdkNetwork();
+    final bdkNetworkKind = walletNetwork.toBdkNetworkKind();
     final descriptor = Descriptor(
       descriptor: trimmedExternal,
-      network: bdkNetwork,
+      networkKind: bdkNetworkKind,
     );
     final changeDescriptor = Descriptor(
       descriptor: trimmedChange,
-      network: bdkNetwork,
+      networkKind: bdkNetworkKind,
     );
 
     return _buildAndPersistWallet(
@@ -192,14 +195,15 @@ class WalletService {
     }
 
     final bdkNetwork = record.network.toBdkNetwork();
+    final bdkNetworkKind = record.network.toBdkNetworkKind();
 
     final descriptor = Descriptor(
       descriptor: secrets.descriptor,
-      network: bdkNetwork,
+      networkKind: bdkNetworkKind,
     );
     final changeDescriptor = Descriptor(
       descriptor: secrets.changeDescriptor,
-      network: bdkNetwork,
+      networkKind: bdkNetworkKind,
     );
 
     final persister = Persister.newInMemory();
@@ -215,19 +219,19 @@ class WalletService {
   Descriptor _deriveDescriptor(
     DescriptorSecretKey secretKey,
     KeychainKind keychainKind,
-    Network network,
+    NetworkKind networkKind,
     ScriptType scriptType,
   ) {
     return switch (scriptType) {
       ScriptType.p2wpkh => Descriptor.newBip84(
         secretKey: secretKey,
         keychainKind: keychainKind,
-        network: network,
+        networkKind: networkKind,
       ),
       ScriptType.p2tr => Descriptor.newBip86(
         secretKey: secretKey,
         keychainKind: keychainKind,
-        network: network,
+        networkKind: networkKind,
       ),
       ScriptType.unknown => throw ArgumentError(
         'Unsupported script type: $scriptType',

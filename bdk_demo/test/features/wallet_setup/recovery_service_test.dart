@@ -1,6 +1,7 @@
 import 'package:bdk_dart/bdk.dart';
 import 'package:uuid/uuid.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
+import 'package:bdk_demo/services/wallet_network_mapper.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -30,14 +31,10 @@ Future<void> _initServices() async {
   WalletNetwork walletNetwork,
   String phrase,
 ) {
-  final bdkNetwork = switch (walletNetwork) {
-    WalletNetwork.signet => Network.signet,
-    WalletNetwork.testnet => Network.testnet,
-    WalletNetwork.regtest => Network.regtest,
-  };
+  final bdkNetworkKind = walletNetwork.toBdkNetworkKind();
   final mnemonic = Mnemonic.fromString(mnemonic: phrase);
   final secretKey = DescriptorSecretKey(
-    network: bdkNetwork,
+    networkKind: bdkNetworkKind,
     mnemonic: mnemonic,
     password: null,
   );
@@ -48,13 +45,13 @@ Future<void> _initServices() async {
     publicKey: publicKey,
     fingerprint: fingerprint,
     keychainKind: KeychainKind.external_,
-    network: bdkNetwork,
+    networkKind: bdkNetworkKind,
   );
   final changeDescriptor = Descriptor.newBip84Public(
     publicKey: publicKey,
     fingerprint: fingerprint,
     keychainKind: KeychainKind.internal,
-    network: bdkNetwork,
+    networkKind: bdkNetworkKind,
   );
 
   return (descriptor.toString(), changeDescriptor.toString());

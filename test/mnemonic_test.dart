@@ -9,14 +9,14 @@ void main() {
             "space echo position wrist orient erupt relief museum myself grain wisdom tumble",
       );
       final descriptorSecretKey = DescriptorSecretKey(
-        network: Network.testnet,
+        networkKind: NetworkKind.test,
         mnemonic: mnemonic,
         password: null,
       );
       final descriptor = Descriptor.newBip86(
         secretKey: descriptorSecretKey,
         keychainKind: KeychainKind.external_,
-        network: Network.testnet,
+        networkKind: NetworkKind.test,
       );
 
       expect(

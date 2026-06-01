@@ -52,7 +52,13 @@ ElectrumClient buildElectrumClientFromEnv({Map<String, String>? env}) {
   final environment = env ?? Platform.environment;
   final url = envOrThrow(electrumUrlEnv, env: environment);
   final socks5 = environment[electrumSocks5Env];
-  return ElectrumClient(url: url, socks5: socks5);
+  return ElectrumClient(
+    url: url,
+    socks5: socks5,
+    validateDomain: true,
+    timeout: null,
+    retry: null,
+  );
 }
 
 EsploraClient buildEsploraClientFromEnv({Map<String, String>? env}) {
