@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, "**"]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -62,6 +62,15 @@ jobs:
       - name: Run tests
         run: |
           dart test
+
+  precompile-binaries:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/precompile_binaries.yml
+    secrets:
+      PRECOMPILED_PRIVATE_KEY: ${{ secrets.PRECOMPILED_PRIVATE_KEY }}
 
   windows-smoke:
     runs-on: windows-latest
