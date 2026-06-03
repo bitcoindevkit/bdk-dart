@@ -27,11 +27,11 @@ _createSqliteWalletFixture(WalletNetwork walletNetwork) async {
   final bdkNetwork = _bdkNetwork(walletNetwork);
   final descriptor = Descriptor(
     descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/0/*)',
-    network: bdkNetwork,
+    networkKind: NetworkKind.test,
   );
   final changeDescriptor = Descriptor(
     descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/1/*)',
-    network: bdkNetwork,
+    networkKind: NetworkKind.test,
   );
   final dbPath = '${dir.path}/wallet.sqlite';
   final persister = Persister.newSqlite(path: dbPath);
@@ -206,11 +206,11 @@ void main() {
         final dbPath = '${dir.path}/missing.sqlite';
         final descriptor = Descriptor(
           descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/0/*)',
-          network: Network.testnet,
+          networkKind: NetworkKind.test,
         );
         final changeDescriptor = Descriptor(
           descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/1/*)',
-          network: Network.testnet,
+          networkKind: NetworkKind.test,
         );
         final persister = Persister.newSqlite(path: dbPath);
         final wallet = Wallet(
@@ -253,11 +253,11 @@ void main() {
       final dbPath = '${dir.path}/ok.sqlite';
       final descriptor = Descriptor(
         descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/0/*)',
-        network: Network.testnet,
+        networkKind: NetworkKind.test,
       );
       final changeDescriptor = Descriptor(
         descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/1/*)',
-        network: Network.testnet,
+        networkKind: NetworkKind.test,
       );
       final persister = Persister.newSqlite(path: dbPath);
       final wallet = Wallet(

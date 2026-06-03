@@ -185,7 +185,13 @@ WalletSyncBackend _defaultWalletSyncBackendFactory(
       EsploraClient(url: endpoint.url, proxy: null),
     ),
     ClientType.electrum => ElectrumWalletSyncBackend(
-      ElectrumClient(url: endpoint.url, socks5: null),
+      ElectrumClient(
+        url: endpoint.url,
+        socks5: null,
+        timeout: null,
+        retry: null,
+        validateDomain: true,
+      ),
     ),
   };
 }
@@ -223,14 +229,17 @@ Future<WalletSyncResult> executeWalletSync(
 
   try {
     final walletNetwork = WalletNetwork.values.byName(req.walletNetworkName);
-    final bdkNetwork = walletNetwork.toBdkNetwork();
+    final bdkNetworkKind = walletNetwork.toBdkNetworkKind();
     final loadRunner = walletLoadRunner ?? _defaultWalletLoadRunner;
     final effectivePersistRunner = persistRunner ?? _defaultPersistRunner;
 
-    descriptor = Descriptor(descriptor: req.descriptor, network: bdkNetwork);
+    descriptor = Descriptor(
+      descriptor: req.descriptor,
+      networkKind: bdkNetworkKind,
+    );
     changeDescriptor = Descriptor(
       descriptor: req.changeDescriptor,
-      network: bdkNetwork,
+      networkKind: bdkNetworkKind,
     );
 
     persister = Persister.newSqlite(path: req.sqlitePath);

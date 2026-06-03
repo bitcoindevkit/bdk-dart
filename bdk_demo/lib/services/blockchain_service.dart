@@ -133,7 +133,13 @@ abstract final class BlockchainService {
       ClientType.electrum =>
         electrumFactory?.call(config.url) ??
             ElectrumBlockchainClient(
-              ElectrumClient(url: config.url, socks5: null),
+              ElectrumClient(
+                url: config.url,
+                socks5: null,
+                timeout: null,
+                retry: null,
+                validateDomain: true,
+              ),
             ),
     };
   }

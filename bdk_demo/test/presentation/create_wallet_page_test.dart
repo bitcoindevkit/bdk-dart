@@ -23,11 +23,11 @@ const _testExtendedPrivKey =
 Wallet _createTestWallet({Network network = Network.signet}) {
   final descriptor = Descriptor(
     descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/0/*)',
-    network: network,
+    networkKind: NetworkKind.test,
   );
   final changeDescriptor = Descriptor(
     descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/1/*)',
-    network: network,
+    networkKind: NetworkKind.test,
   );
   return Wallet(
     descriptor: descriptor,

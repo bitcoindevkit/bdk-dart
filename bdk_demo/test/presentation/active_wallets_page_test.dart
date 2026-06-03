@@ -24,11 +24,11 @@ Wallet _createTestWallet({Network network = Network.testnet}) {
   final coinType = network == Network.signet ? 1 : 1;
   final descriptor = Descriptor(
     descriptor: 'wpkh($_testExtendedPrivKey/84h/${coinType}h/0h/0/*)',
-    network: network,
+    networkKind: NetworkKind.test,
   );
   final changeDescriptor = Descriptor(
     descriptor: 'wpkh($_testExtendedPrivKey/84h/${coinType}h/0h/1/*)',
-    network: network,
+    networkKind: NetworkKind.test,
   );
   return Wallet(
     descriptor: descriptor,
