@@ -58,6 +58,8 @@ class ActiveWalletNotifier extends Notifier<Wallet?> {
     state = wallet;
   }
 
+  void replaceWallet(Wallet wallet) => set(wallet);
+
   void clear() {
     _disposeWallet(_currentWallet);
     _currentWallet = null;
@@ -96,5 +98,3 @@ class WalletRecordsNotifier extends Notifier<List<WalletRecord>> {
     state = ref.read(storageServiceProvider).getWalletRecords();
   }
 }
-
-// TODO: Add balanceProvider, syncStateProvider.
