@@ -75,6 +75,12 @@ final syncControllerProvider = NotifierProvider<SyncController, int>(
   SyncController.new,
 );
 
+final syncActiveWalletTriggerProvider = Provider<Future<void> Function()>((
+  ref,
+) {
+  return ref.read(syncControllerProvider.notifier).syncActiveWallet;
+});
+
 class SyncController extends Notifier<int> {
   bool _inFlight = false;
 

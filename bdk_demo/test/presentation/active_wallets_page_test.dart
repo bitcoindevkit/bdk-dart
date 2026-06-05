@@ -21,7 +21,7 @@ const _testExtendedPrivKey =
     'tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B';
 
 Wallet _createTestWallet({Network network = Network.testnet}) {
-  final coinType = network == Network.signet ? 1 : 1;
+  final coinType = 1;
   final descriptor = Descriptor(
     descriptor: 'wpkh($_testExtendedPrivKey/84h/${coinType}h/0h/0/*)',
     networkKind: NetworkKind.test,

@@ -1,4 +1,6 @@
+import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bdk_demo/features/home/home_page.dart';
 import 'package:bdk_demo/features/transactions/transaction_detail_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
@@ -6,6 +8,8 @@ import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
 import 'package:bdk_demo/features/wallet_setup/recover_wallet_page.dart';
 import 'package:bdk_demo/features/wallet_setup/wallet_choice_page.dart';
+import 'package:bdk_demo/providers/connectivity_provider.dart';
+import 'package:bdk_demo/providers/wallet_providers.dart';
 
 abstract final class AppRoutes {
   static const walletChoice = '/';
@@ -24,7 +28,18 @@ abstract final class AppRoutes {
   static const recoveryData = '/recovery-data';
 }
 
-GoRouter createRouter() => GoRouter(
+typedef RouterRead = T Function<T>(ProviderListenable<T> provider);
+
+String? _sendRouteRedirect(RouterRead read) {
+  final hasActiveWallet =
+      read(activeWalletRecordProvider) != null &&
+      read(activeWalletProvider) != null;
+  if (!hasActiveWallet) return AppRoutes.home;
+  if (!read(isOnlineProvider)) return AppRoutes.home;
+  return null;
+}
+
+GoRouter createRouter(RouterRead read) => GoRouter(
   initialLocation: AppRoutes.walletChoice,
   routes: [
     GoRoute(
@@ -51,7 +66,7 @@ GoRouter createRouter() => GoRouter(
     GoRoute(
       path: AppRoutes.home,
       name: 'home',
-      builder: (context, state) => const PlaceholderPage(title: 'Home'),
+      builder: (context, state) => const HomePage(),
     ),
     GoRoute(
       path: AppRoutes.receive,
@@ -61,6 +76,7 @@ GoRouter createRouter() => GoRouter(
     GoRoute(
       path: AppRoutes.send,
       name: 'send',
+      redirect: (context, state) => _sendRouteRedirect(read),
       builder: (context, state) => const PlaceholderPage(title: 'Send'),
     ),
     GoRoute(

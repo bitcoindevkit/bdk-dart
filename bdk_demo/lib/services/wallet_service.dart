@@ -142,7 +142,11 @@ class WalletService {
     final normalized = phrase
         .trim()
         .toLowerCase()
-        .split(RegExp(r'\s+'))
+        .replaceAll('\t', ' ')
+        .replaceAll('\n', ' ')
+        .replaceAll('\r', ' ')
+        .split(' ')
+        .where((word) => word.isNotEmpty)
         .join(' ');
     if (normalized.isEmpty) {
       throw ArgumentError('Recovery phrase cannot be empty.');

@@ -9,7 +9,7 @@ final isOnlineProvider = Provider<bool>((ref) {
   final connectivity = ref.watch(connectivityProvider);
   return connectivity.when(
     data: (results) => results.any((r) => r != ConnectivityResult.none),
-    loading: () => true,
+    loading: () => false,
     error: (_, __) => false,
   );
 });
