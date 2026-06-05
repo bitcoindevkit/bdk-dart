@@ -34,7 +34,7 @@ class _ActiveWalletsPageState extends ConsumerState<ActiveWalletsPage> {
 
       ref.read(activeWalletProvider.notifier).set(wallet);
       ref.read(activeWalletRecordProvider.notifier).set(record);
-      context.go(AppRoutes.home);
+      context.push(AppRoutes.home);
     } on StateError {
       if (!mounted) return;
       _showSnackBar('Secrets not found for this wallet');

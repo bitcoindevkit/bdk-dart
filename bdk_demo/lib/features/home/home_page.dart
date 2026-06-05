@@ -396,7 +396,7 @@ class _ActionRow extends StatelessWidget {
       children: [
         Expanded(
           child: FilledButton.icon(
-            onPressed: () => context.go(AppRoutes.receive),
+            onPressed: () => context.push(AppRoutes.receive),
             icon: const Icon(Icons.call_received),
             label: const Text('Receive'),
           ),
@@ -404,7 +404,7 @@ class _ActionRow extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: FilledButton.icon(
-            onPressed: isOnline ? () => context.go(AppRoutes.send) : null,
+            onPressed: isOnline ? () => context.push(AppRoutes.send) : null,
             icon: const Icon(Icons.call_made),
             label: const Text('Send'),
           ),

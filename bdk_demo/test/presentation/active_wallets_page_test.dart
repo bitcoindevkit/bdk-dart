@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
+import 'package:bdk_demo/features/shared/widgets/secondary_app_bar.dart';
 import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/settings_providers.dart';
@@ -84,7 +85,10 @@ void main() {
         ),
         GoRoute(
           path: AppRoutes.home,
-          builder: (context, state) => const Scaffold(body: Text('Home')),
+          builder: (context, state) => const Scaffold(
+            appBar: SecondaryAppBar(title: 'Home'),
+            body: Text('Home'),
+          ),
         ),
       ],
     );
@@ -206,11 +210,58 @@ void main() {
       await tester.tap(find.text('Load Me'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Home'), findsOneWidget);
+      expect(find.byType(SecondaryAppBar), findsOneWidget);
+      expect(find.text('Home'), findsNWidgets(2));
       expect(container.read(activeWalletRecordProvider)?.id, record.id);
 
       final activeWallet = container.read(activeWalletProvider);
       expect(activeWallet, isNotNull);
+    });
+
+    testWidgets('back from home returns to Active Wallets after loading', (
+      tester,
+    ) async {
+      storageService = await initStorage();
+      final wallet = _createTestWallet();
+      const record = WalletRecord(
+        id: 'back-nav-id',
+        name: 'Back Nav Wallet',
+        network: WalletNetwork.testnet,
+        scriptType: ScriptType.p2wpkh,
+      );
+      await storageService.addWalletRecord(
+        record,
+        const WalletSecrets(
+          descriptor: 'dummy-desc',
+          changeDescriptor: 'dummy-change',
+        ),
+      );
+      final walletService = _ImmediateLoadWalletService(
+        storage: storageService,
+        wallet: wallet,
+      );
+
+      final container = ProviderContainer(
+        overrides: [
+          storageServiceProvider.overrideWithValue(storageService),
+          walletServiceProvider.overrideWithValue(walletService),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await pumpActiveWalletsPage(tester, container);
+
+      await tester.tap(find.text('Back Nav Wallet'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SecondaryAppBar), findsOneWidget);
+      expect(find.text('Home'), findsNWidgets(2));
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ActiveWalletsPage), findsOneWidget);
+      expect(find.text('Back Nav Wallet'), findsOneWidget);
     });
 
     testWidgets('missing secrets shows error and does not navigate', (
