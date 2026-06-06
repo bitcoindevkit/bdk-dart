@@ -88,8 +88,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                         });
                       },
                     ),
-                    const SizedBox(height: 16),
-                    _SyncStateCard(syncStatus: syncStatus),
+                    if (_supportsAutoSync(record.network)) ...[
+                      const SizedBox(height: 16),
+                      _SyncStateCard(syncStatus: syncStatus),
+                    ],
                     const SizedBox(height: 16),
                     _ActionRow(isOnline: isOnline),
                   ],
@@ -126,6 +128,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isOnline = ref.read(isOnlineProvider);
 
     if (record == null || wallet == null) return;
+    if (!_supportsAutoSync(record.network)) return;
     if (snapshot?.walletId == record.id) {
       _autoSyncedWalletIds.remove(record.id);
       return;
@@ -144,6 +147,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (snapshot?.walletId != walletId) return null;
     return snapshot;
   }
+
+  bool _supportsAutoSync(WalletNetwork network) =>
+      network != WalletNetwork.regtest;
 }
 
 class _WalletHeader extends StatelessWidget {
