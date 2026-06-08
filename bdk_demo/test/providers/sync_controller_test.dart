@@ -355,14 +355,14 @@ void main() {
 
     test('times out slow sync and records timeout error kind', () async {
       final container = await _createContainer([
-        syncTimeoutProvider.overrideWithValue(const Duration(milliseconds: 50)),
         walletSyncJobRunnerProvider.overrideWithValue((
           WalletSyncRequest req,
         ) async {
-          await Future<void>.delayed(const Duration(seconds: 1));
-          return WalletSyncResult.success(
+          return WalletSyncResult.failure(
             walletId: req.walletId,
             performedFullScan: true,
+            errorMessage: 'sync timed out',
+            failureKind: WalletSyncFailureKind.timeout,
           );
         }),
       ]);

@@ -272,24 +272,19 @@ class SyncController extends Notifier<int> {
         fullScanCompleted: record.fullScanCompleted,
         endpointUrl: endpoint.url,
         endpointClientType: endpoint.clientType,
+        syncTimeoutSeconds: ref.read(syncTimeoutProvider).inSeconds,
       );
 
       ref.read(syncProgressProvider.notifier).setPhase(SyncPhase.scanning);
 
       final runner = ref.read(walletSyncJobRunnerProvider);
-      final timeout = ref.read(syncTimeoutProvider);
       final WalletSyncResult result;
+      final attemptStopwatch = Stopwatch()..start();
       try {
-        result = await runner(request).timeout(timeout);
-      } on TimeoutException {
-        if (_stillActive(walletId)) {
-          ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.timeout);
-          _setSyncStatus(SyncStatus.error);
-        } else {
-          _setSyncStatus(SyncStatus.idle);
-        }
-        return;
+        result = await runner(request);
+        attemptStopwatch.stop();
       } catch (e) {
+        attemptStopwatch.stop();
         if (_stillActive(walletId)) {
           ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
           _setSyncStatus(SyncStatus.error);
@@ -305,7 +300,12 @@ class SyncController extends Notifier<int> {
       }
 
       if (!result.success) {
-        ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
+        ref.read(syncErrorKindProvider.notifier).set(
+          switch (result.failureKind) {
+            WalletSyncFailureKind.timeout => SyncErrorKind.timeout,
+            _ => SyncErrorKind.generic,
+          },
+        );
         _setSyncStatus(SyncStatus.error);
         return;
       }

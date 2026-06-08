@@ -15,7 +15,7 @@ abstract final class AppConstants {
 
   static const syncSlowWarningAfter = Duration(seconds: 10);
 
-  static const syncTimeout = Duration(seconds: 12);
+  static const syncTimeout = Duration(seconds: 20);
 
   static const maxRecipients = 4;
 

@@ -30,18 +30,6 @@ const signetEndpointOptions = [
     url: 'ssl://mutinynet.com:60602',
     clientType: ClientType.electrum,
   ),
-  NetworkEndpointOption(
-    id: 'emzy-signet',
-    label: 'Emzy.de',
-    url: 'ssl://electrum.emzy.de:53002',
-    clientType: ClientType.electrum,
-  ),
-  NetworkEndpointOption(
-    id: 'wakiyamap-signet',
-    label: 'Wakiyamap',
-    url: 'ssl://signet-electrumx.wakiyamap.dev:50002',
-    clientType: ClientType.electrum,
-  ),
 ];
 
 const testnetEndpointOptions = [

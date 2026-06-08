@@ -1,6 +1,6 @@
 import 'dart:collection';
-
 import 'package:bdk_demo/core/constants/app_constants.dart';
+import 'package:flutter/foundation.dart';
 
 enum LogLevel { info, warn, error }
 
@@ -20,7 +20,9 @@ class AppLogger {
       LogLevel.warn => 'WARN',
       LogLevel.error => 'ERROR',
     };
-    _entries.addFirst('$timestamp [$label]  $message');
+    final entry = '$timestamp [$label]  $message';
+    _entries.addFirst(entry);
+    debugPrint(entry);
     while (_entries.length > maxEntries) {
       _entries.removeLast();
     }
