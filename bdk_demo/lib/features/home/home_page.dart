@@ -57,6 +57,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final wallet = ref.watch(activeWalletProvider);
     final snapshot = ref.watch(balanceSnapshotProvider);
     final syncStatus = ref.watch(syncStatusProvider);
+    final syncProgress = ref.watch(syncProgressProvider);
     final isOnline = ref.watch(isOnlineProvider);
 
     return Scaffold(
@@ -90,7 +91,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     if (_supportsAutoSync(record.network)) ...[
                       const SizedBox(height: 16),
-                      _SyncStateCard(syncStatus: syncStatus),
+                      _SyncStateCard(
+                        syncStatus: syncStatus,
+                        syncProgress: syncProgress,
+                      ),
                     ],
                     const SizedBox(height: 16),
                     _ActionRow(isOnline: isOnline),
@@ -289,13 +293,17 @@ class _BalanceCard extends StatelessWidget {
 }
 
 class _SyncStateCard extends StatelessWidget {
-  const _SyncStateCard({required this.syncStatus});
+  const _SyncStateCard({required this.syncStatus, required this.syncProgress});
 
   final SyncStatus syncStatus;
+  final SyncProgress syncProgress;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final showProgressSteps =
+        syncStatus == SyncStatus.syncing || syncStatus == SyncStatus.synced;
+
     final (icon, title, message, color) = switch (syncStatus) {
       SyncStatus.idle => (
         Icons.pause_circle_outline,
@@ -306,7 +314,7 @@ class _SyncStateCard extends StatelessWidget {
       SyncStatus.syncing => (
         Icons.sync,
         'Syncing wallet',
-        'Fetching the latest wallet state.',
+        'This usually takes about 5–10 seconds.',
         theme.colorScheme.secondary,
       ),
       SyncStatus.synced => (
@@ -327,6 +335,7 @@ class _SyncStateCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: color),
             const SizedBox(width: 12),
@@ -349,11 +358,126 @@ class _SyncStateCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(message, style: theme.textTheme.bodyMedium),
+                  if (showProgressSteps) ...[
+                    const SizedBox(height: 16),
+                    _SyncProgressSteps(
+                      syncStatus: syncStatus,
+                      syncProgress: syncProgress,
+                    ),
+                  ],
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SyncProgressSteps extends StatelessWidget {
+  const _SyncProgressSteps({
+    required this.syncStatus,
+    required this.syncProgress,
+  });
+
+  final SyncStatus syncStatus;
+  final SyncProgress syncProgress;
+
+  int get _activeStepIndex {
+    if (syncStatus == SyncStatus.synced) return 3;
+    return switch (syncProgress.phase) {
+      SyncPhase.connecting => 0,
+      SyncPhase.scanning => 1,
+      SyncPhase.saving => 2,
+      SyncPhase.upToDate => 3,
+      SyncPhase.idle => 0,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scanLabel = syncProgress.isFirstSync
+        ? 'First sync (checking addresses)'
+        : 'Updating wallet';
+    final steps = [
+      'Connecting to server',
+      scanLabel,
+      'Saving wallet',
+      'Up to date',
+    ];
+    final activeIndex = _activeStepIndex;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < steps.length; i++)
+          _SyncProgressStep(
+            label: steps[i],
+            state: i < activeIndex
+                ? _SyncStepState.complete
+                : i == activeIndex
+                ? (syncStatus == SyncStatus.synced
+                      ? _SyncStepState.complete
+                      : _SyncStepState.active)
+                : _SyncStepState.pending,
+            theme: theme,
+          ),
+      ],
+    );
+  }
+}
+
+enum _SyncStepState { pending, active, complete }
+
+class _SyncProgressStep extends StatelessWidget {
+  const _SyncProgressStep({
+    required this.label,
+    required this.state,
+    required this.theme,
+  });
+
+  final String label;
+  final _SyncStepState state;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, color, weight) = switch (state) {
+      _SyncStepState.pending => (
+        Icons.radio_button_unchecked,
+        theme.colorScheme.onSurface.withAlpha(120),
+        FontWeight.w400,
+      ),
+      _SyncStepState.active => (
+        Icons.sync,
+        theme.colorScheme.secondary,
+        FontWeight.w600,
+      ),
+      _SyncStepState.complete => (
+        Icons.check_circle_outline,
+        Colors.green.shade700,
+        FontWeight.w500,
+      ),
+    };
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: color,
+                fontWeight: weight,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

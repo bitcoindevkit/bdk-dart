@@ -235,6 +235,38 @@ void main() {
     }
   });
 
+  testWidgets('renders sync progress steps while syncing', (tester) async {
+    final container = await createContainer();
+    await seedActiveWallet(container);
+    container.read(syncStatusProvider.notifier).set(SyncStatus.syncing);
+    container.read(syncProgressProvider.notifier).start(isFirstSync: true);
+    container.read(syncProgressProvider.notifier).setPhase(SyncPhase.scanning);
+
+    await pumpHomePage(tester, container);
+
+    expect(find.text('Connecting to server'), findsOneWidget);
+    expect(find.text('First sync (checking addresses)'), findsOneWidget);
+    expect(find.text('Saving wallet'), findsOneWidget);
+    expect(find.text('Up to date'), findsOneWidget);
+    expect(find.text('This usually takes about 5–10 seconds.'), findsOneWidget);
+  });
+
+  testWidgets('renders completed sync progress steps when synced', (
+    tester,
+  ) async {
+    final container = await createContainer();
+    final (record, wallet) = await seedActiveWallet(container);
+    seedBalanceSnapshot(container, wallet, record.id);
+    container.read(syncProgressProvider.notifier).start(isFirstSync: true);
+    container.read(syncProgressProvider.notifier).setPhase(SyncPhase.upToDate);
+    container.read(syncStatusProvider.notifier).set(SyncStatus.synced);
+
+    await pumpHomePage(tester, container);
+
+    expect(find.text('Up to date'), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle_outline), findsWidgets);
+  });
+
   testWidgets('renders safe pre-sync state without a balance snapshot', (
     tester,
   ) async {

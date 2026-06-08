@@ -9,6 +9,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum SyncStatus { idle, syncing, synced, error }
 
+enum SyncPhase { idle, connecting, scanning, saving, upToDate }
+
+class SyncProgress {
+  const SyncProgress({this.phase = SyncPhase.idle, this.isFirstSync = false});
+
+  final SyncPhase phase;
+  final bool isFirstSync;
+}
+
 typedef WalletSqlitePathResolver = Future<String> Function(String walletId);
 typedef WalletFullScanMarker = Future<void> Function(String walletId);
 
@@ -21,6 +30,26 @@ class SyncStatusNotifier extends Notifier<SyncStatus> {
   SyncStatus build() => SyncStatus.idle;
 
   void set(SyncStatus status) => state = status;
+}
+
+final syncProgressProvider =
+    NotifierProvider<SyncProgressNotifier, SyncProgress>(
+      SyncProgressNotifier.new,
+    );
+
+class SyncProgressNotifier extends Notifier<SyncProgress> {
+  @override
+  SyncProgress build() => const SyncProgress();
+
+  void start({required bool isFirstSync}) {
+    state = SyncProgress(phase: SyncPhase.connecting, isFirstSync: isFirstSync);
+  }
+
+  void setPhase(SyncPhase phase) {
+    state = SyncProgress(phase: phase, isFirstSync: state.isFirstSync);
+  }
+
+  void reset() => state = const SyncProgress();
 }
 
 final balanceSnapshotProvider =
@@ -87,6 +116,20 @@ class SyncController extends Notifier<int> {
   @override
   int build() => 0;
 
+  void _setSyncStatus(SyncStatus status) {
+    ref.read(syncStatusProvider.notifier).set(status);
+    final progress = ref.read(syncProgressProvider.notifier);
+    switch (status) {
+      case SyncStatus.synced:
+        progress.setPhase(SyncPhase.upToDate);
+      case SyncStatus.idle:
+      case SyncStatus.error:
+        progress.reset();
+      case SyncStatus.syncing:
+        break;
+    }
+  }
+
   Future<void> syncActiveWallet() async {
     if (_inFlight) return;
 
@@ -94,19 +137,21 @@ class SyncController extends Notifier<int> {
     if (record == null) return;
 
     final walletId = record.id;
+    final isFirstSync = !record.fullScanCompleted;
     Wallet? reloadedWallet;
     var transferredWallet = false;
     _inFlight = true;
     ref.read(syncStatusProvider.notifier).set(SyncStatus.syncing);
+    ref.read(syncProgressProvider.notifier).start(isFirstSync: isFirstSync);
 
     try {
       final storage = ref.read(storageServiceProvider);
       final secrets = await storage.getSecrets(walletId);
       if (secrets == null) {
         if (_stillActive(walletId)) {
-          ref.read(syncStatusProvider.notifier).set(SyncStatus.error);
+          _setSyncStatus(SyncStatus.error);
         } else {
-          ref.read(syncStatusProvider.notifier).set(SyncStatus.idle);
+          _setSyncStatus(SyncStatus.idle);
         }
         return;
       }
@@ -123,35 +168,39 @@ class SyncController extends Notifier<int> {
         fullScanCompleted: record.fullScanCompleted,
       );
 
+      ref.read(syncProgressProvider.notifier).setPhase(SyncPhase.scanning);
+
       final runner = ref.read(walletSyncJobRunnerProvider);
       final WalletSyncResult result;
       try {
         result = await runner(request);
       } catch (e) {
         if (_stillActive(walletId)) {
-          ref.read(syncStatusProvider.notifier).set(SyncStatus.error);
+          _setSyncStatus(SyncStatus.error);
         } else {
-          ref.read(syncStatusProvider.notifier).set(SyncStatus.idle);
+          _setSyncStatus(SyncStatus.idle);
         }
         return;
       }
 
       if (!_stillActive(walletId)) {
-        ref.read(syncStatusProvider.notifier).set(SyncStatus.idle);
+        _setSyncStatus(SyncStatus.idle);
         return;
       }
 
       if (!result.success) {
-        ref.read(syncStatusProvider.notifier).set(SyncStatus.error);
+        _setSyncStatus(SyncStatus.error);
         return;
       }
+
+      ref.read(syncProgressProvider.notifier).setPhase(SyncPhase.saving);
 
       if (result.performedFullScan) {
         await ref.read(walletFullScanMarkerProvider).call(walletId);
       }
 
       if (!_stillActive(walletId)) {
-        ref.read(syncStatusProvider.notifier).set(SyncStatus.idle);
+        _setSyncStatus(SyncStatus.idle);
         return;
       }
 
@@ -165,16 +214,16 @@ class SyncController extends Notifier<int> {
         );
       } catch (_) {
         if (_stillActive(walletId)) {
-          ref.read(syncStatusProvider.notifier).set(SyncStatus.error);
+          _setSyncStatus(SyncStatus.error);
         } else {
-          ref.read(syncStatusProvider.notifier).set(SyncStatus.idle);
+          _setSyncStatus(SyncStatus.idle);
         }
         return;
       }
 
       if (!_stillActive(walletId)) {
         reloadedWallet.dispose();
-        ref.read(syncStatusProvider.notifier).set(SyncStatus.idle);
+        _setSyncStatus(SyncStatus.idle);
         return;
       }
 
@@ -184,15 +233,15 @@ class SyncController extends Notifier<int> {
       ref
           .read(balanceSnapshotProvider.notifier)
           .applyFromWallet(syncedWallet, walletId);
-      ref.read(syncStatusProvider.notifier).set(SyncStatus.synced);
+      _setSyncStatus(SyncStatus.synced);
     } catch (_) {
       if (!transferredWallet) {
         reloadedWallet?.dispose();
       }
       if (_stillActive(walletId)) {
-        ref.read(syncStatusProvider.notifier).set(SyncStatus.error);
+        _setSyncStatus(SyncStatus.error);
       } else {
-        ref.read(syncStatusProvider.notifier).set(SyncStatus.idle);
+        _setSyncStatus(SyncStatus.idle);
       }
     } finally {
       _inFlight = false;

@@ -148,8 +148,55 @@ void main() {
           (r) => r.id == record.id,
         );
         expect(updated.fullScanCompleted, isTrue);
+        expect(container.read(syncProgressProvider).phase, SyncPhase.upToDate);
       },
     );
+
+    test('advances sync progress phases during sync', () async {
+      final gate = Completer<void>();
+      SyncPhase? phaseWhenRunnerStarts;
+      addTearDown(() {
+        if (!gate.isCompleted) gate.complete();
+      });
+
+      late ProviderContainer container;
+      container = await _createContainer([
+        walletSyncJobRunnerProvider.overrideWithValue((
+          WalletSyncRequest req,
+        ) async {
+          phaseWhenRunnerStarts = container.read(syncProgressProvider).phase;
+          await gate.future;
+          return WalletSyncResult.success(
+            walletId: req.walletId,
+            performedFullScan: true,
+          );
+        }),
+      ]);
+      final walletService = container.read(walletServiceProvider);
+      final (record, wallet) = await walletService.createWallet(
+        'Progress Wallet',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+
+      container.read(walletRecordsProvider.notifier).refresh();
+      container.read(activeWalletRecordProvider.notifier).set(record);
+      container.read(activeWalletProvider.notifier).set(wallet);
+
+      final syncFuture = container
+          .read(syncControllerProvider.notifier)
+          .syncActiveWallet();
+
+      while (phaseWhenRunnerStarts == null) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      expect(phaseWhenRunnerStarts, SyncPhase.scanning);
+
+      gate.complete();
+      await syncFuture;
+
+      expect(container.read(syncProgressProvider).phase, SyncPhase.upToDate);
+    });
 
     test('switching wallets clears snapshot for previous wallet', () async {
       final container = await _createContainer([
