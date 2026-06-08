@@ -1,5 +1,7 @@
+import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/core/utils/formatters.dart';
+import 'package:bdk_demo/features/home/network_endpoint_bottom_sheet.dart';
 import 'package:bdk_demo/features/shared/widgets/secondary_app_bar.dart';
 import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
 import 'package:bdk_demo/models/currency_unit.dart';
@@ -21,7 +23,6 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   CurrencyUnit _currencyUnit = CurrencyUnit.bitcoin;
-  final Set<String> _autoSyncedWalletIds = {};
   var _initialAutoSyncQueued = false;
 
   @override
@@ -34,12 +35,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     ref.listenManual(isOnlineProvider, (previous, next) {
       if (next && previous != true) {
         final record = ref.read(activeWalletRecordProvider);
-        final snapshot = ref.read(balanceSnapshotProvider);
         final syncStatus = ref.read(syncStatusProvider);
-        if (record != null &&
-            snapshot?.walletId != record.id &&
-            syncStatus == SyncStatus.error) {
-          _autoSyncedWalletIds.remove(record.id);
+        if (record != null && syncStatus == SyncStatus.error) {
+          ref.read(autoSyncedWalletIdsProvider.notifier).unmark(record.id);
         }
       }
       _queueAutoSync();
@@ -92,6 +90,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     if (_supportsAutoSync(record.network)) ...[
                       const SizedBox(height: 16),
                       _SyncStateCard(
+                        network: record.network,
                         syncStatus: syncStatus,
                         syncProgress: syncProgress,
                       ),
@@ -130,17 +129,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     final snapshot = ref.read(balanceSnapshotProvider);
     final syncStatus = ref.read(syncStatusProvider);
     final isOnline = ref.read(isOnlineProvider);
+    final autoSynced = ref.read(autoSyncedWalletIdsProvider.notifier);
 
     if (record == null || wallet == null) return;
     if (!_supportsAutoSync(record.network)) return;
-    if (snapshot?.walletId == record.id) {
-      _autoSyncedWalletIds.remove(record.id);
+
+    if (autoSynced.contains(record.id)) return;
+
+    if (snapshot?.walletId == record.id || syncStatus == SyncStatus.synced) {
+      autoSynced.mark(record.id);
       return;
     }
+
     if (!isOnline) return;
     if (syncStatus == SyncStatus.syncing) return;
-    if (!_autoSyncedWalletIds.add(record.id)) return;
 
+    autoSynced.mark(record.id);
     ref.read(syncActiveWalletTriggerProvider).call();
   }
 
@@ -292,17 +296,28 @@ class _BalanceCard extends StatelessWidget {
   }
 }
 
-class _SyncStateCard extends StatelessWidget {
-  const _SyncStateCard({required this.syncStatus, required this.syncProgress});
+class _SyncStateCard extends ConsumerWidget {
+  const _SyncStateCard({
+    required this.network,
+    required this.syncStatus,
+    required this.syncProgress,
+  });
 
+  final WalletNetwork network;
   final SyncStatus syncStatus;
   final SyncProgress syncProgress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final syncElapsed = ref.watch(syncElapsedProvider);
+    final syncErrorKind = ref.watch(syncErrorKindProvider);
+    final showSlowBanner =
+        syncStatus == SyncStatus.syncing &&
+        syncElapsed >= AppConstants.syncSlowWarningAfter;
     final showProgressSteps =
         syncStatus == SyncStatus.syncing || syncStatus == SyncStatus.synced;
+    final showChangeServer = syncStatus == SyncStatus.error;
 
     final (icon, title, message, color) = switch (syncStatus) {
       SyncStatus.idle => (
@@ -323,12 +338,20 @@ class _SyncStateCard extends StatelessWidget {
         'Balance reflects the latest successful sync.',
         Colors.green.shade700,
       ),
-      SyncStatus.error => (
-        Icons.error_outline,
-        'Sync error',
-        'Reconnect or revisit Home to try syncing again.',
-        theme.colorScheme.error,
-      ),
+      SyncStatus.error => switch (syncErrorKind) {
+        SyncErrorKind.timeout => (
+          Icons.error_outline,
+          'Change server',
+          'Sync timed out. The server may be overloaded.',
+          theme.colorScheme.error,
+        ),
+        SyncErrorKind.none || SyncErrorKind.generic => (
+          Icons.error_outline,
+          'Change server',
+          'Could not sync with this server. Try another Electrum endpoint.',
+          theme.colorScheme.error,
+        ),
+      },
     };
 
     return Card(
@@ -358,11 +381,45 @@ class _SyncStateCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(message, style: theme.textTheme.bodyMedium),
+                  if (showSlowBanner) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.tertiaryContainer.withAlpha(
+                          120,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'First sync is taking longer than usual. Public servers can be slow — hang tight.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onTertiaryContainer,
+                        ),
+                      ),
+                    ),
+                  ],
                   if (showProgressSteps) ...[
                     const SizedBox(height: 16),
                     _SyncProgressSteps(
                       syncStatus: syncStatus,
                       syncProgress: syncProgress,
+                    ),
+                  ],
+                  if (showChangeServer) ...[
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: OutlinedButton.icon(
+                        onPressed: () => showNetworkEndpointBottomSheet(
+                          context: context,
+                          ref: ref,
+                          network: network,
+                        ),
+                        icon: const Icon(Icons.dns_outlined),
+                        label: const Text('Change server'),
+                      ),
                     ),
                   ],
                 ],

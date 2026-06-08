@@ -82,6 +82,28 @@ final class _FakeSyncBackend implements WalletSyncBackend {
 
 void _noopApply(Wallet wallet) {}
 
+WalletSyncRequest _syncRequest({
+  required String walletId,
+  required String descriptor,
+  required String changeDescriptor,
+  required String walletNetworkName,
+  required String sqlitePath,
+  required bool fullScanCompleted,
+}) {
+  final network = WalletNetwork.values.byName(walletNetworkName);
+  final endpoint = defaultEndpoints[network]!;
+  return WalletSyncRequest(
+    walletId: walletId,
+    descriptor: descriptor,
+    changeDescriptor: changeDescriptor,
+    walletNetworkName: walletNetworkName,
+    sqlitePath: sqlitePath,
+    fullScanCompleted: fullScanCompleted,
+    endpointUrl: endpoint.url,
+    endpointClientType: endpoint.clientType,
+  );
+}
+
 void main() {
   group('executeWalletSync', () {
     test('full scan path uses backend fullScan for regtest', () async {
@@ -91,7 +113,7 @@ void main() {
       var incrementalCalls = 0;
 
       final result = await executeWalletSync(
-        WalletSyncRequest(
+        _syncRequest(
           walletId: 'wallet-a',
           descriptor: fixture.descriptor,
           changeDescriptor: fixture.changeDescriptor,
@@ -99,7 +121,7 @@ void main() {
           sqlitePath: fixture.dbPath,
           fullScanCompleted: false,
         ),
-        backendFactory: (walletNetwork) {
+        backendFactory: (walletNetwork, endpoint) {
           selectedNetwork = walletNetwork;
           return _FakeSyncBackend(
             onFullScan: () => fullScanCalls += 1,
@@ -124,7 +146,7 @@ void main() {
         var incrementalCalls = 0;
 
         final result = await executeWalletSync(
-          WalletSyncRequest(
+          _syncRequest(
             walletId: 'wallet-b',
             descriptor: fixture.descriptor,
             changeDescriptor: fixture.changeDescriptor,
@@ -132,7 +154,7 @@ void main() {
             sqlitePath: fixture.dbPath,
             fullScanCompleted: true,
           ),
-          backendFactory: (walletNetwork) {
+          backendFactory: (walletNetwork, endpoint) {
             selectedNetwork = walletNetwork;
             return _FakeSyncBackend(
               onFullScan: () => fullScanCalls += 1,
@@ -156,7 +178,7 @@ void main() {
         var loadCalls = 0;
 
         final result = await executeWalletSync(
-          WalletSyncRequest(
+          _syncRequest(
             walletId: 'wallet-c',
             descriptor: fixture.descriptor,
             changeDescriptor: fixture.changeDescriptor,
@@ -164,7 +186,7 @@ void main() {
             sqlitePath: fixture.dbPath,
             fullScanCompleted: false,
           ),
-          backendFactory: (_) => _FakeSyncBackend(onFullScan: () {}),
+          backendFactory: (_, __) => _FakeSyncBackend(onFullScan: () {}),
           walletLoadRunner:
               ({
                 required Descriptor descriptor,

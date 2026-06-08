@@ -13,6 +13,10 @@ abstract final class AppConstants {
 
   static const electrumFetchPrevTxouts = false;
 
+  static const syncSlowWarningAfter = Duration(seconds: 10);
+
+  static const syncTimeout = Duration(seconds: 12);
+
   static const maxRecipients = 4;
 
   static const maxLogEntries = 5000;

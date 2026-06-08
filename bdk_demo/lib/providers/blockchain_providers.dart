@@ -1,13 +1,19 @@
+import 'dart:async';
 import 'package:bdk_dart/bdk.dart';
+import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
 import 'package:bdk_demo/models/wallet_balance_snapshot.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
+import 'package:bdk_demo/providers/network_endpoint_providers.dart';
 import 'package:bdk_demo/providers/settings_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:bdk_demo/services/wallet_sync_job.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum SyncStatus { idle, syncing, synced, error }
+
+enum SyncErrorKind { none, timeout, generic }
 
 enum SyncPhase { idle, connecting, scanning, saving, upToDate }
 
@@ -50,6 +56,89 @@ class SyncProgressNotifier extends Notifier<SyncProgress> {
   }
 
   void reset() => state = const SyncProgress();
+}
+
+final syncErrorKindProvider =
+    NotifierProvider<SyncErrorKindNotifier, SyncErrorKind>(
+      SyncErrorKindNotifier.new,
+    );
+
+class SyncErrorKindNotifier extends Notifier<SyncErrorKind> {
+  @override
+  SyncErrorKind build() => SyncErrorKind.none;
+
+  void set(SyncErrorKind kind) => state = kind;
+
+  void reset() => state = SyncErrorKind.none;
+}
+
+final syncElapsedProvider = NotifierProvider<SyncElapsedNotifier, Duration>(
+  SyncElapsedNotifier.new,
+);
+
+class SyncElapsedNotifier extends Notifier<Duration> {
+  Timer? _timer;
+  DateTime? _startedAt;
+
+  @override
+  Duration build() {
+    ref.onDispose(_stopTimer);
+    return Duration.zero;
+  }
+
+  void start() {
+    _startedAt = DateTime.now();
+    _stopTimer();
+    state = Duration.zero;
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final startedAt = _startedAt;
+      if (startedAt != null) {
+        state = DateTime.now().difference(startedAt);
+      }
+    });
+  }
+
+  void stop() {
+    _stopTimer();
+    _startedAt = null;
+    state = Duration.zero;
+  }
+
+  @visibleForTesting
+  void setElapsed(Duration elapsed) {
+    state = elapsed;
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+  }
+}
+
+final syncTimeoutProvider = Provider<Duration>(
+  (ref) => AppConstants.syncTimeout,
+);
+
+final autoSyncedWalletIdsProvider =
+    NotifierProvider<AutoSyncedWalletIdsNotifier, Set<String>>(
+      AutoSyncedWalletIdsNotifier.new,
+    );
+
+class AutoSyncedWalletIdsNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const {};
+
+  bool contains(String walletId) => state.contains(walletId);
+
+  void mark(String walletId) {
+    if (state.contains(walletId)) return;
+    state = {...state, walletId};
+  }
+
+  void unmark(String walletId) {
+    if (!state.contains(walletId)) return;
+    state = state.where((id) => id != walletId).toSet();
+  }
 }
 
 final balanceSnapshotProvider =
@@ -119,15 +208,26 @@ class SyncController extends Notifier<int> {
   void _setSyncStatus(SyncStatus status) {
     ref.read(syncStatusProvider.notifier).set(status);
     final progress = ref.read(syncProgressProvider.notifier);
+    final errorKind = ref.read(syncErrorKindProvider.notifier);
     switch (status) {
       case SyncStatus.synced:
         progress.setPhase(SyncPhase.upToDate);
+        errorKind.reset();
+        ref.read(syncElapsedProvider.notifier).stop();
       case SyncStatus.idle:
+        progress.reset();
+        errorKind.reset();
+        ref.read(syncElapsedProvider.notifier).stop();
       case SyncStatus.error:
         progress.reset();
+        ref.read(syncElapsedProvider.notifier).stop();
       case SyncStatus.syncing:
         break;
     }
+  }
+
+  void _resetSyncErrorKind() {
+    ref.read(syncErrorKindProvider.notifier).reset();
   }
 
   Future<void> syncActiveWallet() async {
@@ -141,14 +241,17 @@ class SyncController extends Notifier<int> {
     Wallet? reloadedWallet;
     var transferredWallet = false;
     _inFlight = true;
+    _resetSyncErrorKind();
     ref.read(syncStatusProvider.notifier).set(SyncStatus.syncing);
     ref.read(syncProgressProvider.notifier).start(isFirstSync: isFirstSync);
+    ref.read(syncElapsedProvider.notifier).start();
 
     try {
       final storage = ref.read(storageServiceProvider);
       final secrets = await storage.getSecrets(walletId);
       if (secrets == null) {
         if (_stillActive(walletId)) {
+          ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
           _setSyncStatus(SyncStatus.error);
         } else {
           _setSyncStatus(SyncStatus.idle);
@@ -159,6 +262,7 @@ class SyncController extends Notifier<int> {
       final sqlitePath = await ref
           .read(walletSqlitePathResolverProvider)
           .call(walletId);
+      final endpoint = ref.read(endpointConfigProvider(record.network));
       final request = WalletSyncRequest(
         walletId: walletId,
         descriptor: secrets.descriptor,
@@ -166,16 +270,28 @@ class SyncController extends Notifier<int> {
         walletNetworkName: record.network.name,
         sqlitePath: sqlitePath,
         fullScanCompleted: record.fullScanCompleted,
+        endpointUrl: endpoint.url,
+        endpointClientType: endpoint.clientType,
       );
 
       ref.read(syncProgressProvider.notifier).setPhase(SyncPhase.scanning);
 
       final runner = ref.read(walletSyncJobRunnerProvider);
+      final timeout = ref.read(syncTimeoutProvider);
       final WalletSyncResult result;
       try {
-        result = await runner(request);
+        result = await runner(request).timeout(timeout);
+      } on TimeoutException {
+        if (_stillActive(walletId)) {
+          ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.timeout);
+          _setSyncStatus(SyncStatus.error);
+        } else {
+          _setSyncStatus(SyncStatus.idle);
+        }
+        return;
       } catch (e) {
         if (_stillActive(walletId)) {
+          ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
           _setSyncStatus(SyncStatus.error);
         } else {
           _setSyncStatus(SyncStatus.idle);
@@ -189,6 +305,7 @@ class SyncController extends Notifier<int> {
       }
 
       if (!result.success) {
+        ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
         _setSyncStatus(SyncStatus.error);
         return;
       }
@@ -214,6 +331,7 @@ class SyncController extends Notifier<int> {
         );
       } catch (_) {
         if (_stillActive(walletId)) {
+          ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
           _setSyncStatus(SyncStatus.error);
         } else {
           _setSyncStatus(SyncStatus.idle);
@@ -233,12 +351,14 @@ class SyncController extends Notifier<int> {
       ref
           .read(balanceSnapshotProvider.notifier)
           .applyFromWallet(syncedWallet, walletId);
+      ref.read(autoSyncedWalletIdsProvider.notifier).mark(walletId);
       _setSyncStatus(SyncStatus.synced);
     } catch (_) {
       if (!transferredWallet) {
         reloadedWallet?.dispose();
       }
       if (_stillActive(walletId)) {
+        ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
         _setSyncStatus(SyncStatus.error);
       } else {
         _setSyncStatus(SyncStatus.idle);

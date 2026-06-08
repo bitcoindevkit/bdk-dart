@@ -13,6 +13,8 @@ class WalletSyncRequest {
     required this.walletNetworkName,
     required this.sqlitePath,
     required this.fullScanCompleted,
+    required this.endpointUrl,
+    required this.endpointClientType,
   });
 
   final String walletId;
@@ -21,6 +23,8 @@ class WalletSyncRequest {
   final String walletNetworkName;
   final String sqlitePath;
   final bool fullScanCompleted;
+  final String endpointUrl;
+  final ClientType endpointClientType;
 }
 
 class WalletSyncResult {
@@ -60,7 +64,10 @@ class WalletSyncResult {
 typedef WalletSyncJobRunner =
     Future<WalletSyncResult> Function(WalletSyncRequest request);
 typedef WalletSyncBackendFactory =
-    WalletSyncBackend Function(WalletNetwork walletNetwork);
+    WalletSyncBackend Function(
+      WalletNetwork walletNetwork,
+      EndpointConfig endpoint,
+    );
 
 Future<WalletSyncResult> defaultWalletSyncJobRunner(WalletSyncRequest request) {
   return Isolate.run(() async {
@@ -178,8 +185,8 @@ final class ElectrumWalletSyncBackend implements WalletSyncBackend {
 
 WalletSyncBackend _defaultWalletSyncBackendFactory(
   WalletNetwork walletNetwork,
+  EndpointConfig endpoint,
 ) {
-  final endpoint = defaultEndpoints[walletNetwork]!;
   return switch (endpoint.clientType) {
     ClientType.esplora => EsploraWalletSyncBackend(
       EsploraClient(url: endpoint.url, proxy: null),
@@ -252,6 +259,7 @@ Future<WalletSyncResult> executeWalletSync(
 
     backend = (backendFactory ?? _defaultWalletSyncBackendFactory)(
       walletNetwork,
+      EndpointConfig(clientType: req.endpointClientType, url: req.endpointUrl),
     );
     final execution = performedFullScan
         ? backend.fullScan(wallet)

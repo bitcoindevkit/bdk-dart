@@ -7,6 +7,9 @@ abstract final class _PrefKeys {
   static const introDone = 'intro_done';
   static const darkTheme = 'dark_theme';
   static const walletRecords = 'wallet_records';
+
+  static String networkEndpointUrl(WalletNetwork network) =>
+      'network_endpoint_url_${network.name}';
 }
 
 abstract final class _SecureKeys {
@@ -79,5 +82,12 @@ class StorageService {
       _PrefKeys.walletRecords,
       WalletRecord.encodeList(updated),
     );
+  }
+
+  String? getSelectedEndpointUrl(WalletNetwork network) =>
+      _prefs.getString(_PrefKeys.networkEndpointUrl(network));
+
+  Future<void> setSelectedEndpointUrl(WalletNetwork network, String url) async {
+    await _prefs.setString(_PrefKeys.networkEndpointUrl(network), url);
   }
 }

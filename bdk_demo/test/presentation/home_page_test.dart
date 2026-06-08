@@ -267,6 +267,60 @@ void main() {
     expect(find.byIcon(Icons.check_circle_outline), findsWidgets);
   });
 
+  testWidgets('shows slow sync banner after 10 seconds', (tester) async {
+    final container = await createContainer();
+    await seedActiveWallet(container);
+    container.read(syncStatusProvider.notifier).set(SyncStatus.syncing);
+    container.read(syncProgressProvider.notifier).start(isFirstSync: true);
+    container
+        .read(syncElapsedProvider.notifier)
+        .setElapsed(const Duration(seconds: 11));
+
+    await pumpHomePage(tester, container);
+
+    expect(
+      find.textContaining('First sync is taking longer than usual'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('shows change server action after sync timeout', (tester) async {
+    final container = await createContainer();
+    final (record, wallet) = await seedActiveWallet(container);
+    seedBalanceSnapshot(container, wallet, record.id);
+    container.read(syncStatusProvider.notifier).set(SyncStatus.error);
+    container.read(syncErrorKindProvider.notifier).set(SyncErrorKind.timeout);
+
+    await pumpHomePage(tester, container);
+
+    expect(
+      find.text('Sync timed out. The server may be overloaded.'),
+      findsOneWidget,
+    );
+    expect(find.text('Change server'), findsNWidgets(2));
+  });
+
+  testWidgets('shows change server action after generic sync error', (
+    tester,
+  ) async {
+    final container = await createContainer();
+    final (record, wallet) = await seedActiveWallet(container);
+    seedBalanceSnapshot(container, wallet, record.id);
+    container.read(syncStatusProvider.notifier).set(SyncStatus.error);
+    container.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
+
+    await pumpHomePage(tester, container);
+
+    expect(find.text('Sync error'), findsNothing);
+    expect(
+      find.text(
+        'Could not sync with this server. Try another Electrum endpoint.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Change server'), findsNWidgets(2));
+  });
+
   testWidgets('renders safe pre-sync state without a balance snapshot', (
     tester,
   ) async {
@@ -387,7 +441,7 @@ void main() {
     expect(syncCalls, 1);
   });
 
-  testWidgets('auto-sync can start when previous wallet left synced status', (
+  testWidgets('synced status prevents auto-sync retry for same wallet', (
     tester,
   ) async {
     var syncCalls = 0;
@@ -396,8 +450,36 @@ void main() {
         syncCalls += 1;
       },
     );
+    final (record, wallet) = await seedActiveWallet(container);
+    seedBalanceSnapshot(container, wallet, record.id);
+    container.read(syncStatusProvider.notifier).set(SyncStatus.synced);
+    container.read(autoSyncedWalletIdsProvider.notifier).mark(record.id);
+
+    await pumpHomePage(tester, container);
+    await flushAutoSync(tester);
+
+    expect(syncCalls, 0);
+  });
+
+  testWidgets('does not auto-sync again when HomePage is remounted', (
+    tester,
+  ) async {
+    var syncCalls = 0;
+    final container = await createContainer(
+      syncTrigger: () async {
+        syncCalls += 1;
+      },
+    );
+
     await pumpHomePage(tester, container);
     await seedActiveWallet(container);
+    await flushAutoSync(tester);
+    expect(syncCalls, 1);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+
+    await pumpHomePage(tester, container);
     container.read(syncStatusProvider.notifier).set(SyncStatus.synced);
     await flushAutoSync(tester);
 

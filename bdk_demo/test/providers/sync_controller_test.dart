@@ -352,5 +352,35 @@ void main() {
       expect(container.read(balanceSnapshotProvider), isNull);
       expect(container.read(activeWalletRecordProvider)?.id, recordB.id);
     });
+
+    test('times out slow sync and records timeout error kind', () async {
+      final container = await _createContainer([
+        syncTimeoutProvider.overrideWithValue(const Duration(milliseconds: 50)),
+        walletSyncJobRunnerProvider.overrideWithValue((
+          WalletSyncRequest req,
+        ) async {
+          await Future<void>.delayed(const Duration(seconds: 1));
+          return WalletSyncResult.success(
+            walletId: req.walletId,
+            performedFullScan: true,
+          );
+        }),
+      ]);
+      final walletService = container.read(walletServiceProvider);
+      final (record, wallet) = await walletService.createWallet(
+        'Timeout Wallet',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+
+      container.read(walletRecordsProvider.notifier).refresh();
+      container.read(activeWalletRecordProvider.notifier).set(record);
+      container.read(activeWalletProvider.notifier).set(wallet);
+
+      await container.read(syncControllerProvider.notifier).syncActiveWallet();
+
+      expect(container.read(syncStatusProvider), SyncStatus.error);
+      expect(container.read(syncErrorKindProvider), SyncErrorKind.timeout);
+    });
   });
 }
