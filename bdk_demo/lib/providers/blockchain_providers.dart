@@ -279,12 +279,9 @@ class SyncController extends Notifier<int> {
 
       final runner = ref.read(walletSyncJobRunnerProvider);
       final WalletSyncResult result;
-      final attemptStopwatch = Stopwatch()..start();
       try {
         result = await runner(request);
-        attemptStopwatch.stop();
       } catch (e) {
-        attemptStopwatch.stop();
         if (_stillActive(walletId)) {
           ref.read(syncErrorKindProvider.notifier).set(SyncErrorKind.generic);
           _setSyncStatus(SyncStatus.error);
