@@ -64,11 +64,14 @@ class _NetworkEndpointBottomSheet extends ConsumerWidget {
                 child: RadioGroup<String>(
                   groupValue: selected?.url ?? options.first.url,
                   onChanged: (url) async {
+                    final syncActiveWallet = ref.read(
+                      syncActiveWalletTriggerProvider,
+                    );
                     if (url == null) return;
                     await selectNetworkEndpoint(ref, network, url);
                     if (!context.mounted) return;
                     Navigator.of(context).pop();
-                    await ref.read(syncActiveWalletTriggerProvider).call();
+                    await syncActiveWallet();
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
