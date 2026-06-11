@@ -363,6 +363,93 @@ class WalletService {
     );
   }
 
+  Future<(AddressInfo, Wallet)> generateAddress(WalletRecord record) async {
+    final secrets = await _storage.getSecrets(record.id);
+    if (secrets == null) {
+      throw StateError(
+        'No secrets found for wallet "${record.name}" (${record.id}). '
+        'Cannot persist receive address.',
+      );
+    }
+
+    Descriptor? descriptor;
+    Descriptor? changeDescriptor;
+    Persister? persister;
+    Wallet? wallet;
+    var returnedWallet = false;
+    try {
+      final bdkNetworkKind = record.network.toBdkNetworkKind();
+      descriptor = Descriptor(
+        descriptor: secrets.descriptor,
+        networkKind: bdkNetworkKind,
+      );
+      changeDescriptor = Descriptor(
+        descriptor: secrets.changeDescriptor,
+        networkKind: bdkNetworkKind,
+      );
+      final dbPath = await WalletStoragePaths.sqlitePathForWallet(record.id);
+      wallet = await loadWalletFromRecord(record);
+
+      final receive = wallet.revealNextAddress(
+        keychain: KeychainKind.external_,
+      );
+      persister = Persister.newSqlite(path: dbPath);
+      await _ensureWalletPersistedToSqlite(
+        wallet,
+        persister,
+        descriptor,
+        changeDescriptor,
+        dbPath,
+      );
+      await _verifyReceiveIndexPersisted(
+        descriptor: descriptor,
+        changeDescriptor: changeDescriptor,
+        dbPath: dbPath,
+        revealedIndex: receive.index,
+      );
+      returnedWallet = true;
+      return (receive, wallet);
+    } finally {
+      if (!returnedWallet) {
+        wallet?.dispose();
+      }
+      persister?.dispose();
+      descriptor?.dispose();
+      changeDescriptor?.dispose();
+    }
+  }
+
+  Future<void> _verifyReceiveIndexPersisted({
+    required Descriptor descriptor,
+    required Descriptor changeDescriptor,
+    required String dbPath,
+    required int revealedIndex,
+  }) async {
+    Persister? verifierPersister;
+    Wallet? verifierWallet;
+    try {
+      verifierPersister = Persister.newSqlite(path: dbPath);
+      verifierWallet = _walletLoadRunner(
+        descriptor: descriptor,
+        changeDescriptor: changeDescriptor,
+        persister: verifierPersister,
+        lookahead: AppConstants.walletLookahead,
+      );
+      final nextExternalIndex = verifierWallet.nextDerivationIndex(
+        keychain: KeychainKind.external_,
+      );
+      if (nextExternalIndex <= revealedIndex) {
+        throw StateError(
+          'Wallet SQLite persistence did not save receive address index '
+          '$revealedIndex.',
+        );
+      }
+    } finally {
+      verifierWallet?.dispose();
+      verifierPersister?.dispose();
+    }
+  }
+
   Future<Wallet> _reseedWalletToPrimarySqlite({
     required String walletId,
     required Descriptor descriptor,

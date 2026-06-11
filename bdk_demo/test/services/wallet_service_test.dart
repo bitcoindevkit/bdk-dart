@@ -435,6 +435,178 @@ void main() {
     });
   });
 
+  group('WalletService.generateAddress()', () {
+    setUp(_initServices);
+    tearDown(_tearDownServices);
+
+    test('reveals and persists the next external receive address', () async {
+      final (record, wallet) = await walletService.createWallet(
+        'Receive Address',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      wallet.dispose();
+
+      final (firstReceive, firstWallet) = await walletService.generateAddress(
+        record,
+      );
+
+      expect(firstReceive.index, 0);
+      expect(firstReceive.keychain, KeychainKind.external_);
+      expect(firstReceive.address.toString(), isNotEmpty);
+      expect(
+        firstWallet.nextDerivationIndex(keychain: KeychainKind.external_),
+        1,
+      );
+
+      firstWallet.dispose();
+
+      final (secondReceive, secondWallet) = await walletService.generateAddress(
+        record,
+      );
+
+      expect(secondReceive.index, 1);
+      expect(secondReceive.keychain, KeychainKind.external_);
+      expect(
+        secondReceive.address.toString(),
+        isNot(firstReceive.address.toString()),
+      );
+      expect(
+        secondWallet.nextDerivationIndex(keychain: KeychainKind.external_),
+        2,
+      );
+
+      secondWallet.dispose();
+    });
+
+    test('supports DescriptorRecovered wallets', () async {
+      final (sourceRecord, sourceWallet) = await walletService.createWallet(
+        'Descriptor Source',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      sourceWallet.dispose();
+
+      final secrets = await storageService.getSecrets(sourceRecord.id);
+      expect(secrets, isNotNull);
+
+      final (descriptorRecord, descriptorWallet) = await walletService
+          .recoverFromDescriptors(
+            'Descriptor Receive',
+            WalletNetwork.testnet,
+            secrets!.descriptor,
+            secrets.changeDescriptor,
+          );
+
+      expect(descriptorRecord.scriptType, ScriptType.unknown);
+
+      descriptorWallet.dispose();
+
+      final (receive, generatedWallet) = await walletService.generateAddress(
+        descriptorRecord,
+      );
+
+      expect(receive.index, 0);
+      expect(receive.keychain, KeychainKind.external_);
+      expect(receive.address.toString(), isNotEmpty);
+
+      generatedWallet.dispose();
+    });
+
+    test('missing secrets throws StateError', () async {
+      final (record, wallet) = await walletService.createWallet(
+        'Secrets Source',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      final orphanRecord = WalletRecord(
+        id: 'missing-secrets-id',
+        name: 'Missing Secrets',
+        network: record.network,
+        scriptType: record.scriptType,
+      );
+
+      await expectLater(
+        () => walletService.generateAddress(orphanRecord),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('No secrets found'),
+          ),
+        ),
+      );
+
+      wallet.dispose();
+    });
+
+    test('corrupt SQLite is reseeded before generating address', () async {
+      final (record, wallet) = await walletService.createWallet(
+        'Receive Corrupt Db',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      wallet.dispose();
+
+      final sqlitePath = await WalletStoragePaths.sqlitePathForWallet(
+        record.id,
+      );
+      await File(sqlitePath).writeAsBytes([0, 1, 2, 3]);
+
+      final (receive, generatedWallet) = await walletService.generateAddress(
+        record,
+      );
+
+      expect(receive.index, 0);
+      expect(receive.keychain, KeychainKind.external_);
+      expect(File(sqlitePath).existsSync(), isTrue);
+      expect(
+        generatedWallet.nextDerivationIndex(keychain: KeychainKind.external_),
+        1,
+      );
+
+      generatedWallet.dispose();
+    });
+
+    test(
+      'persist failure surfaces without advancing reloaded SQLite',
+      () async {
+        final (record, wallet) = await walletService.createWallet(
+          'Receive Persist Failure',
+          WalletNetwork.testnet,
+          ScriptType.p2wpkh,
+        );
+        final failingService = WalletService(
+          storage: storageService,
+          uuid: const Uuid(),
+          persistRunner: (wallet, persister) async => false,
+        );
+
+        await expectLater(
+          () => failingService.generateAddress(record),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              contains('receive address index'),
+            ),
+          ),
+        );
+
+        wallet.dispose();
+
+        final reloadedWallet = await walletService.loadWalletFromRecord(record);
+        final nextExternalIndex = reloadedWallet.nextDerivationIndex(
+          keychain: KeychainKind.external_,
+        );
+
+        expect(nextExternalIndex, 0);
+
+        reloadedWallet.dispose();
+      },
+    );
+  });
+
   group('Descriptor persistence round-trip', () {
     setUp(_initServices);
     tearDown(_tearDownServices);
