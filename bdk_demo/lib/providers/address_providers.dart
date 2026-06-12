@@ -20,6 +20,13 @@ class ReceiveAddressState {
   final bool isGenerating;
   final String? errorMessage;
 
+  bool get isEmpty =>
+      walletId == null &&
+      address == null &&
+      index == null &&
+      !isGenerating &&
+      errorMessage == null;
+
   ReceiveAddressState copyWith({
     String? walletId,
     String? address,
@@ -64,7 +71,9 @@ class CurrentReceiveAddressNotifier extends Notifier<ReceiveAddressState> {
 
     ref.listen<WalletRecord?>(activeWalletRecordProvider, (previous, next) {
       if (next == null) {
-        state = ReceiveAddressState.empty;
+        if (!state.isEmpty) {
+          state = ReceiveAddressState.empty;
+        }
         return;
       }
 
@@ -73,7 +82,10 @@ class CurrentReceiveAddressNotifier extends Notifier<ReceiveAddressState> {
         ref.read(activeWalletProvider.notifier).replaceWallet(cachedWallet);
       }
 
-      state = _stateByWalletId[next.id] ?? ReceiveAddressState.empty;
+      final nextState = _stateByWalletId[next.id] ?? ReceiveAddressState.empty;
+      if (!state.isEmpty || !nextState.isEmpty) {
+        state = nextState;
+      }
     });
 
     return ReceiveAddressState.empty;
