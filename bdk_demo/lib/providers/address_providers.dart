@@ -1,3 +1,4 @@
+import 'package:bdk_dart/bdk.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,23 +48,38 @@ final currentReceiveAddressProvider =
     );
 
 class CurrentReceiveAddressNotifier extends Notifier<ReceiveAddressState> {
-  bool _inFlight = false;
+  final Set<String> _inFlightWalletIds = <String>{};
+  final Map<String, ReceiveAddressState> _stateByWalletId =
+      <String, ReceiveAddressState>{};
+  final Map<String, Wallet> _inactiveWallets = <String, Wallet>{};
 
   @override
   ReceiveAddressState build() {
-    ref.listen<WalletRecord?>(activeWalletRecordProvider, (previous, next) {
-      final current = state;
-      if (current.walletId == null && !current.isGenerating) return;
-      if (next == null || current.walletId != next.id) {
-        state = ReceiveAddressState.empty;
+    ref.onDispose(() {
+      for (final wallet in _inactiveWallets.values) {
+        wallet.dispose();
       }
+      _inactiveWallets.clear();
     });
+
+    ref.listen<WalletRecord?>(activeWalletRecordProvider, (previous, next) {
+      if (next == null) {
+        state = ReceiveAddressState.empty;
+        return;
+      }
+
+      final cachedWallet = _inactiveWallets.remove(next.id);
+      if (cachedWallet != null) {
+        ref.read(activeWalletProvider.notifier).replaceWallet(cachedWallet);
+      }
+
+      state = _stateByWalletId[next.id] ?? ReceiveAddressState.empty;
+    });
+
     return ReceiveAddressState.empty;
   }
 
   Future<void> generateForActiveWallet() async {
-    if (_inFlight) return;
-
     final record = ref.read(activeWalletRecordProvider);
     if (record == null) {
       state = const ReceiveAddressState(errorMessage: 'No active wallet.');
@@ -71,47 +87,73 @@ class CurrentReceiveAddressNotifier extends Notifier<ReceiveAddressState> {
     }
 
     final walletId = record.id;
-    _inFlight = true;
-    state = ReceiveAddressState.empty.copyWith(
+    if (!_inFlightWalletIds.add(walletId)) return;
+
+    final previousState = _stateByWalletId[walletId];
+    final generatingState = ReceiveAddressState.empty.copyWith(
       walletId: walletId,
       isGenerating: true,
       clearAddress: true,
       clearIndex: true,
       clearErrorMessage: true,
     );
+    _stateByWalletId[walletId] = generatingState;
+    state = generatingState;
 
     try {
       final walletService = ref.read(walletServiceProvider);
       final (addressInfo, updatedWallet) = await walletService.generateAddress(
         record,
       );
-
-      if (!_stillActive(walletId)) {
-        updatedWallet.dispose();
-        state = ReceiveAddressState.empty;
-        return;
-      }
-
-      ref.read(activeWalletProvider.notifier).replaceWallet(updatedWallet);
-      state = ReceiveAddressState(
+      final successState = ReceiveAddressState(
         walletId: walletId,
         address: addressInfo.address.toString(),
         index: addressInfo.index,
       );
+      _stateByWalletId[walletId] = successState;
+
+      if (!_stillActive(walletId)) {
+        _cacheInactiveWallet(walletId, updatedWallet);
+        return;
+      }
+
+      _disposeCachedWallet(walletId);
+      ref.read(activeWalletProvider.notifier).replaceWallet(updatedWallet);
+      state = successState;
     } catch (error) {
+      final errorState = ReceiveAddressState(
+        walletId: walletId,
+        address: previousState?.address,
+        index: previousState?.index,
+        errorMessage: error.toString(),
+      );
+
       if (_stillActive(walletId)) {
-        state = ReceiveAddressState(
-          walletId: walletId,
-          errorMessage: error.toString(),
-        );
+        _stateByWalletId[walletId] = errorState;
+        state = errorState;
+      } else if (previousState != null) {
+        _stateByWalletId[walletId] = previousState;
       } else {
-        state = ReceiveAddressState.empty;
+        _stateByWalletId.remove(walletId);
       }
     } finally {
-      _inFlight = false;
+      _inFlightWalletIds.remove(walletId);
     }
   }
 
   bool _stillActive(String walletId) =>
       ref.read(activeWalletRecordProvider)?.id == walletId;
+
+  void _cacheInactiveWallet(String walletId, Wallet wallet) {
+    final previous = _inactiveWallets.remove(walletId);
+    if (previous != null && !identical(previous, wallet)) {
+      previous.dispose();
+    }
+    _inactiveWallets[walletId] = wallet;
+  }
+
+  void _disposeCachedWallet(String walletId) {
+    final previous = _inactiveWallets.remove(walletId);
+    previous?.dispose();
+  }
 }

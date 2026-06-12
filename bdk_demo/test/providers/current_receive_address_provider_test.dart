@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:bdk_dart/bdk.dart';
 import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
@@ -63,6 +64,15 @@ Future<ProviderContainer> _createContainer({
   return container;
 }
 
+void _activateWallet(
+  ProviderContainer container,
+  Wallet wallet,
+  WalletRecord record,
+) {
+  container.read(activeWalletProvider.notifier).set(wallet);
+  container.read(activeWalletRecordProvider.notifier).set(record);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -77,8 +87,7 @@ void main() {
         ScriptType.p2wpkh,
       );
 
-      container.read(activeWalletRecordProvider.notifier).set(record);
-      container.read(activeWalletProvider.notifier).set(wallet);
+      _activateWallet(container, wallet, record);
 
       await container
           .read(currentReceiveAddressProvider.notifier)
@@ -98,19 +107,36 @@ void main() {
       );
     });
 
-    test('missing active wallet sets error and does not generate', () async {
-      final container = await _createContainer();
+    test(
+      'missing active wallet sets error then clears on activation',
+      () async {
+        final container = await _createContainer();
+        final walletService = container.read(walletServiceProvider);
 
-      await container
-          .read(currentReceiveAddressProvider.notifier)
-          .generateForActiveWallet();
+        await container
+            .read(currentReceiveAddressProvider.notifier)
+            .generateForActiveWallet();
 
-      final state = container.read(currentReceiveAddressProvider);
-      expect(state.address, isNull);
-      expect(state.index, isNull);
-      expect(state.errorMessage, contains('No active wallet'));
-      expect(state.isGenerating, isFalse);
-    });
+        final errorState = container.read(currentReceiveAddressProvider);
+        expect(errorState.address, isNull);
+        expect(errorState.index, isNull);
+        expect(errorState.errorMessage, contains('No active wallet'));
+        expect(errorState.isGenerating, isFalse);
+
+        final (record, wallet) = await walletService.createWallet(
+          'Activation Wallet',
+          WalletNetwork.testnet,
+          ScriptType.p2wpkh,
+        );
+        _activateWallet(container, wallet, record);
+
+        final activatedState = container.read(currentReceiveAddressProvider);
+        expect(activatedState.walletId, isNull);
+        expect(activatedState.address, isNull);
+        expect(activatedState.index, isNull);
+        expect(activatedState.errorMessage, isNull);
+      },
+    );
 
     test('switching wallets clears existing receive address state', () async {
       final container = await _createContainer();
@@ -127,8 +153,7 @@ void main() {
         ScriptType.p2wpkh,
       );
 
-      container.read(activeWalletRecordProvider.notifier).set(recordA);
-      container.read(activeWalletProvider.notifier).set(walletA);
+      _activateWallet(container, walletA, recordA);
 
       await container
           .read(currentReceiveAddressProvider.notifier)
@@ -138,29 +163,32 @@ void main() {
         recordA.id,
       );
 
-      container.read(activeWalletRecordProvider.notifier).set(recordB);
-      container.read(activeWalletProvider.notifier).set(walletB);
+      _activateWallet(container, walletB, recordB);
 
-      expect(
-        container.read(currentReceiveAddressProvider),
-        ReceiveAddressState.empty,
-      );
+      final state = container.read(currentReceiveAddressProvider);
+      expect(state.walletId, isNull);
+      expect(state.address, isNull);
+      expect(state.index, isNull);
+      expect(state.errorMessage, isNull);
     });
 
     test(
-      'stale completion does not publish address after wallet switch',
+      'stale completion caches result and restores it on reactivation',
       () async {
         final gate = Completer<void>();
         addTearDown(() {
           if (!gate.isCompleted) gate.complete();
         });
 
+        late String gatedWalletId;
         final container = await _createContainer(
           walletServiceFactory: (storage) => _ControllableWalletService(
             storage: storage,
             uuid: const Uuid(),
             generateAddressOverride: (record) async {
-              await gate.future;
+              if (record.id == gatedWalletId) {
+                await gate.future;
+              }
               return WalletService(
                 storage: storage,
                 uuid: const Uuid(),
@@ -180,9 +208,9 @@ void main() {
           WalletNetwork.testnet,
           ScriptType.p2wpkh,
         );
+        gatedWalletId = recordA.id;
 
-        container.read(activeWalletRecordProvider.notifier).set(recordA);
-        container.read(activeWalletProvider.notifier).set(walletA);
+        _activateWallet(container, walletA, recordA);
 
         final generateFuture = container
             .read(currentReceiveAddressProvider.notifier)
@@ -192,34 +220,118 @@ void main() {
           isTrue,
         );
 
-        container.read(activeWalletRecordProvider.notifier).set(recordB);
-        container.read(activeWalletProvider.notifier).set(walletB);
+        _activateWallet(container, walletB, recordB);
 
         gate.complete();
         await generateFuture;
 
-        expect(
-          container.read(currentReceiveAddressProvider),
-          ReceiveAddressState.empty,
-        );
+        final staleState = container.read(currentReceiveAddressProvider);
+        expect(staleState.walletId, isNull);
+        expect(staleState.address, isNull);
+        expect(staleState.index, isNull);
+        expect(staleState.errorMessage, isNull);
         expect(container.read(activeWalletRecordProvider)?.id, recordB.id);
+        expect(
+          identical(container.read(activeWalletProvider), walletB),
+          isTrue,
+        );
+
+        _activateWallet(container, walletA, recordA);
+
+        final restoredState = container.read(currentReceiveAddressProvider);
+        expect(restoredState.walletId, recordA.id);
+        expect(restoredState.address, isNotEmpty);
+        expect(restoredState.index, 0);
+        expect(restoredState.errorMessage, isNull);
+        expect(
+          container
+              .read(activeWalletProvider)
+              ?.nextDerivationIndex(keychain: KeychainKind.external_),
+          1,
+        );
+        expect(
+          identical(container.read(activeWalletProvider), walletA),
+          isFalse,
+        );
       },
     );
 
-    test('duplicate calls while in flight are dropped', () async {
+    test('wallet B generation is not blocked by wallet A in flight', () async {
       final gate = Completer<void>();
       addTearDown(() {
         if (!gate.isCompleted) gate.complete();
       });
 
-      var generateCalls = 0;
+      late String gatedWalletId;
       final container = await _createContainer(
         walletServiceFactory: (storage) => _ControllableWalletService(
           storage: storage,
           uuid: const Uuid(),
           generateAddressOverride: (record) async {
-            generateCalls += 1;
-            await gate.future;
+            if (record.id == gatedWalletId) {
+              await gate.future;
+            }
+            return WalletService(
+              storage: storage,
+              uuid: const Uuid(),
+            ).generateAddress(record);
+          },
+        ),
+      );
+      final walletService = container.read(walletServiceProvider);
+
+      final (recordA, walletA) = await walletService.createWallet(
+        'In Flight A',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      final (recordB, walletB) = await walletService.createWallet(
+        'In Flight B',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      gatedWalletId = recordA.id;
+
+      _activateWallet(container, walletA, recordA);
+      final walletAFuture = container
+          .read(currentReceiveAddressProvider.notifier)
+          .generateForActiveWallet();
+
+      _activateWallet(container, walletB, recordB);
+      await container
+          .read(currentReceiveAddressProvider.notifier)
+          .generateForActiveWallet();
+
+      final walletBState = container.read(currentReceiveAddressProvider);
+      expect(walletBState.walletId, recordB.id);
+      expect(walletBState.address, isNotEmpty);
+      expect(walletBState.index, 0);
+      expect(
+        container
+            .read(activeWalletProvider)
+            ?.nextDerivationIndex(keychain: KeychainKind.external_),
+        1,
+      );
+
+      gate.complete();
+      await walletAFuture;
+
+      final finalState = container.read(currentReceiveAddressProvider);
+      expect(finalState.walletId, recordB.id);
+      expect(finalState.address, isNotEmpty);
+      expect(finalState.index, 0);
+    });
+
+    test('service failure publishes error for the active wallet', () async {
+      var shouldThrow = false;
+      final container = await _createContainer(
+        walletServiceFactory: (storage) => _ControllableWalletService(
+          storage: storage,
+          uuid: const Uuid(),
+          generateAddressOverride: (record) async {
+            if (shouldThrow) {
+              throw StateError('boom');
+            }
             return WalletService(
               storage: storage,
               uuid: const Uuid(),
@@ -230,24 +342,67 @@ void main() {
       final walletService = container.read(walletServiceProvider);
 
       final (record, wallet) = await walletService.createWallet(
-        'Duplicate Guard',
+        'Failure Wallet',
         WalletNetwork.testnet,
         ScriptType.p2wpkh,
       );
+      _activateWallet(container, wallet, record);
+      shouldThrow = true;
 
-      container.read(activeWalletRecordProvider.notifier).set(record);
-      container.read(activeWalletProvider.notifier).set(wallet);
+      await container
+          .read(currentReceiveAddressProvider.notifier)
+          .generateForActiveWallet();
 
-      final notifier = container.read(currentReceiveAddressProvider.notifier);
-      final firstFuture = notifier.generateForActiveWallet();
-      await notifier.generateForActiveWallet();
-      await notifier.generateForActiveWallet();
-
-      gate.complete();
-      await firstFuture;
-
-      expect(generateCalls, 1);
-      expect(container.read(currentReceiveAddressProvider).index, 0);
+      final state = container.read(currentReceiveAddressProvider);
+      expect(state.walletId, record.id);
+      expect(state.errorMessage, contains('boom'));
+      expect(state.isGenerating, isFalse);
     });
+
+    test(
+      'duplicate calls while in flight are dropped for the same wallet',
+      () async {
+        final gate = Completer<void>();
+        addTearDown(() {
+          if (!gate.isCompleted) gate.complete();
+        });
+
+        var generateCalls = 0;
+        final container = await _createContainer(
+          walletServiceFactory: (storage) => _ControllableWalletService(
+            storage: storage,
+            uuid: const Uuid(),
+            generateAddressOverride: (record) async {
+              generateCalls += 1;
+              await gate.future;
+              return WalletService(
+                storage: storage,
+                uuid: const Uuid(),
+              ).generateAddress(record);
+            },
+          ),
+        );
+        final walletService = container.read(walletServiceProvider);
+
+        final (record, wallet) = await walletService.createWallet(
+          'Duplicate Guard',
+          WalletNetwork.testnet,
+          ScriptType.p2wpkh,
+        );
+
+        _activateWallet(container, wallet, record);
+
+        final notifier = container.read(currentReceiveAddressProvider.notifier);
+        final firstFuture = notifier.generateForActiveWallet();
+        await notifier.generateForActiveWallet();
+        await notifier.generateForActiveWallet();
+
+        gate.complete();
+        await firstFuture;
+
+        expect(generateCalls, 1);
+        expect(container.read(currentReceiveAddressProvider).index, 0);
+      },
+    );
   });
 }
