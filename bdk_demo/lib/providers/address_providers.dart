@@ -1,4 +1,3 @@
-import 'package:bdk_dart/bdk.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,28 +57,15 @@ class CurrentReceiveAddressNotifier extends Notifier<ReceiveAddressState> {
   final Set<String> _inFlightWalletIds = <String>{};
   final Map<String, ReceiveAddressState> _stateByWalletId =
       <String, ReceiveAddressState>{};
-  final Map<String, Wallet> _inactiveWallets = <String, Wallet>{};
 
   @override
   ReceiveAddressState build() {
-    ref.onDispose(() {
-      for (final wallet in _inactiveWallets.values) {
-        wallet.dispose();
-      }
-      _inactiveWallets.clear();
-    });
-
     ref.listen<WalletRecord?>(activeWalletRecordProvider, (previous, next) {
       if (next == null) {
         if (!state.isEmpty) {
           state = ReceiveAddressState.empty;
         }
         return;
-      }
-
-      final cachedWallet = _inactiveWallets.remove(next.id);
-      if (cachedWallet != null) {
-        ref.read(activeWalletProvider.notifier).replaceWallet(cachedWallet);
       }
 
       final nextState = _stateByWalletId[next.id] ?? ReceiveAddressState.empty;
@@ -125,11 +111,10 @@ class CurrentReceiveAddressNotifier extends Notifier<ReceiveAddressState> {
       _stateByWalletId[walletId] = successState;
 
       if (!_stillActive(walletId)) {
-        _cacheInactiveWallet(walletId, updatedWallet);
+        updatedWallet.dispose();
         return;
       }
 
-      _disposeCachedWallet(walletId);
       ref.read(activeWalletProvider.notifier).replaceWallet(updatedWallet);
       state = successState;
     } catch (error) {
@@ -155,17 +140,4 @@ class CurrentReceiveAddressNotifier extends Notifier<ReceiveAddressState> {
 
   bool _stillActive(String walletId) =>
       ref.read(activeWalletRecordProvider)?.id == walletId;
-
-  void _cacheInactiveWallet(String walletId, Wallet wallet) {
-    final previous = _inactiveWallets.remove(walletId);
-    if (previous != null && !identical(previous, wallet)) {
-      previous.dispose();
-    }
-    _inactiveWallets[walletId] = wallet;
-  }
-
-  void _disposeCachedWallet(String walletId) {
-    final previous = _inactiveWallets.remove(walletId);
-    previous?.dispose();
-  }
 }

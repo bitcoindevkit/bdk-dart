@@ -73,6 +73,19 @@ void _activateWallet(
   container.read(activeWalletRecordProvider.notifier).set(record);
 }
 
+Future<void> _waitForActiveExternalIndex(
+  ProviderContainer container,
+  int expectedIndex,
+) async {
+  for (var attempt = 0; attempt < 20; attempt++) {
+    final wallet = container.read(activeWalletProvider);
+    final index = wallet?.nextDerivationIndex(keychain: KeychainKind.external_);
+    if (index == expectedIndex) return;
+    await Future<void>.delayed(Duration.zero);
+  }
+  fail('Timed out waiting for active wallet external index $expectedIndex.');
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -236,22 +249,20 @@ void main() {
           isTrue,
         );
 
-        _activateWallet(container, walletA, recordA);
+        final reactivatedWalletA = await walletService.loadWalletFromRecord(
+          recordA,
+        );
+        _activateWallet(container, reactivatedWalletA, recordA);
 
         final restoredState = container.read(currentReceiveAddressProvider);
         expect(restoredState.walletId, recordA.id);
         expect(restoredState.address, isNotEmpty);
         expect(restoredState.index, 0);
         expect(restoredState.errorMessage, isNull);
+        await _waitForActiveExternalIndex(container, 1);
         expect(
-          container
-              .read(activeWalletProvider)
-              ?.nextDerivationIndex(keychain: KeychainKind.external_),
-          1,
-        );
-        expect(
-          identical(container.read(activeWalletProvider), walletA),
-          isFalse,
+          identical(container.read(activeWalletProvider), reactivatedWalletA),
+          isTrue,
         );
       },
     );
