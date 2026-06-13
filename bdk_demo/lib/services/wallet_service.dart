@@ -6,6 +6,7 @@ import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/constants/bip39_wordlist.dart';
 import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
+import 'package:bdk_demo/services/blockchain_service.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:bdk_demo/services/wallet_network_mapper.dart';
 import 'package:bdk_demo/services/wallet_sqlite_persistence.dart';
@@ -363,6 +364,57 @@ class WalletService {
     );
   }
 
+  Future<Psbt> buildTransaction(
+    WalletRecord record,
+    Wallet wallet,
+    String recipientAddress,
+    int amountSat,
+    int feeRateSatPerVb,
+  ) async {
+    final trimmedAddress = recipientAddress.trim();
+    if (trimmedAddress.isEmpty) {
+      throw ArgumentError('Recipient address must not be empty.');
+    }
+    if (amountSat <= 0) {
+      throw ArgumentError('Amount must be greater than zero.');
+    }
+    if (feeRateSatPerVb <= 0) {
+      throw ArgumentError('Fee rate must be greater than zero.');
+    }
+
+    final network = wallet.network();
+    final address = Address(address: trimmedAddress, network: network);
+    if (!address.isValidForNetwork(network: network)) {
+      throw ArgumentError('Recipient address is not valid for this network.');
+    }
+
+    final psbt = TxBuilder()
+        .addRecipient(
+          script: address.scriptPubkey(),
+          amount: Amount.fromSat(satoshi: amountSat),
+        )
+        .feeRate(feeRate: FeeRate.fromSatPerVb(satVb: feeRateSatPerVb))
+        .finish(wallet: wallet);
+
+    await _persistStagedWalletChanges(record, wallet);
+    return psbt;
+  }
+
+  Txid signAndBroadcast(
+    Wallet wallet,
+    Psbt psbt,
+    BlockchainClient blockchainClient,
+  ) {
+    final signed = wallet.sign(psbt: psbt, signOptions: null);
+    if (!signed) {
+      throw StateError('Could not sign transaction.');
+    }
+
+    final transaction = psbt.extractTx();
+    blockchainClient.broadcast(transaction);
+    return transaction.computeTxid();
+  }
+
   Future<(AddressInfo, Wallet)> generateAddress(WalletRecord record) async {
     final secrets = await _storage.getSecrets(record.id);
     if (secrets == null) {
@@ -479,6 +531,44 @@ class WalletService {
       rethrow;
     }
     return wallet;
+  }
+
+  Future<void> _persistStagedWalletChanges(
+    WalletRecord record,
+    Wallet wallet,
+  ) async {
+    if (wallet.staged() == null) return;
+
+    final secrets = await _storage.getSecrets(record.id);
+    if (secrets == null) {
+      throw StateError(
+        'No secrets found for wallet "${record.name}" (${record.id}). '
+        'Cannot persist transaction state.',
+      );
+    }
+
+    final bdkNetworkKind = record.network.toBdkNetworkKind();
+    final descriptor = Descriptor(
+      descriptor: secrets.descriptor,
+      networkKind: bdkNetworkKind,
+    );
+    final changeDescriptor = Descriptor(
+      descriptor: secrets.changeDescriptor,
+      networkKind: bdkNetworkKind,
+    );
+    final dbPath = await WalletStoragePaths.sqlitePathForWallet(record.id);
+    final persister = Persister.newSqlite(path: dbPath);
+    try {
+      await _ensureWalletPersistedToSqlite(
+        wallet,
+        persister,
+        descriptor,
+        changeDescriptor,
+        dbPath,
+      );
+    } finally {
+      persister.dispose();
+    }
   }
 
   Future<Wallet> _reseedWalletToFallbackSqlite({

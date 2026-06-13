@@ -435,6 +435,102 @@ void main() {
     });
   });
 
+  group('WalletService.buildTransaction()', () {
+    setUp(_initServices);
+    tearDown(_tearDownServices);
+
+    test('empty recipient address throws ArgumentError', () async {
+      final (record, wallet) = await walletService.createWallet(
+        'Send Validation',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      addTearDown(wallet.dispose);
+
+      await expectLater(
+        walletService.buildTransaction(record, wallet, '', 1000, 1),
+        throwsArgumentError,
+      );
+    });
+
+    test('zero amount throws ArgumentError', () async {
+      final (record, wallet) = await walletService.createWallet(
+        'Zero Amount',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      addTearDown(wallet.dispose);
+      final recipient = wallet
+          .nextUnusedAddress(keychain: KeychainKind.external_)
+          .address
+          .toString();
+
+      await expectLater(
+        walletService.buildTransaction(record, wallet, recipient, 0, 1),
+        throwsArgumentError,
+      );
+    });
+
+    test('zero fee rate throws ArgumentError', () async {
+      final (record, wallet) = await walletService.createWallet(
+        'Zero Fee',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      addTearDown(wallet.dispose);
+      final recipient = wallet
+          .nextUnusedAddress(keychain: KeychainKind.external_)
+          .address
+          .toString();
+
+      await expectLater(
+        walletService.buildTransaction(record, wallet, recipient, 1000, 0),
+        throwsArgumentError,
+      );
+    });
+
+    test(
+      'invalid recipient address is rejected before coin selection',
+      () async {
+        final (record, wallet) = await walletService.createWallet(
+          'Invalid Recipient',
+          WalletNetwork.testnet,
+          ScriptType.p2wpkh,
+        );
+        addTearDown(wallet.dispose);
+
+        await expectLater(
+          walletService.buildTransaction(
+            record,
+            wallet,
+            'not-a-bitcoin-address',
+            1000,
+            1,
+          ),
+          throwsA(isA<AddressParseException>()),
+        );
+      },
+    );
+
+    test('valid recipient reaches BDK transaction creation', () async {
+      final (record, wallet) = await walletService.createWallet(
+        'Unfunded Send',
+        WalletNetwork.testnet,
+        ScriptType.p2wpkh,
+      );
+      addTearDown(wallet.dispose);
+      final recipient = wallet
+          .nextUnusedAddress(keychain: KeychainKind.external_)
+          .address
+          .toString();
+
+      await expectLater(
+        walletService.buildTransaction(record, wallet, recipient, 1000, 1),
+        throwsA(isA<CreateTxException>()),
+      );
+    });
+  });
+
   group('WalletService.generateAddress()', () {
     setUp(_initServices);
     tearDown(_tearDownServices);
