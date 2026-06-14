@@ -73,7 +73,7 @@ class _SendPageState extends ConsumerState<SendPage> {
                   const SizedBox(height: 24),
                   Form(
                     key: _formKey,
-                    autovalidateMode: AutovalidateMode.always,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [

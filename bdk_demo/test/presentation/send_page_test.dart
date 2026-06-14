@@ -3,12 +3,14 @@ import 'package:bdk_demo/features/send/send_page.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/connectivity_provider.dart';
 import 'package:bdk_demo/providers/send_providers.dart';
+import 'package:bdk_demo/providers/settings_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
-import 'package:bdk_demo/services/blockchain_service.dart';
+import 'package:bdk_demo/services/storage_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const _testExtendedPrivKey =
     'tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B';
@@ -38,13 +40,17 @@ void main() {
     Map<int, double> feeEstimates = const {1: 2.2, 3: 1.4, 6: 1.0},
     bool seedActiveWallet = true,
   }) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final storage = StorageService(prefs: prefs);
     final container = ProviderContainer(
       overrides: [
+        storageServiceProvider.overrideWithValue(storage),
         connectivityProvider.overrideWith(
           (ref) => Stream.value(const [ConnectivityResult.wifi]),
         ),
-        blockchainClientFactoryProvider.overrideWithValue(
-          (network) => _FakeBlockchainClient(feeEstimates),
+        feeEstimatesJobRunnerProvider.overrideWithValue(
+          (_) async => feeEstimates,
         ),
       ],
     );
@@ -96,16 +102,16 @@ void main() {
     );
   });
 
-  testWidgets('empty form shows validation messages and disabled review', (
+  testWidgets('empty form hides validation messages and disables review', (
     tester,
   ) async {
     final container = await createContainer();
 
     await pumpSendPage(tester, container);
 
-    expect(find.text('Recipient address is required.'), findsOneWidget);
-    expect(find.text('Amount is required.'), findsOneWidget);
-    expect(find.text('Fee rate is required.'), findsOneWidget);
+    expect(find.text('Recipient address is required.'), findsNothing);
+    expect(find.text('Amount is required.'), findsNothing);
+    expect(find.text('Fee rate is required.'), findsNothing);
     final button = tester.widget<FilledButton>(
       find.widgetWithText(FilledButton, 'Review transaction'),
     );
@@ -171,27 +177,4 @@ void main() {
     );
     expect(button.onPressed, isNotNull);
   });
-}
-
-final class _FakeBlockchainClient implements BlockchainClient {
-  _FakeBlockchainClient(this._feeEstimates);
-
-  final Map<int, double> _feeEstimates;
-
-  @override
-  BlockchainBackend get backend => BlockchainBackend.electrum;
-
-  @override
-  void broadcast(Transaction transaction) {
-    throw StateError('Broadcast should not be called in commit 2.');
-  }
-
-  @override
-  void dispose() {}
-
-  @override
-  Map<int, double> getFeeEstimates() => _feeEstimates;
-
-  @override
-  int getTipHeight() => 0;
 }
