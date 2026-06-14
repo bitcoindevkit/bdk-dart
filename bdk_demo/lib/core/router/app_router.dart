@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bdk_demo/features/home/home_page.dart';
+import 'package:bdk_demo/features/send/send_page.dart';
 import 'package:bdk_demo/features/transactions/transaction_detail_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
@@ -77,7 +78,7 @@ GoRouter createRouter(RouterRead read) => GoRouter(
       path: AppRoutes.send,
       name: 'send',
       redirect: (context, state) => _sendRouteRedirect(read),
-      builder: (context, state) => const PlaceholderPage(title: 'Send'),
+      builder: (context, state) => const SendPage(),
     ),
     GoRoute(
       path: AppRoutes.transactionHistory,

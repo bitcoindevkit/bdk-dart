@@ -58,6 +58,8 @@ abstract final class BlockchainFeeNormalizer {
 abstract interface class BlockchainClient {
   BlockchainBackend get backend;
 
+  void broadcast(Transaction transaction);
+
   Map<int, double> getFeeEstimates();
 
   int getTipHeight();
@@ -72,6 +74,10 @@ final class EsploraBlockchainClient implements BlockchainClient {
 
   @override
   BlockchainBackend get backend => BlockchainBackend.esplora;
+
+  @override
+  void broadcast(Transaction transaction) =>
+      _client.broadcast(transaction: transaction);
 
   @override
   Map<int, double> getFeeEstimates() =>
@@ -93,6 +99,10 @@ final class ElectrumBlockchainClient implements BlockchainClient {
 
   @override
   BlockchainBackend get backend => BlockchainBackend.electrum;
+
+  @override
+  void broadcast(Transaction transaction) =>
+      _client.transactionBroadcast(tx: transaction);
 
   @override
   Map<int, double> getFeeEstimates() =>

@@ -136,6 +136,9 @@ final class _FakeBlockchainClient implements BlockchainClient {
   final String url;
 
   @override
+  void broadcast(Transaction transaction) {}
+
+  @override
   void dispose() {}
 
   @override
