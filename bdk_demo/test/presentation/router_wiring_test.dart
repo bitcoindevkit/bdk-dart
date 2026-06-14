@@ -1,6 +1,7 @@
 import 'package:bdk_dart/bdk.dart';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/features/home/home_page.dart';
+import 'package:bdk_demo/features/send/send_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
@@ -8,8 +9,10 @@ import 'package:bdk_demo/features/wallet_setup/active_wallets_page.dart';
 import 'package:bdk_demo/features/wallet_setup/create_wallet_page.dart';
 import 'package:bdk_demo/features/wallet_setup/recover_wallet_page.dart';
 import 'package:bdk_demo/providers/connectivity_provider.dart';
+import 'package:bdk_demo/providers/send_providers.dart';
 import 'package:bdk_demo/providers/settings_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
+import 'package:bdk_demo/services/blockchain_service.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +52,7 @@ void main() {
       ConnectivityResult.wifi,
     ],
     bool seedActiveWallet = false,
+    bool? isOnline,
   }) async {
     SharedPreferences.setMockInitialValues({});
     FlutterSecureStorage.setMockInitialValues({});
@@ -57,9 +61,13 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         storageServiceProvider.overrideWithValue(storage),
+        blockchainClientFactoryProvider.overrideWithValue(
+          (network) => _FakeBlockchainClient(),
+        ),
         connectivityProvider.overrideWith(
           (ref) => Stream.value(connectivityResults),
         ),
+        if (isOnline != null) isOnlineProvider.overrideWith((ref) => isOnline),
       ],
     );
     addTearDown(container.dispose);
@@ -132,6 +140,20 @@ void main() {
     expect(find.text('Send'), findsOneWidget);
   });
 
+  testWidgets('/send resolves to SendPage when online with active wallet', (
+    tester,
+  ) async {
+    await pumpRouterAt(
+      tester,
+      AppRoutes.send,
+      seedActiveWallet: true,
+      isOnline: true,
+    );
+
+    expect(find.byType(SendPage), findsOneWidget);
+    expect(find.byType(PlaceholderPage), findsNothing);
+  });
+
   testWidgets('/recover-wallet resolves to RecoverWalletPage', (tester) async {
     await pumpRouterAt(tester, AppRoutes.recoverWallet);
 
@@ -139,4 +161,21 @@ void main() {
     expect(find.byType(PlaceholderPage), findsNothing);
     expect(find.text('Recover Wallet'), findsOneWidget);
   });
+}
+
+final class _FakeBlockchainClient implements BlockchainClient {
+  @override
+  BlockchainBackend get backend => BlockchainBackend.electrum;
+
+  @override
+  void broadcast(Transaction transaction) {}
+
+  @override
+  void dispose() {}
+
+  @override
+  Map<int, double> getFeeEstimates() => const {1: 1.0};
+
+  @override
+  int getTipHeight() => 0;
 }
