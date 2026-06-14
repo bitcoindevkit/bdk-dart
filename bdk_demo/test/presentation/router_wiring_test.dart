@@ -13,7 +13,6 @@ import 'package:bdk_demo/providers/connectivity_provider.dart';
 import 'package:bdk_demo/providers/send_providers.dart';
 import 'package:bdk_demo/providers/settings_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
-import 'package:bdk_demo/services/blockchain_service.dart';
 import 'package:bdk_demo/services/storage_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -62,8 +61,8 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         storageServiceProvider.overrideWithValue(storage),
-        blockchainClientFactoryProvider.overrideWithValue(
-          (network) => _FakeBlockchainClient(),
+        feeEstimatesJobRunnerProvider.overrideWithValue(
+          (_) async => const {1: 1.0},
         ),
         connectivityProvider.overrideWith(
           (ref) => Stream.value(connectivityResults),
@@ -174,21 +173,4 @@ void main() {
     expect(find.byType(PlaceholderPage), findsNothing);
     expect(find.text('Recover Wallet'), findsOneWidget);
   });
-}
-
-final class _FakeBlockchainClient implements BlockchainClient {
-  @override
-  BlockchainBackend get backend => BlockchainBackend.electrum;
-
-  @override
-  void broadcast(Transaction transaction) {}
-
-  @override
-  void dispose() {}
-
-  @override
-  Map<int, double> getFeeEstimates() => const {1: 1.0};
-
-  @override
-  int getTipHeight() => 0;
 }
