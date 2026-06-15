@@ -1,6 +1,7 @@
 import 'package:bdk_dart/bdk.dart';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/features/home/home_page.dart';
+import 'package:bdk_demo/features/receive/receive_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
@@ -116,6 +117,13 @@ void main() {
     await pumpRouterAt(tester, AppRoutes.home);
 
     expect(find.byType(HomePage), findsOneWidget);
+    expect(find.byType(PlaceholderPage), findsNothing);
+  });
+
+  testWidgets('/receive resolves to ReceivePage', (tester) async {
+    await pumpRouterAt(tester, AppRoutes.receive, seedActiveWallet: true);
+
+    expect(find.byType(ReceivePage), findsOneWidget);
     expect(find.byType(PlaceholderPage), findsNothing);
   });
 

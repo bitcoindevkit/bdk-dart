@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bdk_demo/features/home/home_page.dart';
+import 'package:bdk_demo/features/receive/receive_page.dart';
 import 'package:bdk_demo/features/transactions/transaction_detail_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/shared/widgets/placeholder_page.dart';
@@ -71,7 +72,7 @@ GoRouter createRouter(RouterRead read) => GoRouter(
     GoRoute(
       path: AppRoutes.receive,
       name: 'receive',
-      builder: (context, state) => const PlaceholderPage(title: 'Receive'),
+      builder: (context, state) => const ReceivePage(),
     ),
     GoRoute(
       path: AppRoutes.send,
