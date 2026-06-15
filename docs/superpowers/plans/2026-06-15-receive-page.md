@@ -13,6 +13,8 @@
 ## File Structure
 
 - Create `bdk_demo/lib/features/receive/receive_page.dart`: Receive UI and state rendering.
+- Create `bdk_demo/lib/features/receive/receive_address_card.dart`: QR, address, index, and copy presentation.
+- Create `bdk_demo/lib/features/receive/receive_error_panel.dart`: Provider error presentation.
 - Create `bdk_demo/test/presentation/receive_page_test.dart`: Widget coverage using a fake receive notifier.
 - Modify `bdk_demo/lib/core/router/app_router.dart`: Replace the Receive placeholder route.
 - Modify `bdk_demo/test/presentation/router_wiring_test.dart`: Verify `/receive` resolves to `ReceivePage`.

@@ -79,6 +79,8 @@ The implementation is complete when `flutter analyze` and the full `flutter test
 ## File Impact
 
 - Add `bdk_demo/lib/features/receive/receive_page.dart`.
+- Add `bdk_demo/lib/features/receive/receive_address_card.dart`.
+- Add `bdk_demo/lib/features/receive/receive_error_panel.dart`.
 - Add `bdk_demo/test/presentation/receive_page_test.dart`.
 - Update `bdk_demo/lib/core/router/app_router.dart`.
 - Update `bdk_demo/test/presentation/router_wiring_test.dart`.
