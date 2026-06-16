@@ -55,7 +55,12 @@ Integration tests are skipped unless enabled. See `README.md` for
 
 ## Pull requests
 
-Use clear branch names and commit messages. In the PR description, include a
-short summary, any relevant issue link, and the checks you ran.
+Use clear branch names and Conventional Commits messages, for example
+`fix: handle null fee rates`, `feat: expose wallet sync options`, or
+`docs: update setup instructions`.
+
+If the PR is squashed before merge, make sure the final squash commit or PR
+title uses Conventional Commits format. In the PR description, include a short
+summary, any relevant issue link, and the checks you ran.
 
 CI runs format, analysis, tests, binding generation, and platform smoke builds.
