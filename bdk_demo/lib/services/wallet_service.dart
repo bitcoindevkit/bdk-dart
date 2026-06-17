@@ -400,11 +400,12 @@ class WalletService {
     return psbt;
   }
 
-  Txid signAndBroadcast(
+  Future<Txid> signAndBroadcast(
+    WalletRecord record,
     Wallet wallet,
     Psbt psbt,
     BlockchainClient blockchainClient,
-  ) {
+  ) async {
     final signed = wallet.sign(psbt: psbt, signOptions: null);
     if (!signed) {
       throw StateError('Could not sign transaction.');
@@ -412,6 +413,17 @@ class WalletService {
 
     final transaction = psbt.extractTx();
     blockchainClient.broadcast(transaction);
+    wallet.applyUnconfirmedTxs(
+      unconfirmedTxs: [
+        UnconfirmedTx(
+          tx: transaction,
+          lastSeen:
+              DateTime.now().millisecondsSinceEpoch ~/
+              Duration.millisecondsPerSecond,
+        ),
+      ],
+    );
+    await _persistStagedWalletChanges(record, wallet);
     return transaction.computeTxid();
   }
 

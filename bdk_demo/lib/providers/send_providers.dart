@@ -52,8 +52,12 @@ final sendTransactionDraftBuilderProvider =
         );
         return SendTransactionDraft(
           feeSat: psbt.fee(),
-          broadcast: (client) async =>
-              walletService.signAndBroadcast(wallet, psbt, client).toString(),
+          broadcast: (client) async => (await walletService.signAndBroadcast(
+            record,
+            wallet,
+            psbt,
+            client,
+          )).toString(),
         );
       };
     });
