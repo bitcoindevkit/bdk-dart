@@ -125,6 +125,59 @@ jobs:
         working-directory: bdk_demo
         run: flutter build apk --debug --target-platform android-arm64
 
+  android-alignment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "3.10.0"
+
+      - name: Pub get
+        run: dart pub get
+
+      - name: Install Android NDK
+        run: sdkmanager "ndk;27.1.12297006"
+
+      - name: Build Android native library with NDK 27
+        run: |
+          rustup toolchain install 1.85.1 --profile minimal --target aarch64-linux-android
+          NDK="$ANDROID_HOME/ndk/27.1.12297006"
+          TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/linux-x86_64"
+          export ANDROID_NDK_HOME="$NDK"
+          export ANDROID_NDK_ROOT="$NDK"
+          export AR_aarch64_linux_android="$TOOLCHAIN/bin/llvm-ar"
+          export CC_aarch64_linux_android="$TOOLCHAIN/bin/aarch64-linux-android35-clang"
+          export CXX_aarch64_linux_android="$TOOLCHAIN/bin/aarch64-linux-android35-clang++"
+          export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="$TOOLCHAIN/bin/aarch64-linux-android35-clang"
+          export BINDGEN_EXTRA_CLANG_ARGS_aarch64_linux_android="--sysroot=$TOOLCHAIN/sysroot -I$TOOLCHAIN/sysroot/usr/include/aarch64-linux-android"
+          rustup run 1.85.1 cargo build \
+            --release \
+            --manifest-path native/Cargo.toml \
+            --package bdk_dart_ffi \
+            --target aarch64-linux-android \
+            --target-dir /tmp/bdk-dart-android-target \
+            --config native/.cargo/config.toml
+
+      - name: Verify NDK 27 native library alignment
+        run: dart scripts/check_android_elf_alignment.dart /tmp/bdk-dart-android-target/aarch64-linux-android/release/libbdk_dart_ffi.so
+
+      - name: Verify NDK 27 hook alignment
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/27.1.12297006"
+          export ANDROID_NDK_ROOT="$ANDROID_NDK_HOME"
+          dart scripts/check_android_hook_alignment.dart
+
   ios-smoke:
     runs-on: macos-latest
     steps:
