@@ -7,18 +7,29 @@ import 'check_android_elf_alignment.dart' as elf_alignment;
 
 const _androidNdkVersion = '27.1.12297006';
 const _androidApi = 35;
-const _androidArm64Clang = 'aarch64-linux-android35-clang';
 const _assetId = 'package:bdk_dart/uniffi:bdk_dart_ffi';
+const _defaultArchitectureName = 'arm64';
+const _targetArchitectures = <String, Architecture>{
+  'arm64': Architecture.arm64,
+  'x64': Architecture.x64,
+};
+const _androidClangs = <String, String>{
+  'arm64': 'aarch64-linux-android35-clang',
+  'x64': 'x86_64-linux-android35-clang',
+};
 
 Future<void> main(List<String> args) async {
-  final ndk = _findNdk(args);
-  final toolchain = _findLlvmToolchain(ndk);
-  final clang = _tool(toolchain, _androidArm64Clang);
+  final options = _parseOptions(args);
+  final targetArchitecture = _targetArchitectures[options.architectureName]!;
+  final androidClang = _androidClangs[options.architectureName]!;
+  final ndk = _findNdk(options.ndkPath);
+  final toolchain = _findLlvmToolchain(ndk, androidClang);
+  final clang = _tool(toolchain, androidClang);
 
   await testCodeBuildHook(
     mainMethod: build_hook.main,
     targetOS: OS.android,
-    targetArchitecture: Architecture.arm64,
+    targetArchitecture: targetArchitecture,
     targetAndroidNdkApi: _androidApi,
     cCompiler: CCompilerConfig(
       archiver: _tool(toolchain, 'llvm-ar').uri,
@@ -52,8 +63,7 @@ Future<void> main(List<String> args) async {
   );
 }
 
-Directory _findNdk(List<String> args) {
-  final explicitNdkPath = _parseNdkPath(args);
+Directory _findNdk(String? explicitNdkPath) {
   final androidHome = Platform.environment['ANDROID_HOME'];
   final androidSdkRoot = Platform.environment['ANDROID_SDK_ROOT'];
   final candidates = <String?>[
@@ -79,8 +89,10 @@ Directory _findNdk(List<String> args) {
   );
 }
 
-String? _parseNdkPath(List<String> args) {
+({String architectureName, String? ndkPath}) _parseOptions(List<String> args) {
+  var architectureName = _defaultArchitectureName;
   String? ndkPath;
+
   for (var index = 0; index < args.length; index++) {
     final arg = args[index];
     if (arg == '--ndk') {
@@ -90,14 +102,26 @@ String? _parseNdkPath(List<String> args) {
       ndkPath = args[++index];
     } else if (arg.startsWith('--ndk=')) {
       ndkPath = arg.substring('--ndk='.length);
+    } else if (arg == '--arch') {
+      if (index + 1 >= args.length) {
+        _usage();
+      }
+      architectureName = args[++index];
+    } else if (arg.startsWith('--arch=')) {
+      architectureName = arg.substring('--arch='.length);
     } else {
       _usage();
     }
   }
-  return ndkPath;
+
+  if (!_targetArchitectures.containsKey(architectureName)) {
+    _usage();
+  }
+
+  return (architectureName: architectureName, ndkPath: ndkPath);
 }
 
-Directory _findLlvmToolchain(Directory ndk) {
+Directory _findLlvmToolchain(Directory ndk, String androidClang) {
   final prebuilt = Directory(
     _join(_join(_join(ndk.path, 'toolchains'), 'llvm'), 'prebuilt'),
   );
@@ -112,14 +136,14 @@ Directory _findLlvmToolchain(Directory ndk) {
           .where(
             (directory) =>
                 _tool(directory, 'llvm-ar').existsSync() &&
-                _tool(directory, _androidArm64Clang).existsSync(),
+                _tool(directory, androidClang).existsSync(),
           )
           .toList()
         ..sort((a, b) => a.path.compareTo(b.path));
   if (candidates.isEmpty) {
     _fail(
       'No NDK LLVM toolchain under ${prebuilt.path} contains llvm-ar and '
-      '$_androidArm64Clang',
+      '$androidClang',
     );
   }
 
@@ -149,7 +173,10 @@ String _join(String parent, String child) {
 }
 
 Never _usage() {
-  _fail('Usage: dart scripts/check_android_hook_alignment.dart [--ndk <path>]');
+  _fail(
+    'Usage: dart scripts/check_android_hook_alignment.dart '
+    '[--arch <arm64|x64>] [--ndk <path>]',
+  );
 }
 
 Never _fail(String message) {
