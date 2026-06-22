@@ -8,7 +8,8 @@ const _ptLoad = 1;
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     _fail(
-      'Usage: dart scripts/check_android_elf_alignment.dart <apk-or-so> [...]',
+      'Usage: dart scripts/check_android_elf_alignment.dart '
+      '<apk-aab-or-so> [...]',
     );
   }
 
@@ -21,32 +22,30 @@ Future<void> main(List<String> args) async {
     if (_isElf(input)) {
       _checkLibrary(input, input.path);
     } else {
-      await _checkApk(input);
+      await _checkArchive(input);
     }
   }
 }
 
-Future<void> _checkApk(File apk) async {
+Future<void> _checkArchive(File archive) async {
   final tempDir = await Directory.systemTemp.createTemp(
     'bdk_dart_elf_alignment_',
   );
 
   try {
-    await _extractLibraries(apk, tempDir);
-    final libraries =
-        tempDir
-            .listSync(recursive: true)
-            .whereType<File>()
-            .where((file) => file.uri.pathSegments.last == _libraryName)
-            .toList()
-          ..sort((a, b) => a.path.compareTo(b.path));
-
-    if (libraries.isEmpty) {
-      _fail('No $_libraryName entries found in ${apk.path}');
+    final entries = await _findNativeLibraryEntries(archive);
+    if (entries.isEmpty) {
+      _fail('No $_libraryName entries found in ${archive.path}');
     }
 
-    for (final library in libraries) {
-      _checkLibrary(library, _relativePath(library, tempDir));
+    await _extractLibraries(archive, tempDir, entries);
+
+    for (final entry in entries) {
+      final library = _extractedEntry(tempDir, entry);
+      if (!library.existsSync()) {
+        _fail('Extracted library not found: $entry');
+      }
+      _checkLibrary(library, entry);
     }
   } finally {
     await tempDir.delete(recursive: true);
@@ -76,21 +75,67 @@ void _checkLibrary(File library, String label) {
   stdout.writeln('OK $label minLOADalign=${_hex(minimumAlignment)}');
 }
 
-Future<void> _extractLibraries(File apk, Directory destination) async {
+Future<List<String>> _findNativeLibraryEntries(File archive) async {
+  final result = await Process.run('unzip', ['-Z', '-1', archive.path]);
+  if (result.exitCode != 0) {
+    _fail(
+      'Failed to list $_libraryName entries in ${archive.path}.\n'
+      '${result.stderr}',
+    );
+  }
+
+  final entries =
+      (result.stdout as String)
+          .split('\n')
+          .where(_isTargetLibraryEntry)
+          .toList()
+        ..sort();
+  return entries;
+}
+
+bool _isTargetLibraryEntry(String entry) {
+  final segments = entry.split('/');
+  if (segments.any((segment) => segment.isEmpty || segment == '.')) {
+    return false;
+  }
+  if (segments.any((segment) => segment == '..')) {
+    return false;
+  }
+  if (segments.last != _libraryName) {
+    return false;
+  }
+
+  final isApkLibrary = segments.length == 3 && segments[0] == 'lib';
+  final isAabLibrary = segments.length == 4 && segments[1] == 'lib';
+  return isApkLibrary || isAabLibrary;
+}
+
+Future<void> _extractLibraries(
+  File archive,
+  Directory destination,
+  List<String> entries,
+) async {
   final result = await Process.run('unzip', [
     '-q',
-    apk.path,
-    'lib/*/$_libraryName',
+    archive.path,
+    ...entries,
     '-d',
     destination.path,
   ]);
 
   if (result.exitCode != 0) {
     _fail(
-      'Failed to extract $_libraryName from ${apk.path}.\n'
+      'Failed to extract $_libraryName from ${archive.path}.\n'
       '${result.stderr}',
     );
   }
+}
+
+File _extractedEntry(Directory root, String entry) {
+  final path = entry
+      .split('/')
+      .fold(root.path, (parent, child) => _join(parent, child));
+  return File(path);
 }
 
 bool _isElf(File file) {
@@ -158,14 +203,14 @@ List<int> _readLoadAlignments(File elfFile) {
   return alignments;
 }
 
-String _relativePath(File file, Directory root) {
-  final prefix = '${root.path}${Platform.pathSeparator}';
-  return file.path.startsWith(prefix)
-      ? file.path.substring(prefix.length)
-      : file.path;
-}
-
 String _hex(int value) => '0x${value.toRadixString(16)}';
+
+String _join(String parent, String child) {
+  final separator = Platform.pathSeparator;
+  return parent.endsWith(separator)
+      ? '$parent$child'
+      : '$parent$separator$child';
+}
 
 Never _fail(String message) {
   stderr.writeln(message);
