@@ -1,0 +1,121 @@
+// @Tags(['integration'])
+
+import 'dart:io';
+
+import 'package:bdk_dart/bdk.dart';
+import 'package:test/test.dart';
+
+import '../test_constants.dart';
+
+Future<void> _deleteDirectoryWithRetry(Directory directory) async {
+  for (var attempt = 0; attempt < 10; attempt++) {
+    try {
+      if (directory.existsSync()) {
+        await directory.delete(recursive: true);
+      }
+      return;
+    } on PathAccessException {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+  }
+
+  if (directory.existsSync()) {
+    await directory.delete(recursive: true);
+  }
+}
+
+void main() {
+  group('Wallet creation integration', () {
+    test('persists derivation state across a SQLite reopen', () {
+      final tempDir = Directory.systemTemp.createTempSync(
+        'bdk_dart_wallet_creation_',
+      );
+      addTearDown(() => _deleteDirectoryWithRetry(tempDir));
+
+      final dbPath = '${tempDir.path}/wallet.sqlite';
+      final descriptor = buildBip84Descriptor(Network.testnet);
+      final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
+      Persister? persister;
+      Wallet? wallet;
+      Persister? reopenedPersister;
+      Wallet? reopenedWallet;
+
+      try {
+        expect(File(dbPath).existsSync(), isFalse);
+
+        final initialPersister = Persister.newSqlite(path: dbPath);
+        persister = initialPersister;
+
+        wallet = Wallet(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          network: Network.testnet,
+          persister: initialPersister,
+          lookahead: defaultLookahead,
+        );
+
+        final externalAddress = wallet.revealNextAddress(
+          keychain: KeychainKind.external_,
+        );
+        final internalAddress = wallet.revealNextAddress(
+          keychain: KeychainKind.internal,
+        );
+
+        expect(externalAddress.index, equals(0));
+        expect(internalAddress.index, equals(0));
+        expect(wallet.persist(persister: initialPersister), isTrue);
+
+        wallet.dispose();
+        wallet = null;
+        persister.dispose();
+        persister = null;
+
+        expect(File(dbPath).existsSync(), isTrue);
+
+        reopenedPersister = Persister.newSqlite(path: dbPath);
+        reopenedWallet = Wallet.load(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          persister: reopenedPersister,
+          lookahead: defaultLookahead,
+        );
+
+        expect(reopenedWallet.network(), equals(Network.testnet));
+        expect(reopenedWallet.balance().total.toSat(), equals(0));
+        expect(
+          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.external_),
+          equals(1),
+        );
+        expect(
+          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.internal),
+          equals(1),
+        );
+
+        final reopenedExternalAddress = reopenedWallet.peekAddress(
+          keychain: KeychainKind.external_,
+          index: externalAddress.index,
+        );
+        final reopenedInternalAddress = reopenedWallet.peekAddress(
+          keychain: KeychainKind.internal,
+          index: internalAddress.index,
+        );
+
+        expect(
+          reopenedExternalAddress.address.scriptPubkey().toBytes(),
+          orderedEquals(externalAddress.address.scriptPubkey().toBytes()),
+        );
+        expect(
+          reopenedInternalAddress.address.scriptPubkey().toBytes(),
+          orderedEquals(internalAddress.address.scriptPubkey().toBytes()),
+        );
+      } finally {
+        reopenedWallet?.dispose();
+        reopenedPersister?.dispose();
+        wallet?.dispose();
+        persister?.dispose();
+        descriptor.dispose();
+        changeDescriptor.dispose();
+      }
+    });
+  });
+}
