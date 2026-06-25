@@ -44,7 +44,7 @@ dependencies:
 
 ```yaml
 dependencies:
-  bdk_dart: ^1.0.0-rc.1
+  bdk_dart: ^1.0.0-rc.2
 ```
 
 Import the package entrypoint:

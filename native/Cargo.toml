@@ -1,7 +1,7 @@
 [package]
 name = "bdk_dart_ffi"
 description = "This is a simple wrapper crate which re-exports bdk-ffi for publishing to pub.dev"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.2"
 homepage = "https://bitcoindevkit.org"
 repository = "https://github.com/bitcoindevkit/bdk-dart"
 edition = "2021"

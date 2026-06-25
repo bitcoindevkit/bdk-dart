@@ -8,6 +8,8 @@ docs/
 **/build/
 **/.dart_tool/
 native/target/
+Cargo.lock
+native/Cargo.lock
 
 # Native libraries are built per consumer by Dart Native Assets.
 *.dylib
