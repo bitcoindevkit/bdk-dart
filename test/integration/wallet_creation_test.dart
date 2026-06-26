@@ -220,5 +220,66 @@ void main() {
         changeDescriptor.dispose();
       }
     });
+
+    test('cover explicit SQLite wallet persist contract', () {
+      final tempDir = Directory.systemTemp.createTempSync(
+        'bdk_dart_wallet_creation_test2_',
+      );
+      addTearDown(() => _deleteDirectoryWithRetry(tempDir));
+
+      final dbPath = '${tempDir.path}/wallet.sqlite';
+      final descriptor = buildBip84Descriptor(Network.testnet);
+      final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
+      Persister? persister;
+      Wallet? wallet;
+      Persister? reopenedPersister;
+      Wallet? reopenedWallet;
+
+      try {
+        final initialPersister = Persister.newSqlite(path: dbPath);
+        persister = initialPersister;
+
+        wallet = Wallet(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          network: Network.testnet,
+          persister: initialPersister,
+          lookahead: defaultLookahead,
+        );
+
+        final ext0 = wallet.revealNextAddress(keychain: KeychainKind.external_);
+        expect(ext0.index, equals(0));
+
+        expect(wallet.persist(persister: initialPersister), isTrue);
+
+        final ext1 = wallet.revealNextAddress(keychain: KeychainKind.external_);
+        expect(ext1.index, equals(1));
+
+        wallet.dispose();
+        wallet = null;
+        persister.dispose();
+        persister = null;
+
+        reopenedPersister = Persister.newSqlite(path: dbPath);
+        reopenedWallet = Wallet.load(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          persister: reopenedPersister,
+          lookahead: defaultLookahead,
+        );
+
+        expect(
+          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.external_),
+          equals(1),
+        );
+      } finally {
+        reopenedWallet?.dispose();
+        reopenedPersister?.dispose();
+        wallet?.dispose();
+        persister?.dispose();
+        descriptor.dispose();
+        changeDescriptor.dispose();
+      }
+    });
   });
 }
