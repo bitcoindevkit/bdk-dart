@@ -5,6 +5,14 @@ set shell := ["sh", "-c"]
 
 set windows-shell := ["powershell.exe", "-Command"]
 
+windows_generate_bindings := "cd native; if (-not $?) { exit 1 }; cargo build --profile dev; if (-not $?) { exit 1 }; cargo run --profile dev --bin uniffi-bindgen -- generate --library target/debug/bdk_dart_ffi.dll --language dart --config uniffi.toml --out-dir ../lib/"
+
+unix_generate_bindings := "bash ./scripts/generate_bindings.sh"
+
+windows_clean := "'.dart_tool', 'build', 'native/target', 'coverage', 'bdk_demo/.dart_tool', 'bdk_demo/build', 'example/.dart_tool', 'example/build' | Where-Object { Test-Path $_ } | ForEach-Object { Remove-Item -Recurse -Force $_ }"
+
+unix_clean := "rm -rf .dart_tool/ build/ native/target/ coverage/ bdk_demo/.dart_tool/ bdk_demo/build/ example/.dart_tool/ example/build/"
+
 opener := if os_family() == "windows" { "Start-Process" } else if os() == "macos" { "open" } else { "xdg-open" }
 
 [group("Repo")]
@@ -40,11 +48,7 @@ test *ARGS:
 [group("Bindings")]
 [doc("Build native library and regenerate bindings.")]
 generate-bindings:
-  {{ if os() == "windows" {
-        "cd native; if (-not $?) { exit 1 }; cargo build --profile dev; if (-not $?) { exit 1 }; cargo run --profile dev --bin uniffi-bindgen -- generate --library target/debug/bdk_dart_ffi.dll --language dart --config uniffi.toml --out-dir ../lib/"
-    } else {
-        "bash ./scripts/generate_bindings.sh"
-    } }}
+  {{ if os() == "windows" { windows_generate_bindings } else { unix_generate_bindings } }}
 
 [group("Demo")]
 [doc("Run Flutter analysis for the demo app.")]
@@ -70,8 +74,4 @@ ci:
 [group("Dart")]
 [doc("Remove build and tool artifacts to start fresh.")]
 clean:
-  {{ if os() == "windows" {
-        "'.dart_tool', 'build', 'native/target', 'coverage', 'bdk_demo/.dart_tool', 'bdk_demo/build', 'example/.dart_tool', 'example/build' | Where-Object { Test-Path $_ } | ForEach-Object { Remove-Item -Recurse -Force $_ }"
-    } else {
-        "rm -rf .dart_tool/ build/ native/target/ coverage/ bdk_demo/.dart_tool/ bdk_demo/build/ example/.dart_tool/ example/build/"
-    } }}
+  {{ if os() == "windows" { windows_clean } else { unix_clean } }}
