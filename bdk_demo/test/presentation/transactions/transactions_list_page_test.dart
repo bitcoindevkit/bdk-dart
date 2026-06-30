@@ -1,17 +1,19 @@
 import 'package:bdk_demo/features/transactions/transaction_detail_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
+import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../helpers/fakes/fake_transactions_repository.dart';
-import '../../helpers/fixtures/placeholder_transactions.dart';
+import '../../helpers/fixtures/transaction_history_items.dart';
 
 Future<void> _pumpTransactionsFlow(
   WidgetTester tester, {
   required TransactionsRepository repository,
+  bool hasActiveWallet = true,
 }) async {
   final router = GoRouter(
     initialLocation: '/transactions',
@@ -32,7 +34,10 @@ Future<void> _pumpTransactionsFlow(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [transactionsRepositoryProvider.overrideWithValue(repository)],
+      overrides: [
+        transactionsRepositoryProvider.overrideWithValue(repository),
+        hasActiveWalletProvider.overrideWithValue(hasActiveWallet),
+      ],
       child: MaterialApp.router(routerConfig: router),
     ),
   );
@@ -40,28 +45,28 @@ Future<void> _pumpTransactionsFlow(
 }
 
 void main() {
-  testWidgets('shows intro before loading transactions', (tester) async {
+  testWidgets('shows intro before loading transaction history', (tester) async {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(
-        transactions: placeholderTransactions,
+        transactions: transactionHistoryItems,
       ),
     );
 
-    expect(find.text('Transactions Demo'), findsNWidgets(2));
-    expect(find.text('Load Transactions Demo'), findsOneWidget);
-    expect(find.text('Transactions not loaded yet'), findsOneWidget);
+    expect(find.text('Transaction History'), findsNWidgets(2));
+    expect(find.text('Load Transaction History'), findsOneWidget);
+    expect(find.text('Transaction history not loaded yet'), findsOneWidget);
   });
 
-  testWidgets('loads and renders placeholder transactions', (tester) async {
+  testWidgets('loads and renders wallet transactions', (tester) async {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(
-        transactions: placeholderTransactions,
+        transactions: transactionHistoryItems,
       ),
     );
 
-    await tester.tap(find.text('Load Transactions Demo'));
+    await tester.tap(find.text('Load Transaction History'));
     await tester.pumpAndSettle();
 
     expect(find.text('+42000 sat'), findsOneWidget);
@@ -80,13 +85,13 @@ void main() {
       repository: FakeTransactionsRepository(transactions: const []),
     );
 
-    await tester.tap(find.text('Load Transactions Demo'));
+    await tester.tap(find.text('Load Transaction History'));
     await tester.pumpAndSettle();
 
     expect(find.text('No transactions yet'), findsOneWidget);
     expect(
       find.text(
-        'The transaction demo loaded successfully, but no placeholder transactions are configured yet.',
+        'The active wallet has no transactions yet. Sync the wallet or receive funds to populate history.',
       ),
       findsOneWidget,
     );
@@ -96,11 +101,11 @@ void main() {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(
-        transactions: placeholderTransactions,
+        transactions: transactionHistoryItems,
       ),
     );
 
-    await tester.tap(find.text('Load Transactions Demo'));
+    await tester.tap(find.text('Load Transaction History'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('123456...abcd'));
@@ -114,4 +119,54 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'no active wallet shows the no-wallet state and disables load button',
+    (tester) async {
+      await _pumpTransactionsFlow(
+        tester,
+        repository: FakeTransactionsRepository(transactions: const []),
+        hasActiveWallet: false,
+      );
+
+      expect(find.text('No active wallet'), findsOneWidget);
+      expect(
+        find.text(
+          'Create or load a wallet before viewing transaction history.',
+        ),
+        findsOneWidget,
+      );
+
+      // Verify button is disabled
+      final buttonFinder = find.widgetWithText(
+        FilledButton,
+        'Load Transaction History',
+      );
+      expect(tester.widget<FilledButton>(buttonFinder).onPressed, isNull);
+    },
+  );
+
+  testWidgets(
+    'active wallet with no transactions still shows the normal empty-history state after loading',
+    (tester) async {
+      await _pumpTransactionsFlow(
+        tester,
+        repository: FakeTransactionsRepository(transactions: const []),
+        hasActiveWallet: true,
+      );
+
+      expect(find.text('Transaction history not loaded yet'), findsOneWidget);
+
+      await tester.tap(find.text('Load Transaction History'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No transactions yet'), findsOneWidget);
+      expect(
+        find.text(
+          'The active wallet has no transactions yet. Sync the wallet or receive funds to populate history.',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 }
