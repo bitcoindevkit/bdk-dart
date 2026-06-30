@@ -25,7 +25,7 @@ void main() {
       expect(item.blockHeight, 120);
       expect(
         item.confirmationTime,
-        DateTime.fromMillisecondsSinceEpoch(1704164640000),
+        DateTime.fromMillisecondsSinceEpoch(1704164640000, isUtc: true),
       );
       expect(item.statusLabel, 'confirmed');
     });

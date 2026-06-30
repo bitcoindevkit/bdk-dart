@@ -38,6 +38,7 @@ class TransactionHistoryMapper {
         blockHeight: position.blockHeight,
         confirmationTime: DateTime.fromMillisecondsSinceEpoch(
           position.confirmationTime * 1000,
+          isUtc: true,
         ),
       ),
       UnconfirmedTransactionPosition() => TransactionHistoryItem(

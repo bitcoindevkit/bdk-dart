@@ -1,8 +1,9 @@
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
+import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum TransactionsLoadState { idle, loading, success, error }
+enum TransactionsLoadState { idle, loading, success, error, noWallet }
 
 class TransactionsState {
   final TransactionsLoadState status;
@@ -52,9 +53,31 @@ final transactionDetailsProvider =
 
 class TransactionsController extends Notifier<TransactionsState> {
   @override
-  TransactionsState build() => const TransactionsState.idle();
+  TransactionsState build() {
+    final hasWallet = ref.watch(activeWalletProvider) != null;
+    if (!hasWallet) {
+      return const TransactionsState(
+        status: TransactionsLoadState.noWallet,
+        transactions: [],
+        statusMessage:
+            'Create or load a wallet before viewing transaction history.',
+      );
+    }
+    return const TransactionsState.idle();
+  }
 
   Future<void> loadTransactions() async {
+    final hasWallet = ref.read(activeWalletProvider) != null;
+    if (!hasWallet) {
+      state = const TransactionsState(
+        status: TransactionsLoadState.noWallet,
+        transactions: [],
+        statusMessage:
+            'Create or load a wallet before viewing transaction history.',
+      );
+      return;
+    }
+
     state = state.copyWith(
       status: TransactionsLoadState.loading,
       transactions: const [],

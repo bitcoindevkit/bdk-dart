@@ -105,12 +105,18 @@ class BdkWalletTransactionSource implements TransactionHistorySource {
     final sentAndReceived = _wallet.sentAndReceived(tx: transaction);
     final txid = transaction.computeTxid();
     final txidText = txid.toString();
+    final sentSat = sentAndReceived.sent.toSat();
+    final receivedSat = sentAndReceived.received.toSat();
+
     txid.dispose();
+    transaction.dispose();
+    sentAndReceived.sent.dispose();
+    sentAndReceived.received.dispose();
 
     return TransactionHistoryRecord(
       txid: txidText,
-      sent: sentAndReceived.sent.toSat(),
-      received: sentAndReceived.received.toSat(),
+      sent: sentSat,
+      received: receivedSat,
       position: _positionFromBdk(canonicalTx.chainPosition),
     );
   }

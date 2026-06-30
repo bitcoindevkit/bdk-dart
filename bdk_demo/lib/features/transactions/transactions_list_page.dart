@@ -5,6 +5,7 @@ import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_controller.dart';
 import 'package:bdk_demo/models/currency_unit.dart';
+import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +27,9 @@ class TransactionsListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final state = ref.watch(transactionsControllerProvider);
+    final hasWallet = ref.watch(activeWalletProvider) != null;
     final isLoading = state.status == TransactionsLoadState.loading;
+    final canLoad = hasWallet && !isLoading;
 
     return Scaffold(
       appBar: const SecondaryAppBar(title: 'Transaction History'),
@@ -68,11 +71,11 @@ class TransactionsListPage extends ConsumerWidget {
                     ),
                     const SizedBox(height: 20),
                     FilledButton.icon(
-                      onPressed: isLoading
-                          ? null
-                          : () => ref
+                      onPressed: canLoad
+                          ? () => ref
                                 .read(transactionsControllerProvider.notifier)
-                                .loadTransactions(),
+                                .loadTransactions()
+                          : null,
                       icon: isLoading
                           ? SizedBox(
                               width: 16,
@@ -120,6 +123,11 @@ class _TransactionsBody extends StatelessWidget {
     final theme = Theme.of(context);
 
     return switch (state.status) {
+      TransactionsLoadState.noWallet => const WalletStateCard(
+        icon: Icons.account_balance_wallet_outlined,
+        title: 'No active wallet',
+        message: 'Create or load a wallet before viewing transaction history.',
+      ),
       TransactionsLoadState.idle => WalletStateCard(
         icon: Icons.info_outline,
         title: 'Transaction history not loaded yet',
