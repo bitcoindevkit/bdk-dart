@@ -54,7 +54,7 @@ final transactionDetailsProvider =
 class TransactionsController extends Notifier<TransactionsState> {
   @override
   TransactionsState build() {
-    final hasWallet = ref.watch(activeWalletProvider) != null;
+    final hasWallet = ref.watch(hasActiveWalletProvider);
     if (!hasWallet) {
       return const TransactionsState(
         status: TransactionsLoadState.noWallet,
@@ -67,7 +67,7 @@ class TransactionsController extends Notifier<TransactionsState> {
   }
 
   Future<void> loadTransactions() async {
-    final hasWallet = ref.read(activeWalletProvider) != null;
+    final hasWallet = ref.read(hasActiveWalletProvider);
     if (!hasWallet) {
       state = const TransactionsState(
         status: TransactionsLoadState.noWallet,

@@ -27,7 +27,7 @@ class TransactionsListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final state = ref.watch(transactionsControllerProvider);
-    final hasWallet = ref.watch(activeWalletProvider) != null;
+    final hasWallet = ref.watch(hasActiveWalletProvider);
     final isLoading = state.status == TransactionsLoadState.loading;
     final canLoad = hasWallet && !isLoading;
 

@@ -1,4 +1,3 @@
-import 'package:bdk_dart/bdk.dart';
 import 'package:bdk_demo/features/transactions/transaction_detail_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_list_page.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
@@ -10,35 +9,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../helpers/fakes/fake_transactions_repository.dart';
 import '../../helpers/fixtures/transaction_history_items.dart';
-
-const _testExtendedPrivKey =
-    'tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B';
-
-class FakeActiveWalletNotifier extends ActiveWalletNotifier {
-  final Wallet? _wallet;
-  FakeActiveWalletNotifier(this._wallet);
-
-  @override
-  Wallet? build() => _wallet;
-}
-
-Wallet _createTestWallet() {
-  final descriptor = Descriptor(
-    descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/0/*)',
-    networkKind: NetworkKind.test,
-  );
-  final changeDescriptor = Descriptor(
-    descriptor: 'wpkh($_testExtendedPrivKey/84h/1h/0h/1/*)',
-    networkKind: NetworkKind.test,
-  );
-  return Wallet(
-    descriptor: descriptor,
-    changeDescriptor: changeDescriptor,
-    network: Network.testnet,
-    persister: Persister.newInMemory(),
-    lookahead: 25,
-  );
-}
 
 Future<void> _pumpTransactionsFlow(
   WidgetTester tester, {
@@ -66,10 +36,7 @@ Future<void> _pumpTransactionsFlow(
     ProviderScope(
       overrides: [
         transactionsRepositoryProvider.overrideWithValue(repository),
-        if (seedActiveWallet)
-          activeWalletProvider.overrideWith(
-            () => FakeActiveWalletNotifier(_createTestWallet()),
-          ),
+        hasActiveWalletProvider.overrideWithValue(seedActiveWallet),
       ],
       child: MaterialApp.router(routerConfig: router),
     ),

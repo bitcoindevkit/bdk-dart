@@ -32,6 +32,10 @@ final activeWalletProvider = NotifierProvider<ActiveWalletNotifier, Wallet?>(
   ActiveWalletNotifier.new,
 );
 
+final hasActiveWalletProvider = Provider<bool>((ref) {
+  return ref.watch(activeWalletProvider) != null;
+});
+
 class ActiveWalletNotifier extends Notifier<Wallet?> {
   late WalletDisposer _walletDisposer;
   Wallet? _currentWallet;
