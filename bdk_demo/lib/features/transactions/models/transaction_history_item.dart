@@ -1,6 +1,6 @@
 import 'package:bdk_demo/core/utils/formatters.dart';
 
-class DemoTxDetails {
+class TransactionHistoryItem {
   final String txid;
   final int sent;
   final int received;
@@ -8,7 +8,7 @@ class DemoTxDetails {
   final int? blockHeight;
   final DateTime? confirmationTime;
 
-  const DemoTxDetails({
+  const TransactionHistoryItem({
     required this.txid,
     required this.sent,
     required this.received,

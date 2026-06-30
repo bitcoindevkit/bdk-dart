@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes/fake_transactions_repository.dart';
-import '../../helpers/fixtures/placeholder_transactions.dart';
+import '../../helpers/fixtures/transaction_history_items.dart';
 
 Future<void> _pumpDetailPage(
   WidgetTester tester, {
@@ -31,9 +31,9 @@ void main() {
     await _pumpDetailPage(
       tester,
       repository: FakeTransactionsRepository(
-        transactions: placeholderTransactions,
+        transactions: transactionHistoryItems,
       ),
-      txid: placeholderTransactions.first.txid,
+      txid: transactionHistoryItems.first.txid,
     );
 
     expect(find.text('Transaction Detail'), findsOneWidget);
@@ -51,13 +51,13 @@ void main() {
 
   testWidgets('updates when the txid changes', (tester) async {
     final repository = FakeTransactionsRepository(
-      transactions: placeholderTransactions,
+      transactions: transactionHistoryItems,
     );
 
     await _pumpDetailPage(
       tester,
       repository: repository,
-      txid: placeholderTransactions.first.txid,
+      txid: transactionHistoryItems.first.txid,
     );
 
     expect(
@@ -71,7 +71,7 @@ void main() {
     await _pumpDetailPage(
       tester,
       repository: repository,
-      txid: placeholderTransactions.last.txid,
+      txid: transactionHistoryItems.last.txid,
     );
 
     expect(

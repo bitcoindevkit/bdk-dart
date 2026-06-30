@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../helpers/fakes/fake_transactions_repository.dart';
-import '../../helpers/fixtures/placeholder_transactions.dart';
+import '../../helpers/fixtures/transaction_history_items.dart';
 
 Future<void> _pumpTransactionsFlow(
   WidgetTester tester, {
@@ -40,28 +40,28 @@ Future<void> _pumpTransactionsFlow(
 }
 
 void main() {
-  testWidgets('shows intro before loading transactions', (tester) async {
+  testWidgets('shows intro before loading transaction history', (tester) async {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(
-        transactions: placeholderTransactions,
+        transactions: transactionHistoryItems,
       ),
     );
 
-    expect(find.text('Transactions Demo'), findsNWidgets(2));
-    expect(find.text('Load Transactions Demo'), findsOneWidget);
-    expect(find.text('Transactions not loaded yet'), findsOneWidget);
+    expect(find.text('Transaction History'), findsNWidgets(2));
+    expect(find.text('Load Transaction History'), findsOneWidget);
+    expect(find.text('Transaction history not loaded yet'), findsOneWidget);
   });
 
-  testWidgets('loads and renders placeholder transactions', (tester) async {
+  testWidgets('loads and renders wallet transactions', (tester) async {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(
-        transactions: placeholderTransactions,
+        transactions: transactionHistoryItems,
       ),
     );
 
-    await tester.tap(find.text('Load Transactions Demo'));
+    await tester.tap(find.text('Load Transaction History'));
     await tester.pumpAndSettle();
 
     expect(find.text('+42000 sat'), findsOneWidget);
@@ -80,13 +80,13 @@ void main() {
       repository: FakeTransactionsRepository(transactions: const []),
     );
 
-    await tester.tap(find.text('Load Transactions Demo'));
+    await tester.tap(find.text('Load Transaction History'));
     await tester.pumpAndSettle();
 
     expect(find.text('No transactions yet'), findsOneWidget);
     expect(
       find.text(
-        'The transaction demo loaded successfully, but no placeholder transactions are configured yet.',
+        'The active wallet has no transactions yet. Sync the wallet or receive funds to populate history.',
       ),
       findsOneWidget,
     );
@@ -96,11 +96,11 @@ void main() {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(
-        transactions: placeholderTransactions,
+        transactions: transactionHistoryItems,
       ),
     );
 
-    await tester.tap(find.text('Load Transactions Demo'));
+    await tester.tap(find.text('Load Transaction History'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('123456...abcd'));

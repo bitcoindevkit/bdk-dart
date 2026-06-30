@@ -2,7 +2,7 @@ import 'package:bdk_demo/core/theme/app_theme.dart';
 import 'package:bdk_demo/core/utils/formatters.dart';
 import 'package:bdk_demo/features/shared/widgets/secondary_app_bar.dart';
 import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
-import 'package:bdk_demo/features/transactions/models/demo_tx_details.dart';
+import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_controller.dart';
 import 'package:bdk_demo/models/currency_unit.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ class TransactionDetailPage extends ConsumerWidget {
 
   const TransactionDetailPage({super.key, required this.txid});
 
-  String _formatAmount(DemoTxDetails transaction) {
+  String _formatAmount(TransactionHistoryItem transaction) {
     final amount = transaction.netAmount;
     final prefix = amount >= 0 ? '+' : '-';
     final value = Formatters.formatBalance(amount.abs(), CurrencyUnit.satoshi);
@@ -37,14 +37,14 @@ class TransactionDetailPage extends ConsumerWidget {
           loading: () => const WalletStateCard(
             icon: Icons.hourglass_bottom,
             title: 'Loading transaction',
-            message: 'Preparing placeholder transaction details...',
+            message: 'Reading wallet transaction details...',
             showSpinner: true,
             centered: true,
           ),
           error: (_, __) => WalletStateCard(
             icon: Icons.error_outline,
             title: 'Transaction unavailable',
-            message: 'The demo could not load placeholder transaction details.',
+            message: 'The wallet transaction details could not be loaded.',
             accentColor: theme.colorScheme.error,
             centered: true,
           ),
@@ -54,7 +54,7 @@ class TransactionDetailPage extends ConsumerWidget {
                 icon: Icons.search_off,
                 title: 'Transaction not found',
                 message:
-                    'No placeholder transaction was found for this txid.\n\n$txid',
+                    'No wallet transaction was found for this txid.\n\n$txid',
                 centered: true,
               );
             }
@@ -83,7 +83,7 @@ class TransactionDetailPage extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Standalone transaction detail view for the selected placeholder transaction.',
+                          'Transaction detail for the selected wallet transaction.',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withAlpha(170),
                           ),

@@ -1,4 +1,4 @@
-import 'package:bdk_demo/features/transactions/models/demo_tx_details.dart';
+import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,7 +6,7 @@ enum TransactionsLoadState { idle, loading, success, error }
 
 class TransactionsState {
   final TransactionsLoadState status;
-  final List<DemoTxDetails> transactions;
+  final List<TransactionHistoryItem> transactions;
   final String statusMessage;
   final String? errorMessage;
 
@@ -21,13 +21,12 @@ class TransactionsState {
     : this(
         status: TransactionsLoadState.idle,
         transactions: const [],
-        statusMessage:
-            'Load the transaction demo to preview list and detail states.',
+        statusMessage: 'Load the active wallet transaction history.',
       );
 
   TransactionsState copyWith({
     TransactionsLoadState? status,
-    List<DemoTxDetails>? transactions,
+    List<TransactionHistoryItem>? transactions,
     String? statusMessage,
     String? errorMessage,
   }) {
@@ -46,7 +45,7 @@ final transactionsControllerProvider =
     );
 
 final transactionDetailsProvider =
-    FutureProvider.family<DemoTxDetails?, String>((ref, txid) {
+    FutureProvider.family<TransactionHistoryItem?, String>((ref, txid) {
       final repository = ref.read(transactionsRepositoryProvider);
       return repository.loadTransactionByTxid(txid);
     });
@@ -59,7 +58,7 @@ class TransactionsController extends Notifier<TransactionsState> {
     state = state.copyWith(
       status: TransactionsLoadState.loading,
       transactions: const [],
-      statusMessage: 'Loading placeholder transactions...',
+      statusMessage: 'Loading transaction history...',
       errorMessage: null,
     );
 
@@ -72,15 +71,15 @@ class TransactionsController extends Notifier<TransactionsState> {
         status: TransactionsLoadState.success,
         transactions: transactions,
         statusMessage: transactions.isEmpty
-            ? 'Transaction demo loaded. No transactions yet.'
-            : 'Transaction demo loaded. Showing placeholder transaction rows.',
+            ? 'Transaction history loaded. No transactions yet.'
+            : 'Transaction history loaded.',
         errorMessage: null,
       );
     } catch (error) {
       state = state.copyWith(
         status: TransactionsLoadState.error,
         transactions: const [],
-        statusMessage: 'The transaction demo could not be loaded.',
+        statusMessage: 'Transaction history could not be loaded.',
         errorMessage: _readableError(error),
       );
     }
