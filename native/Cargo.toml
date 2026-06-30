@@ -17,13 +17,13 @@ name = "uniffi-bindgen"
 path = "uniffi-bindgen.rs"
 
 [dependencies]
-bdk-ffi = { package = "bdk-ffi", git = "https://github.com/bitcoindevkit/bdk-ffi.git", tag = "v3.0.0" }
-uniffi = { version = "=0.31.1", features = ["cli"] }
-uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.0+v0.31.1" }
+bdk-ffi = { package = "bdk-ffi", git = "https://github.com/bitcoindevkit/bdk-ffi.git", rev = "17c48b8b52ba81cdc58531e75ad1165be0cc25d9" }
+uniffi = { version = "=0.31.2", features = ["cli"] }
+uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.1+v0.31.2" }
 camino = "1.2"
 
 [build-dependencies]
-uniffi = { version = "=0.31.1", features = ["build"] }
-uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.0+v0.31.1", features = [
+uniffi = { version = "=0.31.2", features = ["build"] }
+uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.1+v0.31.2", features = [
     "build",
 ] }
