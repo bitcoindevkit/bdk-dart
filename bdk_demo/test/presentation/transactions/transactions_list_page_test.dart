@@ -13,7 +13,7 @@ import '../../helpers/fixtures/transaction_history_items.dart';
 Future<void> _pumpTransactionsFlow(
   WidgetTester tester, {
   required TransactionsRepository repository,
-  bool seedActiveWallet = true,
+  bool hasActiveWallet = true,
 }) async {
   final router = GoRouter(
     initialLocation: '/transactions',
@@ -36,7 +36,7 @@ Future<void> _pumpTransactionsFlow(
     ProviderScope(
       overrides: [
         transactionsRepositoryProvider.overrideWithValue(repository),
-        hasActiveWalletProvider.overrideWithValue(seedActiveWallet),
+        hasActiveWalletProvider.overrideWithValue(hasActiveWallet),
       ],
       child: MaterialApp.router(routerConfig: router),
     ),
@@ -126,7 +126,7 @@ void main() {
       await _pumpTransactionsFlow(
         tester,
         repository: FakeTransactionsRepository(transactions: const []),
-        seedActiveWallet: false,
+        hasActiveWallet: false,
       );
 
       expect(find.text('No active wallet'), findsOneWidget);
@@ -152,7 +152,7 @@ void main() {
       await _pumpTransactionsFlow(
         tester,
         repository: FakeTransactionsRepository(transactions: const []),
-        seedActiveWallet: true,
+        hasActiveWallet: true,
       );
 
       expect(find.text('Transaction history not loaded yet'), findsOneWidget);
