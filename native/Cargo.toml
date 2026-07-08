@@ -27,3 +27,13 @@ uniffi = { version = "=0.31.2", features = ["build"] }
 uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.1+v0.31.2", features = [
     "build",
 ] }
+
+# Reproducible builds: force a single codegen unit. With the default (16),
+# rustc partitions each crate across parallel codegen units and the resulting
+# function layout in the .so is not stable across build environments, so the
+# same source produces byte-diverging libraries. codegen-units = 1 removes that
+# partitioning. This is pinned in the crate itself because the native-assets
+# build (native_toolchain_rust) does not reliably inherit the caller's
+# CARGO_PROFILE_RELEASE_CODEGEN_UNITS / CARGO_ENCODED_RUSTFLAGS environment.
+[profile.release]
+codegen-units = 1
