@@ -9,7 +9,8 @@ docs/
 **/.dart_tool/
 native/target/
 Cargo.lock
-native/Cargo.lock
+# Ship the native crate lockfile so published package builds use the pinned graph.
+!native/Cargo.lock
 
 # Native libraries are built per consumer by Dart Native Assets.
 *.dylib
