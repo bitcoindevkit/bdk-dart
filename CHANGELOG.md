@@ -2,6 +2,10 @@
 
 All notable changes to `bdk_dart` will be documented in this file.
 
+## 1.0.0-rc.3
+
+- Make native library builds reproducible by tracking `native/Cargo.lock`, shipping it in the pub.dev archive, and pinning release builds to a single Rust codegen unit.
+
 ## 1.0.0-rc.2
 
 - Apply Android 16 KB page-size alignment configuration during native asset builds so `libbdk_dart_ffi.so` meets Google Play requirements.
