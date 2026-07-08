@@ -185,7 +185,7 @@ dependencies = [
 
 [[package]]
 name = "bdk_dart_ffi"
-version = "1.0.0-rc.2"
+version = "1.0.0-rc.3"
 dependencies = [
  "bdk-ffi",
  "camino",
