@@ -539,6 +539,7 @@ class WalletService {
       );
     } catch (_) {
       _walletDisposer(wallet);
+      persister.dispose();
       await WalletStoragePaths.deleteWalletData(walletId);
       rethrow;
     }
@@ -610,10 +611,20 @@ class WalletService {
         changeDescriptor,
         fallbackDbPath,
       );
+      _walletDisposer(wallet);
+      fallbackPersister.dispose();
       await WalletStoragePaths.replaceWalletDataWithFallback(walletId);
-      return wallet;
+      final dbPath = await WalletStoragePaths.sqlitePathForWallet(walletId);
+      final persister = Persister.newSqlite(path: dbPath);
+      return _walletLoadRunner(
+        descriptor: descriptor,
+        changeDescriptor: changeDescriptor,
+        persister: persister,
+        lookahead: AppConstants.walletLookahead,
+      );
     } catch (_) {
       _walletDisposer(wallet);
+      fallbackPersister.dispose();
       await WalletStoragePaths.deleteFallbackWalletData(walletId);
       rethrow;
     }
