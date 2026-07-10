@@ -1,0 +1,360 @@
+---
+anchor: "class Wallet implements WalletInterface {"
+docs: |
+  /// A descriptor-based Bitcoin wallet backed by BDK.
+  ///
+  /// Create a new wallet with [Wallet] or restore persisted state with
+  /// [Wallet.load]. After revealing addresses, building transactions, or
+  /// applying chain updates, call [Wallet.persist] to save staged changes.
+  ///
+  /// FFI handles are released when [Wallet.dispose] is called. Long-lived apps
+  /// should dispose wallets and related objects when they are no longer needed.
+---
+anchor: "Wallet({"
+docs: |
+  /// Creates a wallet from external and change [Descriptor]s.
+  ///
+  /// Throws [CreateWithPersistException] when wallet creation fails.
+---
+anchor: "Wallet.load({"
+docs: |
+  /// Loads a wallet from a [Persister] using external and change descriptors.
+  ///
+  /// Throws [LoadWithPersistException] when persisted state cannot be loaded.
+---
+anchor: "Wallet.loadSingle({"
+docs: |
+  /// Loads a single-descriptor wallet from a [Persister].
+  ///
+  /// Throws [LoadWithPersistException] when persisted state cannot be loaded.
+---
+anchor: "void dispose() {"
+scope_after: "class Wallet implements WalletInterface {"
+docs: |
+  /// Releases the native wallet handle.
+  ///
+  /// Call this when the wallet is no longer needed. Do not use the instance
+  /// after calling [dispose].
+---
+anchor: "bool persist({required Persister persister}) {"
+docs: |
+  /// Persists staged wallet changes to the given [Persister].
+  ///
+  /// Returns `true` when new data was written. Call after address reveals,
+  /// transaction inserts, or applying sync updates.
+---
+anchor: "void applyUpdate({required Update update}) {"
+docs: |
+  /// Applies a chain sync [Update] returned by Electrum or Esplora clients.
+  ///
+  /// Follow with [Wallet.persist] to save the updated wallet state.
+---
+anchor: "SyncRequestBuilder startSyncWithRevealedSpks() {"
+docs: |
+  /// Starts building a sync request for all revealed script pubkeys.
+  ///
+  /// Pass the built request to [ElectrumClient.sync_] or [EsploraClient.sync_],
+  /// then apply the returned [Update] with [Wallet.applyUpdate].
+---
+anchor: "class Descriptor implements DescriptorInterface {"
+docs: |
+  /// A Bitcoin output descriptor describing wallet script types.
+  ///
+  /// Construct from a descriptor string with the [Descriptor] constructor, or use helpers
+  /// such as [Descriptor.newBip84] and [Descriptor.newBip86] for common paths.
+  /// Call [Descriptor.sanityCheck] before use when parsing user-supplied strings.
+  ///
+  /// Throws [DescriptorException] when parsing or validation fails.
+---
+anchor: "class Mnemonic implements MnemonicInterface {"
+docs: |
+  /// A BIP39 mnemonic seed phrase.
+  ///
+  /// Generate a new phrase with [Mnemonic] and a [WordCount], restore from
+  /// entropy with [Mnemonic.fromEntropy], or parse an existing phrase with
+  /// [Mnemonic.fromString].
+  ///
+  /// Throws [Bip39Exception] when entropy or phrase data is invalid.
+---
+anchor: "class ElectrumClient implements ElectrumClientInterface {"
+docs: |
+  /// An Electrum protocol client for syncing and broadcasting transactions.
+  ///
+  /// Network calls are synchronous and block the calling isolate until the
+  /// Electrum server responds. Use [ElectrumClient.ping] to verify connectivity.
+  ///
+  /// Throws [ElectrumException] or [CannotConnectException] on RPC failures.
+---
+anchor: "ElectrumClient({"
+docs: |
+  /// Connects to an Electrum server at [url].
+  ///
+  /// Use `ssl://host:port` for TLS. Optional [socks5], [timeout], and [retry]
+  /// configure proxying and connection behaviour.
+---
+anchor: "void dispose() {"
+scope_after: "class ElectrumClient implements ElectrumClientInterface {"
+docs: |
+  /// Releases the native Electrum client handle.
+---
+anchor: "Update sync_({"
+scope_after: "class ElectrumClient implements ElectrumClientInterface {"
+docs: |
+  /// Syncs the wallet using the given [SyncRequest].
+  ///
+  /// This call blocks until the Electrum server finishes the requested sync.
+  /// Apply the returned [Update] with [Wallet.applyUpdate].
+---
+anchor: "class EsploraClient implements EsploraClientInterface {"
+docs: |
+  /// An Esplora HTTP API client for syncing and broadcasting transactions.
+  ///
+  /// Unlike [ElectrumClient], Esplora sync methods run blocking Rust calls on
+  /// the current isolate. Use [EsploraClient.broadcast] to publish signed
+  /// transactions.
+  ///
+  /// Throws [EsploraException] or [CannotConnectException] on API failures.
+---
+anchor: "EsploraClient({required String url, required String? proxy})"
+docs: |
+  /// Connects to an Esplora HTTP API base URL.
+  ///
+  /// Example: `https://blockstream.info/testnet/api`. Optional [proxy] sets
+  /// an HTTP proxy URL.
+---
+anchor: "void dispose() {"
+scope_after: "class EsploraClient implements EsploraClientInterface {"
+docs: |
+  /// Releases the native Esplora client handle.
+---
+anchor: "void broadcast({required Transaction transaction}) {"
+scope_after: "class EsploraClient implements EsploraClientInterface {"
+docs: |
+  /// Broadcasts a signed [Transaction] to the Esplora backend.
+  ///
+  /// Throws [EsploraException] when the server rejects the transaction.
+---
+anchor: "Update sync_({required SyncRequest request, required int parallelRequests}) {"
+scope_after: "class EsploraClient implements EsploraClientInterface {"
+docs: |
+  /// Syncs the wallet using the given [SyncRequest].
+  ///
+  /// Apply the returned [Update] with [Wallet.applyUpdate], then persist.
+---
+anchor: "class Transaction implements TransactionInterface {"
+docs: |
+  /// A Bitcoin transaction.
+  ///
+  /// Typically obtained from [Psbt.extractTx] after signing, or from chain
+  /// backends via client fetch methods. Call [Transaction.dispose] when done.
+---
+anchor: "void dispose() {"
+scope_after: "class Transaction implements TransactionInterface {"
+docs: |
+  /// Releases the native transaction handle.
+---
+anchor: "class Psbt implements PsbtInterface {"
+docs: |
+  /// A partially signed Bitcoin transaction (PSBT).
+  ///
+  /// Used in the build-sign-broadcast flow: create or receive a PSBT, sign
+  /// inputs, combine multiple PSBTs if needed, then extract the final
+  /// [Transaction] with [Psbt.extractTx].
+  ///
+  /// Throws [PsbtException], [PsbtParseException], or [PsbtFinalizeException]
+  /// when PSBT operations fail.
+---
+anchor: "void dispose() {"
+scope_after: "class Psbt implements PsbtInterface {"
+docs: |
+  /// Releases the native PSBT handle.
+---
+anchor: "Psbt combine({required Psbt other}) {"
+docs: |
+  /// Combines this PSBT with [other], merging inputs and signatures.
+---
+anchor: "Transaction extractTx() {"
+docs: |
+  /// Extracts the final signed [Transaction] from this PSBT.
+  ///
+  /// Throws [ExtractTxException] when the PSBT cannot be finalized.
+---
+anchor: "abstract class AddForeignUtxoException implements Exception {"
+docs: |
+  /// Thrown when adding a foreign UTXO to a PSBT fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class AddressParseException implements Exception {"
+docs: |
+  /// Thrown when parsing a Bitcoin address fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class Bip32Exception implements Exception {"
+docs: |
+  /// Thrown when BIP32 key derivation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class Bip39Exception implements Exception {"
+docs: |
+  /// Thrown when BIP39 mnemonic operations fail.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class CalculateFeeException implements Exception {"
+docs: |
+  /// Thrown when fee calculation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class CannotConnectException implements Exception {"
+docs: |
+  /// Thrown when a network connection cannot be established.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class CbfException implements Exception {"
+docs: |
+  /// Thrown when compact block filter client operations fail.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class CreateTxException implements Exception {"
+docs: |
+  /// Thrown when transaction creation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class CreateWithPersistException implements Exception {"
+docs: |
+  /// Thrown when creating a wallet with a persister fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class DescriptorException implements Exception {"
+docs: |
+  /// Thrown when descriptor parsing or validation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class DescriptorKeyException implements Exception {"
+docs: |
+  /// Thrown when descriptor key operations fail.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class ElectrumException implements Exception {"
+docs: |
+  /// Thrown when an Electrum RPC call fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class EsploraException implements Exception {"
+docs: |
+  /// Thrown when an Esplora API call fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class ExtractTxException implements Exception {"
+docs: |
+  /// Thrown when extracting a transaction from a PSBT fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class FeeRateException implements Exception {"
+docs: |
+  /// Thrown when fee rate parsing or validation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class FromScriptException implements Exception {"
+docs: |
+  /// Thrown when converting a script fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class HashParseException implements Exception {"
+docs: |
+  /// Thrown when parsing a block or transaction hash fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class LoadWithPersistException implements Exception {"
+docs: |
+  /// Thrown when loading a wallet from a persister fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class MiniscriptException implements Exception {"
+docs: |
+  /// Thrown when miniscript policy operations fail.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class ParseAmountException implements Exception {"
+docs: |
+  /// Thrown when parsing a Bitcoin amount fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class PersistenceException implements Exception {"
+docs: |
+  /// Thrown when persister read or write operations fail.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class PreV1MigrationException implements Exception {"
+docs: |
+  /// Thrown when migrating legacy wallet data fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class PsbtException implements Exception {"
+docs: |
+  /// Thrown when a PSBT operation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class PsbtFinalizeException implements Exception {"
+docs: |
+  /// Thrown when PSBT finalization fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class PsbtParseException implements Exception {"
+docs: |
+  /// Thrown when parsing a PSBT fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class RequestBuilderException implements Exception {"
+docs: |
+  /// Thrown when building a transaction or sync request fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class SighashParseException implements Exception {"
+docs: |
+  /// Thrown when parsing a sighash type fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class SignerException implements Exception {"
+docs: |
+  /// Thrown when a signing operation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class TransactionException implements Exception {"
+docs: |
+  /// Thrown when transaction validation fails.
+  ///
+  /// See subclasses for the specific failure reason.
+---
+anchor: "abstract class TxidParseException implements Exception {"
+docs: |
+  /// Thrown when parsing a transaction ID fails.
+  ///
+  /// See subclasses for the specific failure reason.

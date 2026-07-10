@@ -4333,6 +4333,9 @@ class FfiConverterNetworkKind {
   }
 }
 
+/// Thrown when adding a foreign UTXO to a PSBT fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class AddForeignUtxoException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -4569,6 +4572,9 @@ class AddForeignUtxoExceptionErrorHandler
 final AddForeignUtxoExceptionErrorHandler addForeignUtxoExceptionErrorHandler =
     AddForeignUtxoExceptionErrorHandler();
 
+/// Thrown when parsing a Bitcoin address fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class AddressParseException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -5054,6 +5060,9 @@ class AddressParseExceptionErrorHandler
 final AddressParseExceptionErrorHandler addressParseExceptionErrorHandler =
     AddressParseExceptionErrorHandler();
 
+/// Thrown when BIP32 key derivation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class Bip32Exception implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -5635,6 +5644,9 @@ class Bip32ExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final Bip32ExceptionErrorHandler bip32ExceptionErrorHandler =
     Bip32ExceptionErrorHandler();
 
+/// Thrown when BIP39 mnemonic operations fail.
+///
+/// See subclasses for the specific failure reason.
 abstract class Bip39Exception implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -5919,6 +5931,9 @@ class Bip39ExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final Bip39ExceptionErrorHandler bip39ExceptionErrorHandler =
     Bip39ExceptionErrorHandler();
 
+/// Thrown when fee calculation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class CalculateFeeException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -6067,6 +6082,9 @@ class CalculateFeeExceptionErrorHandler
 final CalculateFeeExceptionErrorHandler calculateFeeExceptionErrorHandler =
     CalculateFeeExceptionErrorHandler();
 
+/// Thrown when a network connection cannot be established.
+///
+/// See subclasses for the specific failure reason.
 abstract class CannotConnectException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -6163,6 +6181,9 @@ class CannotConnectExceptionErrorHandler
 final CannotConnectExceptionErrorHandler cannotConnectExceptionErrorHandler =
     CannotConnectExceptionErrorHandler();
 
+/// Thrown when compact block filter client operations fail.
+///
+/// See subclasses for the specific failure reason.
 abstract class CbfException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -6248,6 +6269,9 @@ class CbfExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final CbfExceptionErrorHandler cbfExceptionErrorHandler =
     CbfExceptionErrorHandler();
 
+/// Thrown when transaction creation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class CreateTxException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -7384,6 +7408,9 @@ class CreateTxExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final CreateTxExceptionErrorHandler createTxExceptionErrorHandler =
     CreateTxExceptionErrorHandler();
 
+/// Thrown when creating a wallet with a persister fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class CreateWithPersistException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -7585,6 +7612,9 @@ final CreateWithPersistExceptionErrorHandler
 createWithPersistExceptionErrorHandler =
     CreateWithPersistExceptionErrorHandler();
 
+/// Thrown when descriptor parsing or validation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class DescriptorException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -8249,6 +8279,9 @@ class DescriptorExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final DescriptorExceptionErrorHandler descriptorExceptionErrorHandler =
     DescriptorExceptionErrorHandler();
 
+/// Thrown when descriptor key operations fail.
+///
+/// See subclasses for the specific failure reason.
 abstract class DescriptorKeyException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -8480,6 +8513,9 @@ class DescriptorKeyExceptionErrorHandler
 final DescriptorKeyExceptionErrorHandler descriptorKeyExceptionErrorHandler =
     DescriptorKeyExceptionErrorHandler();
 
+/// Thrown when an Electrum RPC call fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class ElectrumException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -9307,6 +9343,9 @@ class ElectrumExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final ElectrumExceptionErrorHandler electrumExceptionErrorHandler =
     ElectrumExceptionErrorHandler();
 
+/// Thrown when an Esplora API call fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class EsploraException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -10033,6 +10072,9 @@ class EsploraExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final EsploraExceptionErrorHandler esploraExceptionErrorHandler =
     EsploraExceptionErrorHandler();
 
+/// Thrown when extracting a transaction from a PSBT fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class ExtractTxException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -10245,6 +10287,9 @@ class ExtractTxExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final ExtractTxExceptionErrorHandler extractTxExceptionErrorHandler =
     ExtractTxExceptionErrorHandler();
 
+/// Thrown when fee rate parsing or validation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class FeeRateException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -10330,6 +10375,9 @@ class FeeRateExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final FeeRateExceptionErrorHandler feeRateExceptionErrorHandler =
     FeeRateExceptionErrorHandler();
 
+/// Thrown when converting a script fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class FromScriptException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -10558,6 +10606,9 @@ class FromScriptExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final FromScriptExceptionErrorHandler fromScriptExceptionErrorHandler =
     FromScriptExceptionErrorHandler();
 
+/// Thrown when parsing a block or transaction hash fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class HashParseException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -10702,6 +10753,9 @@ class HashParseExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final HashParseExceptionErrorHandler hashParseExceptionErrorHandler =
     HashParseExceptionErrorHandler();
 
+/// Thrown when loading a wallet from a persister fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class LoadWithPersistException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -10897,6 +10951,9 @@ class LoadWithPersistExceptionErrorHandler
 final LoadWithPersistExceptionErrorHandler
 loadWithPersistExceptionErrorHandler = LoadWithPersistExceptionErrorHandler();
 
+/// Thrown when miniscript policy operations fail.
+///
+/// See subclasses for the specific failure reason.
 abstract class MiniscriptException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -12627,6 +12684,9 @@ class MiniscriptExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final MiniscriptExceptionErrorHandler miniscriptExceptionErrorHandler =
     MiniscriptExceptionErrorHandler();
 
+/// Thrown when parsing a Bitcoin amount fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class ParseAmountException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -12923,6 +12983,9 @@ class ParseAmountExceptionErrorHandler
 final ParseAmountExceptionErrorHandler parseAmountExceptionErrorHandler =
     ParseAmountExceptionErrorHandler();
 
+/// Thrown when persister read or write operations fail.
+///
+/// See subclasses for the specific failure reason.
 abstract class PersistenceException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -13019,6 +13082,9 @@ class PersistenceExceptionErrorHandler
 final PersistenceExceptionErrorHandler persistenceExceptionErrorHandler =
     PersistenceExceptionErrorHandler();
 
+/// Thrown when migrating legacy wallet data fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class PreV1MigrationException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -13265,6 +13331,9 @@ class PreV1MigrationExceptionErrorHandler
 final PreV1MigrationExceptionErrorHandler preV1MigrationExceptionErrorHandler =
     PreV1MigrationExceptionErrorHandler();
 
+/// Thrown when a PSBT operation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class PsbtException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -14758,6 +14827,9 @@ class PsbtExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final PsbtExceptionErrorHandler psbtExceptionErrorHandler =
     PsbtExceptionErrorHandler();
 
+/// Thrown when PSBT finalization fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class PsbtFinalizeException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -15011,6 +15083,9 @@ class PsbtFinalizeExceptionErrorHandler
 final PsbtFinalizeExceptionErrorHandler psbtFinalizeExceptionErrorHandler =
     PsbtFinalizeExceptionErrorHandler();
 
+/// Thrown when parsing a PSBT fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class PsbtParseException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -15161,6 +15236,9 @@ class PsbtParseExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final PsbtParseExceptionErrorHandler psbtParseExceptionErrorHandler =
     PsbtParseExceptionErrorHandler();
 
+/// Thrown when building a transaction or sync request fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class RequestBuilderException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -15255,6 +15333,9 @@ class RequestBuilderExceptionErrorHandler
 final RequestBuilderExceptionErrorHandler requestBuilderExceptionErrorHandler =
     RequestBuilderExceptionErrorHandler();
 
+/// Thrown when parsing a sighash type fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class SighashParseException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -15351,6 +15432,9 @@ class SighashParseExceptionErrorHandler
 final SighashParseExceptionErrorHandler sighashParseExceptionErrorHandler =
     SighashParseExceptionErrorHandler();
 
+/// Thrown when a signing operation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class SignerException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -16129,6 +16213,9 @@ class SignerExceptionErrorHandler extends UniffiRustCallStatusErrorHandler {
 final SignerExceptionErrorHandler signerExceptionErrorHandler =
     SignerExceptionErrorHandler();
 
+/// Thrown when transaction validation fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class TransactionException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -16505,6 +16592,9 @@ class TransactionExceptionErrorHandler
 final TransactionExceptionErrorHandler transactionExceptionErrorHandler =
     TransactionExceptionErrorHandler();
 
+/// Thrown when parsing a transaction ID fails.
+///
+/// See subclasses for the specific failure reason.
 abstract class TxidParseException implements Exception {
   RustBuffer lower();
   int allocationSize();
@@ -20300,6 +20390,14 @@ final _PsbtFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall((status) => uniffi_bdkffi_fn_free_psbt(ptr, status));
 });
 
+/// A partially signed Bitcoin transaction (PSBT).
+///
+/// Used in the build-sign-broadcast flow: create or receive a PSBT, sign
+/// inputs, combine multiple PSBTs if needed, then extract the final
+/// [Transaction] with [Psbt.extractTx].
+///
+/// Throws [PsbtException], [PsbtParseException], or [PsbtFinalizeException]
+/// when PSBT operations fail.
 class Psbt implements PsbtInterface {
   late final Pointer<Void> _ptr;
   Psbt._(this._ptr) {
@@ -20362,11 +20460,13 @@ class Psbt implements PsbtInterface {
     return 8;
   }
 
+  /// Releases the native PSBT handle.
   void dispose() {
     _PsbtFinalizer.detach(this);
     rustCall((status) => uniffi_bdkffi_fn_free_psbt(_ptr, status));
   }
 
+  /// Combines this PSBT with [other], merging inputs and signatures.
   Psbt combine({required Psbt other}) {
     return rustCallWithLifter(
       (status) => uniffi_bdkffi_fn_method_psbt_combine(
@@ -20379,6 +20479,9 @@ class Psbt implements PsbtInterface {
     );
   }
 
+  /// Extracts the final signed [Transaction] from this PSBT.
+  ///
+  /// Throws [ExtractTxException] when the PSBT cannot be finalized.
   Transaction extractTx() {
     return rustCallWithLifter(
       (status) =>
@@ -20645,6 +20748,10 @@ final _TransactionFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall((status) => uniffi_bdkffi_fn_free_transaction(ptr, status));
 });
 
+/// A Bitcoin transaction.
+///
+/// Typically obtained from [Psbt.extractTx] after signing, or from chain
+/// backends via client fetch methods. Call [Transaction.dispose] when done.
 class Transaction implements TransactionInterface {
   late final Pointer<Void> _ptr;
   Transaction._(this._ptr) {
@@ -20689,6 +20796,7 @@ class Transaction implements TransactionInterface {
     return 8;
   }
 
+  /// Releases the native transaction handle.
   void dispose() {
     _TransactionFinalizer.detach(this);
     rustCall((status) => uniffi_bdkffi_fn_free_transaction(_ptr, status));
@@ -21243,6 +21351,13 @@ final _DescriptorFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall((status) => uniffi_bdkffi_fn_free_descriptor(ptr, status));
 });
 
+/// A Bitcoin output descriptor describing wallet script types.
+///
+/// Construct from a descriptor string with the [Descriptor] constructor, or use helpers
+/// such as [Descriptor.newBip84] and [Descriptor.newBip86] for common paths.
+/// Call [Descriptor.sanityCheck] before use when parsing user-supplied strings.
+///
+/// Throws [DescriptorException] when parsing or validation fails.
 class Descriptor implements DescriptorInterface {
   late final Pointer<Void> _ptr;
   Descriptor._(this._ptr) {
@@ -21717,11 +21832,21 @@ final _ElectrumClientFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall((status) => uniffi_bdkffi_fn_free_electrumclient(ptr, status));
 });
 
+/// An Electrum protocol client for syncing and broadcasting transactions.
+///
+/// Network calls are synchronous and block the calling isolate until the
+/// Electrum server responds. Use [ElectrumClient.ping] to verify connectivity.
+///
+/// Throws [ElectrumException] or [CannotConnectException] on RPC failures.
 class ElectrumClient implements ElectrumClientInterface {
   late final Pointer<Void> _ptr;
   ElectrumClient._(this._ptr) {
     _ElectrumClientFinalizer.attach(this, _ptr, detach: this);
   }
+  /// Connects to an Electrum server at [url].
+  ///
+  /// Use `ssl://host:port` for TLS. Optional [socks5], [timeout], and [retry]
+  /// configure proxying and connection behaviour.
   ElectrumClient({
     required String url,
     required String? socks5,
@@ -21770,6 +21895,7 @@ class ElectrumClient implements ElectrumClientInterface {
     return 8;
   }
 
+  /// Releases the native Electrum client handle.
   void dispose() {
     _ElectrumClientFinalizer.detach(this);
     rustCall((status) => uniffi_bdkffi_fn_free_electrumclient(_ptr, status));
@@ -21882,6 +22008,10 @@ class ElectrumClient implements ElectrumClientInterface {
     );
   }
 
+  /// Syncs the wallet using the given [SyncRequest].
+  ///
+  /// This call blocks until the Electrum server finishes the requested sync.
+  /// Apply the returned [Update] with [Wallet.applyUpdate].
   Update sync_({
     required SyncRequest request,
     required int batchSize,
@@ -21953,11 +22083,22 @@ final _EsploraClientFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall((status) => uniffi_bdkffi_fn_free_esploraclient(ptr, status));
 });
 
+/// An Esplora HTTP API client for syncing and broadcasting transactions.
+///
+/// Unlike [ElectrumClient], Esplora sync methods run blocking Rust calls on
+/// the current isolate. Use [EsploraClient.broadcast] to publish signed
+/// transactions.
+///
+/// Throws [EsploraException] or [CannotConnectException] on API failures.
 class EsploraClient implements EsploraClientInterface {
   late final Pointer<Void> _ptr;
   EsploraClient._(this._ptr) {
     _EsploraClientFinalizer.attach(this, _ptr, detach: this);
   }
+  /// Connects to an Esplora HTTP API base URL.
+  ///
+  /// Example: `https://blockstream.info/testnet/api`. Optional [proxy] sets
+  /// an HTTP proxy URL.
   EsploraClient({required String url, required String? proxy})
     : _ptr = rustCall(
         (status) => uniffi_bdkffi_fn_constructor_esploraclient_new(
@@ -21998,11 +22139,15 @@ class EsploraClient implements EsploraClientInterface {
     return 8;
   }
 
+  /// Releases the native Esplora client handle.
   void dispose() {
     _EsploraClientFinalizer.detach(this);
     rustCall((status) => uniffi_bdkffi_fn_free_esploraclient(_ptr, status));
   }
 
+  /// Broadcasts a signed [Transaction] to the Esplora backend.
+  ///
+  /// Throws [EsploraException] when the server rejects the transaction.
   void broadcast({required Transaction transaction}) {
     return rustCall((status) {
       uniffi_bdkffi_fn_method_esploraclient_broadcast(
@@ -22202,6 +22347,9 @@ class EsploraClient implements EsploraClientInterface {
     );
   }
 
+  /// Syncs the wallet using the given [SyncRequest].
+  ///
+  /// Apply the returned [Update] with [Wallet.applyUpdate], then persist.
   Update sync_({required SyncRequest request, required int parallelRequests}) {
     return rustCallWithLifter(
       (status) => uniffi_bdkffi_fn_method_esploraclient_sync(
@@ -22683,6 +22831,13 @@ final _MnemonicFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall((status) => uniffi_bdkffi_fn_free_mnemonic(ptr, status));
 });
 
+/// A BIP39 mnemonic seed phrase.
+///
+/// Generate a new phrase with [Mnemonic] and a [WordCount], restore from
+/// entropy with [Mnemonic.fromEntropy], or parse an existing phrase with
+/// [Mnemonic.fromString].
+///
+/// Throws [Bip39Exception] when entropy or phrase data is invalid.
 class Mnemonic implements MnemonicInterface {
   late final Pointer<Void> _ptr;
   Mnemonic._(this._ptr) {
@@ -25332,6 +25487,14 @@ final _WalletFinalizer = Finalizer<Pointer<Void>>((ptr) {
   rustCall((status) => uniffi_bdkffi_fn_free_wallet(ptr, status));
 });
 
+/// A descriptor-based Bitcoin wallet backed by BDK.
+///
+/// Create a new wallet with [Wallet] or restore persisted state with
+/// [Wallet.load]. After revealing addresses, building transactions, or
+/// applying chain updates, call [Wallet.persist] to save staged changes.
+///
+/// FFI handles are released when [Wallet.dispose] is called. Long-lived apps
+/// should dispose wallets and related objects when they are no longer needed.
 class Wallet implements WalletInterface {
   late final Pointer<Void> _ptr;
   Wallet._(this._ptr) {
@@ -25372,6 +25535,9 @@ class Wallet implements WalletInterface {
        ) {
     _WalletFinalizer.attach(this, _ptr, detach: this);
   }
+  /// Loads a wallet from a [Persister] using external and change descriptors.
+  ///
+  /// Throws [LoadWithPersistException] when persisted state cannot be loaded.
   Wallet.load({
     required Descriptor descriptor,
     required Descriptor changeDescriptor,
@@ -25389,6 +25555,9 @@ class Wallet implements WalletInterface {
        ) {
     _WalletFinalizer.attach(this, _ptr, detach: this);
   }
+  /// Loads a single-descriptor wallet from a [Persister].
+  ///
+  /// Throws [LoadWithPersistException] when persisted state cannot be loaded.
   Wallet.loadSingle({
     required Descriptor descriptor,
     required Persister persister,
@@ -25404,6 +25573,9 @@ class Wallet implements WalletInterface {
        ) {
     _WalletFinalizer.attach(this, _ptr, detach: this);
   }
+  /// Creates a wallet from external and change [Descriptor]s.
+  ///
+  /// Throws [CreateWithPersistException] when wallet creation fails.
   Wallet({
     required Descriptor descriptor,
     required Descriptor changeDescriptor,
@@ -25450,6 +25622,10 @@ class Wallet implements WalletInterface {
     return 8;
   }
 
+  /// Releases the native wallet handle.
+  ///
+  /// Call this when the wallet is no longer needed. Do not use the instance
+  /// after calling [dispose].
   void dispose() {
     _WalletFinalizer.detach(this);
     rustCall((status) => uniffi_bdkffi_fn_free_wallet(_ptr, status));
@@ -25503,6 +25679,9 @@ class Wallet implements WalletInterface {
     );
   }
 
+  /// Applies a chain sync [Update] returned by Electrum or Esplora clients.
+  ///
+  /// Follow with [Wallet.persist] to save the updated wallet state.
   void applyUpdate({required Update update}) {
     return rustCall((status) {
       uniffi_bdkffi_fn_method_wallet_apply_update(
@@ -25827,6 +26006,10 @@ class Wallet implements WalletInterface {
     );
   }
 
+  /// Persists staged wallet changes to the given [Persister].
+  ///
+  /// Returns `true` when new data was written. Call after address reveals,
+  /// transaction inserts, or applying sync updates.
   bool persist({required Persister persister}) {
     return rustCallWithLifter(
       (status) => uniffi_bdkffi_fn_method_wallet_persist(
@@ -25948,6 +26131,10 @@ class Wallet implements WalletInterface {
     );
   }
 
+  /// Starts building a sync request for all revealed script pubkeys.
+  ///
+  /// Pass the built request to [ElectrumClient.sync_] or [EsploraClient.sync_],
+  /// then apply the returned [Update] with [Wallet.applyUpdate].
   SyncRequestBuilder startSyncWithRevealedSpks() {
     return rustCallWithLifter(
       (status) => uniffi_bdkffi_fn_method_wallet_start_sync_with_revealed_spks(

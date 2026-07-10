@@ -35,4 +35,7 @@ cargo build --profile dev
 # Generate Dart bindings using local uniffi-bindgen wrapper
 cargo run --profile dev --bin uniffi-bindgen -- generate --library --language dart --out-dir "$BDK_DART_DIR/lib/" "$NATIVE_DIR/target/debug/$LIBNAME"
 
+cd "$BDK_DART_DIR"
+dart scripts/inject_dartdocs.dart
+
 echo "Bindings generated successfully!"
