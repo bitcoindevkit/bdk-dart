@@ -1,11 +1,9 @@
-// @Tags(['integration'])
-
 import 'dart:io';
 
 import 'package:bdk_dart/bdk.dart';
 import 'package:test/test.dart';
 
-import '../test_constants.dart';
+import 'test_constants.dart';
 
 Future<void> _deleteDirectoryWithRetry(Directory directory) async {
   for (var attempt = 0; attempt < 10; attempt++) {
@@ -25,7 +23,7 @@ Future<void> _deleteDirectoryWithRetry(Directory directory) async {
 }
 
 void main() {
-  group('Wallet creation integration', () {
+  group('Wallet creation SQLite lifecycle', () {
     test('persists derivation state across a SQLite reopen', () {
       final tempDir = Directory.systemTemp.createTempSync(
         'bdk_dart_wallet_creation_',
