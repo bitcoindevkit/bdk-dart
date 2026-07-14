@@ -24,13 +24,19 @@ void main() {
 
         final keychains = wallet.keychains();
 
-        expect(keychains, isNotEmpty);
-        for (final walletKeychain in keychains) {
-          expect(
-            wallet.publicDescriptor(keychain: walletKeychain.keychain),
-            isNotEmpty,
-          );
-          expect(walletKeychain.publicDescriptor.toString(), isNotEmpty);
+        try {
+          expect(keychains, isNotEmpty);
+          for (final walletKeychain in keychains) {
+            expect(
+              wallet.publicDescriptor(keychain: walletKeychain.keychain),
+              isNotEmpty,
+            );
+            expect(walletKeychain.publicDescriptor.toString(), isNotEmpty);
+          }
+        } finally {
+          for (final walletKeychain in keychains) {
+            walletKeychain.publicDescriptor.dispose();
+          }
         }
       } finally {
         if (walletInitialized) {
