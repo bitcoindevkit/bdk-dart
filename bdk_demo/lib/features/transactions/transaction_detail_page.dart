@@ -5,6 +5,7 @@ import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_controller.dart';
 import 'package:bdk_demo/models/currency_unit.dart';
+import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +29,10 @@ class TransactionDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final transactionAsync = ref.watch(transactionDetailsProvider(txid));
+    final activeWalletId = ref.watch(activeWalletIdProvider) ?? '';
+    final transactionAsync = ref.watch(
+      transactionDetailsProvider((walletId: activeWalletId, txid: txid)),
+    );
 
     return Scaffold(
       appBar: const SecondaryAppBar(title: 'Transaction Detail'),

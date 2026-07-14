@@ -45,17 +45,24 @@ final transactionsControllerProvider =
       TransactionsController.new,
     );
 
-final transactionDetailsProvider =
-    FutureProvider.family<TransactionHistoryItem?, String>((ref, txid) {
-      final repository = ref.read(transactionsRepositoryProvider);
-      return repository.loadTransactionByTxid(txid);
+final transactionDetailsProvider = FutureProvider.autoDispose
+    .family<TransactionHistoryItem?, ({String walletId, String txid})>((
+      ref,
+      arg,
+    ) {
+      final activeWalletId = ref.watch(activeWalletIdProvider);
+      if (activeWalletId != arg.walletId) {
+        return Future.value(null);
+      }
+      final repository = ref.watch(transactionsRepositoryProvider);
+      return repository.loadTransactionByTxid(arg.txid);
     });
 
 class TransactionsController extends Notifier<TransactionsState> {
   @override
   TransactionsState build() {
-    final hasWallet = ref.watch(hasActiveWalletProvider);
-    if (!hasWallet) {
+    final activeWalletId = ref.watch(activeWalletIdProvider);
+    if (activeWalletId == null) {
       return const TransactionsState(
         status: TransactionsLoadState.noWallet,
         transactions: [],
@@ -67,8 +74,8 @@ class TransactionsController extends Notifier<TransactionsState> {
   }
 
   Future<void> loadTransactions() async {
-    final hasWallet = ref.read(hasActiveWalletProvider);
-    if (!hasWallet) {
+    final activeWalletId = ref.read(activeWalletIdProvider);
+    if (activeWalletId == null) {
       state = const TransactionsState(
         status: TransactionsLoadState.noWallet,
         transactions: [],
@@ -90,6 +97,10 @@ class TransactionsController extends Notifier<TransactionsState> {
           .read(transactionsRepositoryProvider)
           .loadTransactions();
 
+      if (ref.read(activeWalletIdProvider) != activeWalletId) {
+        return;
+      }
+
       state = state.copyWith(
         status: TransactionsLoadState.success,
         transactions: transactions,
@@ -99,6 +110,10 @@ class TransactionsController extends Notifier<TransactionsState> {
         errorMessage: null,
       );
     } catch (error) {
+      if (ref.read(activeWalletIdProvider) != activeWalletId) {
+        return;
+      }
+
       state = state.copyWith(
         status: TransactionsLoadState.error,
         transactions: const [],

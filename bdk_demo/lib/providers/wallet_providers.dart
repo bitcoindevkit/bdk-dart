@@ -20,6 +20,10 @@ final activeWalletRecordProvider =
       ActiveWalletRecordNotifier.new,
     );
 
+final activeWalletIdProvider = Provider<String?>((ref) {
+  return ref.watch(activeWalletRecordProvider)?.id;
+});
+
 class ActiveWalletRecordNotifier extends Notifier<WalletRecord?> {
   @override
   WalletRecord? build() => null;
