@@ -3,6 +3,9 @@
 native/target/
 **/*.rs.bk
 Cargo.lock
+# Track the native crate's lockfile: it pins the exact dependency versions the
+# published .so is compiled from, which is required for reproducible builds.
+!native/Cargo.lock
 
 # Flutter/Dart
 **/build/
