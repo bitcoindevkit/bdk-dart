@@ -174,6 +174,7 @@ void main() {
           }),
         ],
       );
+      addTearDown(container.dispose);
 
       // Set initial wallet record to Wallet A
       container.read(activeWalletRecordProvider.notifier).set(recordA);

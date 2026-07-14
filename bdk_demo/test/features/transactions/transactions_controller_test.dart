@@ -6,6 +6,7 @@ import 'package:bdk_demo/features/transactions/transactions_repository.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/fakes/fake_transactions_repository.dart';
@@ -36,12 +37,35 @@ class DelayedTransactionsRepository implements TransactionsRepository {
 }
 
 void main() {
+  WalletRecord createRecord(String id, String name) {
+    return WalletRecord(
+      id: id,
+      name: name,
+      network: WalletNetwork.testnet,
+      scriptType: ScriptType.p2wpkh,
+    );
+  }
+
+  TransactionHistoryItem createTx(String txid, int received) {
+    return TransactionHistoryItem(
+      txid: txid,
+      sent: 0,
+      received: received,
+      pending: false,
+    );
+  }
+
+  ProviderContainer createContainer(List<Override> overrides) {
+    final container = ProviderContainer(overrides: overrides);
+    addTearDown(container.dispose);
+    return container;
+  }
+
   group('TransactionsController & transactionDetailsProvider', () {
     test('no active wallet returns the no-wallet state', () {
-      final container = ProviderContainer(
-        overrides: [activeWalletIdProvider.overrideWithValue(null)],
-      );
-      addTearDown(container.dispose);
+      final container = createContainer([
+        activeWalletIdProvider.overrideWithValue(null),
+      ]);
 
       final state = container.read(transactionsControllerProvider);
       expect(state.status, TransactionsLoadState.noWallet);
@@ -49,23 +73,13 @@ void main() {
     });
 
     test('an active wallet can load its transaction history', () async {
-      final txs = [
-        TransactionHistoryItem(
-          txid: 'tx-1',
-          sent: 0,
-          received: 5000,
-          pending: false,
+      final txs = [createTx('tx-1', 5000)];
+      final container = createContainer([
+        activeWalletIdProvider.overrideWithValue('wallet-a'),
+        transactionsRepositoryProvider.overrideWithValue(
+          FakeTransactionsRepository(transactions: txs),
         ),
-      ];
-      final container = ProviderContainer(
-        overrides: [
-          activeWalletIdProvider.overrideWithValue('wallet-a'),
-          transactionsRepositoryProvider.overrideWithValue(
-            FakeTransactionsRepository(transactions: txs),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
+      ]);
 
       // Initially idle
       expect(
@@ -87,47 +101,20 @@ void main() {
     test(
       'switching the logical active wallet ID from A to B clears A\'s transaction list',
       () async {
-        final recordA = WalletRecord(
-          id: 'wallet-a',
-          name: 'Wallet A',
-          network: WalletNetwork.testnet,
-          scriptType: ScriptType.p2wpkh,
-        );
-        final recordB = WalletRecord(
-          id: 'wallet-b',
-          name: 'Wallet B',
-          network: WalletNetwork.testnet,
-          scriptType: ScriptType.p2wpkh,
-        );
+        final recordA = createRecord('wallet-a', 'Wallet A');
+        final recordB = createRecord('wallet-b', 'Wallet B');
 
-        final txsA = [
-          TransactionHistoryItem(
-            txid: 'tx-a',
-            sent: 0,
-            received: 10000,
-            pending: false,
-          ),
-        ];
-        final txsB = [
-          TransactionHistoryItem(
-            txid: 'tx-b',
-            sent: 0,
-            received: 20000,
-            pending: false,
-          ),
-        ];
+        final txsA = [createTx('tx-a', 10000)];
+        final txsB = [createTx('tx-b', 20000)];
 
-        final container = ProviderContainer(
-          overrides: [
-            transactionsRepositoryProvider.overrideWith((ref) {
-              final activeId = ref.watch(activeWalletIdProvider);
-              return FakeTransactionsRepository(
-                transactions: activeId == 'wallet-a' ? txsA : txsB,
-              );
-            }),
-          ],
-        );
-        addTearDown(container.dispose);
+        final container = createContainer([
+          transactionsRepositoryProvider.overrideWith((ref) {
+            final activeId = ref.watch(activeWalletIdProvider);
+            return FakeTransactionsRepository(
+              transactions: activeId == 'wallet-a' ? txsA : txsB,
+            );
+          }),
+        ]);
 
         // Set initial wallet record to Wallet A
         container.read(activeWalletRecordProvider.notifier).set(recordA);
@@ -162,28 +149,15 @@ void main() {
     test(
       'an asynchronous result started for wallet A is ignored if the active wallet changes to B before it completes',
       () async {
-        final recordA = WalletRecord(
-          id: 'wallet-a',
-          name: 'Wallet A',
-          network: WalletNetwork.testnet,
-          scriptType: ScriptType.p2wpkh,
-        );
-        final recordB = WalletRecord(
-          id: 'wallet-b',
-          name: 'Wallet B',
-          network: WalletNetwork.testnet,
-          scriptType: ScriptType.p2wpkh,
-        );
+        final recordA = createRecord('wallet-a', 'Wallet A');
+        final recordB = createRecord('wallet-b', 'Wallet B');
 
         final completer = Completer<List<TransactionHistoryItem>>();
         final delayedRepo = DelayedTransactionsRepository(completer.future);
 
-        final container = ProviderContainer(
-          overrides: [
-            transactionsRepositoryProvider.overrideWithValue(delayedRepo),
-          ],
-        );
-        addTearDown(container.dispose);
+        final container = createContainer([
+          transactionsRepositoryProvider.overrideWithValue(delayedRepo),
+        ]);
 
         // Set initial wallet record to Wallet A
         container.read(activeWalletRecordProvider.notifier).set(recordA);
@@ -210,14 +184,7 @@ void main() {
         );
 
         // Complete async request for Wallet A
-        completer.complete([
-          TransactionHistoryItem(
-            txid: 'tx-a',
-            sent: 0,
-            received: 10000,
-            pending: false,
-          ),
-        ]);
+        completer.complete([createTx('tx-a', 10000)]);
 
         await future;
 
@@ -231,33 +198,16 @@ void main() {
     test(
       'replacing the FFI Wallet object while retaining the same wallet record ID does not reset state',
       () async {
-        final recordA = WalletRecord(
-          id: 'wallet-a',
-          name: 'Wallet A',
-          network: WalletNetwork.testnet,
-          scriptType: ScriptType.p2wpkh,
-        );
+        final recordA = createRecord('wallet-a', 'Wallet A');
 
         final wallet1 = FakeWallet();
         final wallet2 = FakeWallet();
 
-        final container = ProviderContainer(
-          overrides: [
-            transactionsRepositoryProvider.overrideWithValue(
-              FakeTransactionsRepository(
-                transactions: [
-                  TransactionHistoryItem(
-                    txid: 'tx-a',
-                    sent: 0,
-                    received: 10000,
-                    pending: false,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-        addTearDown(container.dispose);
+        final container = createContainer([
+          transactionsRepositoryProvider.overrideWithValue(
+            FakeTransactionsRepository(transactions: [createTx('tx-a', 10000)]),
+          ),
+        ]);
 
         // Set initial wallet record and FFI Wallet instance
         container.read(activeWalletRecordProvider.notifier).set(recordA);
@@ -294,43 +244,20 @@ void main() {
     test(
       'a transaction detail from wallet A is not reused after switching to wallet B',
       () async {
-        final recordA = WalletRecord(
-          id: 'wallet-a',
-          name: 'Wallet A',
-          network: WalletNetwork.testnet,
-          scriptType: ScriptType.p2wpkh,
-        );
-        final recordB = WalletRecord(
-          id: 'wallet-b',
-          name: 'Wallet B',
-          network: WalletNetwork.testnet,
-          scriptType: ScriptType.p2wpkh,
-        );
+        final recordA = createRecord('wallet-a', 'Wallet A');
+        final recordB = createRecord('wallet-b', 'Wallet B');
 
-        final txA = TransactionHistoryItem(
-          txid: 'tx-123',
-          sent: 0,
-          received: 10000,
-          pending: false,
-        );
-        final txB = TransactionHistoryItem(
-          txid: 'tx-123',
-          sent: 0,
-          received: 20000,
-          pending: false,
-        );
+        final txA = createTx('tx-123', 10000);
+        final txB = createTx('tx-123', 20000);
 
-        final container = ProviderContainer(
-          overrides: [
-            transactionsRepositoryProvider.overrideWith((ref) {
-              final activeId = ref.watch(activeWalletIdProvider);
-              return FakeTransactionsRepository(
-                transactions: activeId == 'wallet-a' ? [txA] : [txB],
-              );
-            }),
-          ],
-        );
-        addTearDown(container.dispose);
+        final container = createContainer([
+          transactionsRepositoryProvider.overrideWith((ref) {
+            final activeId = ref.watch(activeWalletIdProvider);
+            return FakeTransactionsRepository(
+              transactions: activeId == 'wallet-a' ? [txA] : [txB],
+            );
+          }),
+        ]);
 
         // Set initial wallet record to Wallet A
         container.read(activeWalletRecordProvider.notifier).set(recordA);

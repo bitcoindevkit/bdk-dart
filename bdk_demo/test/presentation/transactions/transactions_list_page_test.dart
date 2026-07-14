@@ -239,6 +239,7 @@ void main() {
           }),
         ],
       );
+      addTearDown(container.dispose);
 
       // Set initial wallet record to Wallet A
       container.read(activeWalletRecordProvider.notifier).set(recordA);
@@ -258,11 +259,6 @@ void main() {
 
       // Verify A's transactions are rendered
       expect(find.text('+10000 sat'), findsOneWidget);
-      expect(
-        find.text('tx-a...short'),
-        findsNothing,
-      ); // Wait, shortTxid for 'tx-a' is 'tx-a' or whatever Formatters.abbreviateTxid returns.
-      // Let's check how shortTxid abbreviates 'tx-a'. It probably returns 'tx-a' if it is short. Let's just find.textContaining('tx-a').
       expect(find.textContaining('tx-a'), findsOneWidget);
 
       // 3. Switch logical active wallet ID from A to B

@@ -76,10 +76,23 @@ class BdkWalletTransactionSource implements TransactionHistorySource {
 
   @override
   List<TransactionHistoryRecord> transactions() {
-    return _wallet
-        .transactions()
-        .map(_recordFromCanonicalTx)
-        .toList(growable: false);
+    final list = _wallet.transactions();
+    var index = 0;
+    var entered = false;
+    try {
+      final records = <TransactionHistoryRecord>[];
+      for (index = 0; index < list.length; index++) {
+        entered = true;
+        records.add(_recordFromCanonicalTx(list[index]));
+        entered = false;
+      }
+      return records;
+    } finally {
+      final startDisposeIndex = entered ? index + 1 : index;
+      for (var i = startDisposeIndex; i < list.length; i++) {
+        _disposeCanonicalTx(list[i]);
+      }
+    }
   }
 
   @override
@@ -101,40 +114,63 @@ class BdkWalletTransactionSource implements TransactionHistorySource {
   }
 
   TransactionHistoryRecord _recordFromCanonicalTx(bdk.CanonicalTx canonicalTx) {
-    final transaction = canonicalTx.transaction;
-    final sentAndReceived = _wallet.sentAndReceived(tx: transaction);
-    final txid = transaction.computeTxid();
-    final txidText = txid.toString();
-    final sentSat = sentAndReceived.sent.toSat();
-    final receivedSat = sentAndReceived.received.toSat();
+    bdk.Transaction? transaction;
+    bdk.Txid? txid;
+    bdk.SentAndReceivedValues? sentAndReceived;
+    bdk.BlockHash? blockHash;
+    bdk.Txid? transitively;
 
-    txid.dispose();
-    transaction.dispose();
-    sentAndReceived.sent.dispose();
-    sentAndReceived.received.dispose();
+    transaction = canonicalTx.transaction;
+    final position = canonicalTx.chainPosition;
+    if (position is bdk.ConfirmedChainPosition) {
+      blockHash = position.confirmationBlockTime.blockId.hash;
+      transitively = position.transitively;
+    }
 
-    return TransactionHistoryRecord(
-      txid: txidText,
-      sent: sentSat,
-      received: receivedSat,
-      position: _positionFromBdk(canonicalTx.chainPosition),
-    );
+    try {
+      sentAndReceived = _wallet.sentAndReceived(tx: transaction);
+      txid = transaction.computeTxid();
+      final txidText = txid.toString();
+      final sentSat = sentAndReceived.sent.toSat();
+      final receivedSat = sentAndReceived.received.toSat();
+
+      TransactionHistoryPosition mappedPosition;
+      if (position is bdk.ConfirmedChainPosition) {
+        mappedPosition = ConfirmedTransactionPosition(
+          blockHeight: position.confirmationBlockTime.blockId.height,
+          confirmationTime: position.confirmationBlockTime.confirmationTime,
+        );
+      } else if (position is bdk.UnconfirmedChainPosition) {
+        mappedPosition = UnconfirmedTransactionPosition(
+          timestamp: position.timestamp,
+        );
+      } else {
+        throw StateError('Unsupported transaction chain position: $position');
+      }
+
+      return TransactionHistoryRecord(
+        txid: txidText,
+        sent: sentSat,
+        received: receivedSat,
+        position: mappedPosition,
+      );
+    } finally {
+      txid?.dispose();
+      sentAndReceived?.sent.dispose();
+      sentAndReceived?.received.dispose();
+      transaction.dispose();
+      blockHash?.dispose();
+      transitively?.dispose();
+    }
   }
 
-  TransactionHistoryPosition _positionFromBdk(bdk.ChainPosition position) {
-    if (position is bdk.ConfirmedChainPosition) {
-      final confirmation = position.confirmationBlockTime;
-      return ConfirmedTransactionPosition(
-        blockHeight: confirmation.blockId.height,
-        confirmationTime: confirmation.confirmationTime,
-      );
+  void _disposeCanonicalTx(bdk.CanonicalTx canonicalTx) {
+    canonicalTx.transaction.dispose();
+    final pos = canonicalTx.chainPosition;
+    if (pos is bdk.ConfirmedChainPosition) {
+      pos.confirmationBlockTime.blockId.hash.dispose();
+      pos.transitively?.dispose();
     }
-
-    if (position is bdk.UnconfirmedChainPosition) {
-      return UnconfirmedTransactionPosition(timestamp: position.timestamp);
-    }
-
-    throw StateError('Unsupported transaction chain position: $position');
   }
 }
 
