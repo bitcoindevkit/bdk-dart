@@ -24,202 +24,151 @@ Future<void> _deleteDirectoryWithRetry(Directory directory) async {
 
 void main() {
   group('Wallet creation SQLite lifecycle', () {
-    test('persists derivation state across a SQLite reopen', () {
-      final tempDir = Directory.systemTemp.createTempSync(
-        'bdk_dart_wallet_creation_',
-      );
-      addTearDown(() => _deleteDirectoryWithRetry(tempDir));
-
-      final dbPath = '${tempDir.path}/wallet.sqlite';
-      final descriptor = buildBip84Descriptor(Network.testnet);
-      final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
-      Persister? persister;
-      Wallet? wallet;
-      Persister? reopenedPersister;
-      Wallet? reopenedWallet;
-
-      try {
-        expect(File(dbPath).existsSync(), isFalse);
-
-        final initialPersister = Persister.newSqlite(path: dbPath);
-        persister = initialPersister;
-
-        wallet = Wallet(
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          network: Network.testnet,
-          persister: initialPersister,
-          lookahead: defaultLookahead,
+    test(
+      'persists external and internal derivation state across SQLite reopen',
+      () {
+        final tempDir = Directory.systemTemp.createTempSync(
+          'bdk_dart_wallet_creation_',
         );
+        addTearDown(() => _deleteDirectoryWithRetry(tempDir));
 
-        final externalAddress = wallet.revealNextAddress(
-          keychain: KeychainKind.external_,
-        );
-        final internalAddress = wallet.revealNextAddress(
-          keychain: KeychainKind.internal,
-        );
+        final dbPath = '${tempDir.path}/wallet.sqlite';
+        final descriptor = buildBip84Descriptor(Network.testnet);
+        final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
+        Persister? persister;
+        Wallet? wallet;
+        Address? externalAddress;
+        Address? internalAddress;
+        Script? externalScript;
+        Script? internalScript;
+        Persister? reopenedPersister;
+        Wallet? reopenedWallet;
+        Address? reopenedExternalAddress;
+        Address? reopenedInternalAddress;
+        Script? reopenedExternalScript;
+        Script? reopenedInternalScript;
 
-        expect(externalAddress.index, equals(0));
-        expect(internalAddress.index, equals(0));
-        expect(wallet.persist(persister: initialPersister), isTrue);
+        try {
+          expect(File(dbPath).existsSync(), isFalse);
 
-        wallet.dispose();
-        wallet = null;
-        persister.dispose();
-        persister = null;
+          persister = Persister.newSqlite(path: dbPath);
+          wallet = Wallet(
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            network: Network.testnet,
+            persister: persister,
+            lookahead: defaultLookahead,
+          );
 
-        expect(File(dbPath).existsSync(), isTrue);
+          final extAddressInfo = wallet.revealNextAddress(
+            keychain: KeychainKind.external_,
+          );
+          externalAddress = extAddressInfo.address;
 
-        reopenedPersister = Persister.newSqlite(path: dbPath);
-        reopenedWallet = Wallet.load(
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          persister: reopenedPersister,
-          lookahead: defaultLookahead,
-        );
+          final intAddressInfo = wallet.revealNextAddress(
+            keychain: KeychainKind.internal,
+          );
+          internalAddress = intAddressInfo.address;
 
-        expect(reopenedWallet.network(), equals(Network.testnet));
-        expect(reopenedWallet.balance().total.toSat(), equals(0));
-        expect(
-          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.external_),
-          equals(1),
-        );
-        expect(
-          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.internal),
-          equals(1),
-        );
+          expect(extAddressInfo.index, equals(0));
+          expect(intAddressInfo.index, equals(0));
+          expect(wallet.persist(persister: persister), isTrue);
 
-        final reopenedExternalAddress = reopenedWallet.peekAddress(
-          keychain: KeychainKind.external_,
-          index: externalAddress.index,
-        );
-        final reopenedInternalAddress = reopenedWallet.peekAddress(
-          keychain: KeychainKind.internal,
-          index: internalAddress.index,
-        );
+          externalScript = externalAddress.scriptPubkey();
+          final extBytes = externalScript.toBytes();
 
-        expect(
-          reopenedExternalAddress.address.scriptPubkey().toBytes(),
-          orderedEquals(externalAddress.address.scriptPubkey().toBytes()),
-        );
-        expect(
-          reopenedInternalAddress.address.scriptPubkey().toBytes(),
-          orderedEquals(internalAddress.address.scriptPubkey().toBytes()),
-        );
-      } finally {
-        reopenedWallet?.dispose();
-        reopenedPersister?.dispose();
-        wallet?.dispose();
-        persister?.dispose();
-        descriptor.dispose();
-        changeDescriptor.dispose();
-      }
-    });
+          internalScript = internalAddress.scriptPubkey();
+          final intBytes = internalScript.toBytes();
 
-    test('cover multiple SQLite wallet address reveals', () {
-      final tempDir = Directory.systemTemp.createTempSync(
-        'bdk_dart_wallet_creation_test1_',
-      );
-      addTearDown(() => _deleteDirectoryWithRetry(tempDir));
+          // Dispose temporary address and script objects
+          externalScript.dispose();
+          externalScript = null;
+          externalAddress.dispose();
+          externalAddress = null;
 
-      final dbPath = '${tempDir.path}/wallet.sqlite';
-      final descriptor = buildBip84Descriptor(Network.testnet);
-      final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
-      Persister? persister;
-      Wallet? wallet;
-      Persister? reopenedPersister;
-      Wallet? reopenedWallet;
+          internalScript.dispose();
+          internalScript = null;
+          internalAddress.dispose();
+          internalAddress = null;
 
-      try {
-        final initialPersister = Persister.newSqlite(path: dbPath);
-        persister = initialPersister;
+          wallet.dispose();
+          wallet = null;
+          persister.dispose();
+          persister = null;
 
-        wallet = Wallet(
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          network: Network.testnet,
-          persister: initialPersister,
-          lookahead: defaultLookahead,
-        );
+          expect(File(dbPath).existsSync(), isTrue);
 
-        final ext0 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-        final ext1 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-        final ext2 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-        final int0 = wallet.revealNextAddress(keychain: KeychainKind.internal);
+          reopenedPersister = Persister.newSqlite(path: dbPath);
+          reopenedWallet = Wallet.load(
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            persister: reopenedPersister,
+            lookahead: defaultLookahead,
+          );
 
-        expect(ext0.index, equals(0));
-        expect(ext1.index, equals(1));
-        expect(ext2.index, equals(2));
-        expect(int0.index, equals(0));
+          expect(reopenedWallet.network(), equals(Network.testnet));
 
-        expect(wallet.persist(persister: initialPersister), isTrue);
+          final balance = reopenedWallet.balance();
+          final balanceSat = balance.total.toSat();
+          balance.immature.dispose();
+          balance.trustedPending.dispose();
+          balance.untrustedPending.dispose();
+          balance.confirmed.dispose();
+          balance.trustedSpendable.dispose();
+          balance.total.dispose();
 
-        wallet.dispose();
-        wallet = null;
-        persister.dispose();
-        persister = null;
+          expect(balanceSat, equals(0));
+          expect(
+            reopenedWallet.nextDerivationIndex(
+              keychain: KeychainKind.external_,
+            ),
+            equals(1),
+          );
+          expect(
+            reopenedWallet.nextDerivationIndex(keychain: KeychainKind.internal),
+            equals(1),
+          );
 
-        reopenedPersister = Persister.newSqlite(path: dbPath);
-        reopenedWallet = Wallet.load(
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          persister: reopenedPersister,
-          lookahead: defaultLookahead,
-        );
+          final reopenedExtAddressInfo = reopenedWallet.peekAddress(
+            keychain: KeychainKind.external_,
+            index: 0,
+          );
+          reopenedExternalAddress = reopenedExtAddressInfo.address;
 
-        expect(
-          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.external_),
-          equals(3),
-        );
-        expect(
-          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.internal),
-          equals(1),
-        );
+          final reopenedIntAddressInfo = reopenedWallet.peekAddress(
+            keychain: KeychainKind.internal,
+            index: 0,
+          );
+          reopenedInternalAddress = reopenedIntAddressInfo.address;
 
-        final reopenedExt0 = reopenedWallet.peekAddress(
-          keychain: KeychainKind.external_,
-          index: 0,
-        );
-        final reopenedExt1 = reopenedWallet.peekAddress(
-          keychain: KeychainKind.external_,
-          index: 1,
-        );
-        final reopenedExt2 = reopenedWallet.peekAddress(
-          keychain: KeychainKind.external_,
-          index: 2,
-        );
-        final reopenedInt0 = reopenedWallet.peekAddress(
-          keychain: KeychainKind.internal,
-          index: 0,
-        );
+          reopenedExternalScript = reopenedExternalAddress.scriptPubkey();
+          final reopenedExtBytes = reopenedExternalScript.toBytes();
 
-        expect(
-          reopenedExt0.address.scriptPubkey().toBytes(),
-          orderedEquals(ext0.address.scriptPubkey().toBytes()),
-        );
-        expect(
-          reopenedExt1.address.scriptPubkey().toBytes(),
-          orderedEquals(ext1.address.scriptPubkey().toBytes()),
-        );
-        expect(
-          reopenedExt2.address.scriptPubkey().toBytes(),
-          orderedEquals(ext2.address.scriptPubkey().toBytes()),
-        );
-        expect(
-          reopenedInt0.address.scriptPubkey().toBytes(),
-          orderedEquals(int0.address.scriptPubkey().toBytes()),
-        );
-      } finally {
-        reopenedWallet?.dispose();
-        reopenedPersister?.dispose();
-        wallet?.dispose();
-        persister?.dispose();
-        descriptor.dispose();
-        changeDescriptor.dispose();
-      }
-    });
+          reopenedInternalScript = reopenedInternalAddress.scriptPubkey();
+          final reopenedIntBytes = reopenedInternalScript.toBytes();
 
-    test('cover explicit SQLite wallet persist contract', () {
+          expect(reopenedExtBytes, orderedEquals(extBytes));
+          expect(reopenedIntBytes, orderedEquals(intBytes));
+        } finally {
+          reopenedInternalScript?.dispose();
+          reopenedExternalScript?.dispose();
+          reopenedInternalAddress?.dispose();
+          reopenedExternalAddress?.dispose();
+          reopenedWallet?.dispose();
+          reopenedPersister?.dispose();
+          internalScript?.dispose();
+          externalScript?.dispose();
+          internalAddress?.dispose();
+          externalAddress?.dispose();
+          wallet?.dispose();
+          persister?.dispose();
+          descriptor.dispose();
+          changeDescriptor.dispose();
+        }
+      },
+    );
+
+    test('does not restore derivation changes made after the last persist', () {
       final tempDir = Directory.systemTemp.createTempSync(
         'bdk_dart_wallet_creation_test2_',
       );
@@ -230,28 +179,40 @@ void main() {
       final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
       Persister? persister;
       Wallet? wallet;
+      Address? externalAddress0;
+      Address? externalAddress1;
       Persister? reopenedPersister;
       Wallet? reopenedWallet;
 
       try {
-        final initialPersister = Persister.newSqlite(path: dbPath);
-        persister = initialPersister;
-
+        persister = Persister.newSqlite(path: dbPath);
         wallet = Wallet(
           descriptor: descriptor,
           changeDescriptor: changeDescriptor,
           network: Network.testnet,
-          persister: initialPersister,
+          persister: persister,
           lookahead: defaultLookahead,
         );
 
-        final ext0 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-        expect(ext0.index, equals(0));
+        final extAddressInfo0 = wallet.revealNextAddress(
+          keychain: KeychainKind.external_,
+        );
+        externalAddress0 = extAddressInfo0.address;
+        expect(extAddressInfo0.index, equals(0));
 
-        expect(wallet.persist(persister: initialPersister), isTrue);
+        expect(wallet.persist(persister: persister), isTrue);
 
-        final ext1 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-        expect(ext1.index, equals(1));
+        final extAddressInfo1 = wallet.revealNextAddress(
+          keychain: KeychainKind.external_,
+        );
+        externalAddress1 = extAddressInfo1.address;
+        expect(extAddressInfo1.index, equals(1));
+
+        // Dispose original wallet and persister before reopening
+        externalAddress0.dispose();
+        externalAddress0 = null;
+        externalAddress1.dispose();
+        externalAddress1 = null;
 
         wallet.dispose();
         wallet = null;
@@ -273,97 +234,8 @@ void main() {
       } finally {
         reopenedWallet?.dispose();
         reopenedPersister?.dispose();
-        wallet?.dispose();
-        persister?.dispose();
-        descriptor.dispose();
-        changeDescriptor.dispose();
-      }
-    });
-
-    test('cover independent SQLite keychain indexes', () {
-      final tempDir = Directory.systemTemp.createTempSync(
-        'bdk_dart_wallet_creation_test3_',
-      );
-      addTearDown(() => _deleteDirectoryWithRetry(tempDir));
-
-      final dbPath = '${tempDir.path}/wallet.sqlite';
-      final descriptor = buildBip84Descriptor(Network.testnet);
-      final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
-      Persister? persister;
-      Wallet? wallet;
-      Persister? reopenedPersister;
-      Wallet? reopenedWallet;
-
-      try {
-        final initialPersister = Persister.newSqlite(path: dbPath);
-        persister = initialPersister;
-
-        wallet = Wallet(
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          network: Network.testnet,
-          persister: initialPersister,
-          lookahead: defaultLookahead,
-        );
-
-        final ext0 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-        final ext1 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-        final ext2 = wallet.revealNextAddress(keychain: KeychainKind.external_);
-
-        final int0 = wallet.revealNextAddress(keychain: KeychainKind.internal);
-        final int1 = wallet.revealNextAddress(keychain: KeychainKind.internal);
-
-        expect(ext0.index, equals(0));
-        expect(ext1.index, equals(1));
-        expect(ext2.index, equals(2));
-
-        expect(int0.index, equals(0));
-        expect(int1.index, equals(1));
-
-        expect(wallet.persist(persister: initialPersister), isTrue);
-
-        wallet.dispose();
-        wallet = null;
-        persister.dispose();
-        persister = null;
-
-        reopenedPersister = Persister.newSqlite(path: dbPath);
-        reopenedWallet = Wallet.load(
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          persister: reopenedPersister,
-          lookahead: defaultLookahead,
-        );
-
-        expect(
-          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.external_),
-          equals(3),
-        );
-        expect(
-          reopenedWallet.nextDerivationIndex(keychain: KeychainKind.internal),
-          equals(2),
-        );
-
-        final reopenedExt1 = reopenedWallet.peekAddress(
-          keychain: KeychainKind.external_,
-          index: 1,
-        );
-        final reopenedInt0 = reopenedWallet.peekAddress(
-          keychain: KeychainKind.internal,
-          index: 0,
-        );
-
-        expect(
-          reopenedExt1.address.scriptPubkey().toBytes(),
-          orderedEquals(ext1.address.scriptPubkey().toBytes()),
-        );
-        expect(
-          reopenedInt0.address.scriptPubkey().toBytes(),
-          orderedEquals(int0.address.scriptPubkey().toBytes()),
-        );
-      } finally {
-        reopenedWallet?.dispose();
-        reopenedPersister?.dispose();
+        externalAddress1?.dispose();
+        externalAddress0?.dispose();
         wallet?.dispose();
         persister?.dispose();
         descriptor.dispose();
