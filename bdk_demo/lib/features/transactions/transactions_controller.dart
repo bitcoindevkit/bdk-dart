@@ -1,6 +1,5 @@
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
-import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum TransactionsLoadState { idle, loading, success, error, noWallet }
@@ -40,18 +39,17 @@ class TransactionsState {
   }
 }
 
-final transactionsControllerProvider =
-    NotifierProvider<TransactionsController, TransactionsState>(
+final transactionsControllerProvider = NotifierProvider.autoDispose
+    .family<TransactionsController, TransactionsState, String?>(
       TransactionsController.new,
     );
 
 final transactionDetailsProvider = FutureProvider.autoDispose
-    .family<TransactionHistoryItem?, ({String walletId, String txid})>((
+    .family<TransactionHistoryItem?, ({String? walletId, String txid})>((
       ref,
       arg,
     ) {
-      final activeWalletId = ref.watch(activeWalletIdProvider);
-      if (activeWalletId != arg.walletId) {
+      if (arg.walletId == null) {
         return Future.value(null);
       }
       final repository = ref.watch(transactionsRepositoryProvider);
@@ -59,10 +57,13 @@ final transactionDetailsProvider = FutureProvider.autoDispose
     });
 
 class TransactionsController extends Notifier<TransactionsState> {
+  TransactionsController(this.walletId);
+
+  final String? walletId;
+
   @override
   TransactionsState build() {
-    final activeWalletId = ref.watch(activeWalletIdProvider);
-    if (activeWalletId == null) {
+    if (walletId == null) {
       return const TransactionsState(
         status: TransactionsLoadState.noWallet,
         transactions: [],
@@ -74,8 +75,7 @@ class TransactionsController extends Notifier<TransactionsState> {
   }
 
   Future<void> loadTransactions() async {
-    final activeWalletId = ref.read(activeWalletIdProvider);
-    if (activeWalletId == null) {
+    if (walletId == null) {
       state = const TransactionsState(
         status: TransactionsLoadState.noWallet,
         transactions: [],
@@ -97,7 +97,7 @@ class TransactionsController extends Notifier<TransactionsState> {
           .read(transactionsRepositoryProvider)
           .loadTransactions();
 
-      if (ref.read(activeWalletIdProvider) != activeWalletId) {
+      if (!ref.mounted) {
         return;
       }
 
@@ -110,7 +110,7 @@ class TransactionsController extends Notifier<TransactionsState> {
         errorMessage: null,
       );
     } catch (error) {
-      if (ref.read(activeWalletIdProvider) != activeWalletId) {
+      if (!ref.mounted) {
         return;
       }
 

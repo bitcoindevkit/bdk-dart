@@ -251,6 +251,7 @@ void main() {
         container: container,
       );
 
+      expect(tester.takeException(), isNull);
       expect(find.text('Transaction history not loaded yet'), findsOneWidget);
 
       // 2. Load wallet A transactions
@@ -263,9 +264,10 @@ void main() {
 
       // 3. Switch logical active wallet ID from A to B
       container.read(activeWalletRecordProvider.notifier).set(recordB);
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       // 4. Verify wallet A's transaction rows are cleared immediately and not rendered
+      expect(tester.takeException(), isNull);
       expect(find.text('+10000 sat'), findsNothing);
       expect(find.textContaining('tx-a'), findsNothing);
       expect(find.text('Transaction history not loaded yet'), findsOneWidget);

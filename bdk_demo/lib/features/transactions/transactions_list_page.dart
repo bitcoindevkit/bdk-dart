@@ -26,8 +26,9 @@ class TransactionsListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final state = ref.watch(transactionsControllerProvider);
     final activeWalletId = ref.watch(activeWalletIdProvider);
+    final controllerProvider = transactionsControllerProvider(activeWalletId);
+    final state = ref.watch(controllerProvider);
     final isLoading = state.status == TransactionsLoadState.loading;
     final canLoad = activeWalletId != null && !isLoading;
 
@@ -73,7 +74,7 @@ class TransactionsListPage extends ConsumerWidget {
                     FilledButton.icon(
                       onPressed: canLoad
                           ? () => ref
-                                .read(transactionsControllerProvider.notifier)
+                                .read(controllerProvider.notifier)
                                 .loadTransactions()
                           : null,
                       icon: isLoading

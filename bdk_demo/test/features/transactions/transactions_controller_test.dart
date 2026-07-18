@@ -61,13 +61,20 @@ void main() {
     return container;
   }
 
+  void keepControllerAlive(ProviderContainer container, String? walletId) {
+    final subscription = container.listen(
+      transactionsControllerProvider(walletId),
+      (_, __) {},
+    );
+    addTearDown(subscription.close);
+  }
+
   group('TransactionsController & transactionDetailsProvider', () {
     test('no active wallet returns the no-wallet state', () {
-      final container = createContainer([
-        activeWalletIdProvider.overrideWithValue(null),
-      ]);
+      final container = createContainer([]);
+      keepControllerAlive(container, null);
 
-      final state = container.read(transactionsControllerProvider);
+      final state = container.read(transactionsControllerProvider(null));
       expect(state.status, TransactionsLoadState.noWallet);
       expect(state.transactions, isEmpty);
     });
@@ -75,24 +82,24 @@ void main() {
     test('an active wallet can load its transaction history', () async {
       final txs = [createTx('tx-1', 5000)];
       final container = createContainer([
-        activeWalletIdProvider.overrideWithValue('wallet-a'),
         transactionsRepositoryProvider.overrideWithValue(
           FakeTransactionsRepository(transactions: txs),
         ),
       ]);
+      keepControllerAlive(container, 'wallet-a');
 
       // Initially idle
       expect(
-        container.read(transactionsControllerProvider).status,
+        container.read(transactionsControllerProvider('wallet-a')).status,
         TransactionsLoadState.idle,
       );
 
       // Load transactions
       await container
-          .read(transactionsControllerProvider.notifier)
+          .read(transactionsControllerProvider('wallet-a').notifier)
           .loadTransactions();
 
-      final state = container.read(transactionsControllerProvider);
+      final state = container.read(transactionsControllerProvider('wallet-a'));
       expect(state.status, TransactionsLoadState.success);
       expect(state.transactions, hasLength(1));
       expect(state.transactions.first.txid, 'tx-1');
@@ -118,18 +125,20 @@ void main() {
 
         // Set initial wallet record to Wallet A
         container.read(activeWalletRecordProvider.notifier).set(recordA);
+        final walletAId = container.read(activeWalletIdProvider);
+        keepControllerAlive(container, walletAId);
 
         // Load Wallet A transactions
         await container
-            .read(transactionsControllerProvider.notifier)
+            .read(transactionsControllerProvider(walletAId).notifier)
             .loadTransactions();
         expect(
-          container.read(transactionsControllerProvider).status,
+          container.read(transactionsControllerProvider(walletAId)).status,
           TransactionsLoadState.success,
         );
         expect(
           container
-              .read(transactionsControllerProvider)
+              .read(transactionsControllerProvider(walletAId))
               .transactions
               .first
               .txid,
@@ -138,9 +147,13 @@ void main() {
 
         // Switch active wallet to Wallet B
         container.read(activeWalletRecordProvider.notifier).set(recordB);
+        final walletBId = container.read(activeWalletIdProvider);
+        keepControllerAlive(container, walletBId);
 
         // Verify that Wallet A's transaction state is cleared and we are back to idle
-        final stateAfterSwitch = container.read(transactionsControllerProvider);
+        final stateAfterSwitch = container.read(
+          transactionsControllerProvider(walletBId),
+        );
         expect(stateAfterSwitch.status, TransactionsLoadState.idle);
         expect(stateAfterSwitch.transactions, isEmpty);
       },
@@ -161,25 +174,32 @@ void main() {
 
         // Set initial wallet record to Wallet A
         container.read(activeWalletRecordProvider.notifier).set(recordA);
+        final walletAId = container.read(activeWalletIdProvider);
+        final walletASubscription = container.listen(
+          transactionsControllerProvider(walletAId),
+          (_, __) {},
+        );
 
         // Start loading
         final future = container
-            .read(transactionsControllerProvider.notifier)
+            .read(transactionsControllerProvider(walletAId).notifier)
             .loadTransactions();
 
         // State is loading
         expect(
-          container.read(transactionsControllerProvider).status,
+          container.read(transactionsControllerProvider(walletAId)).status,
           TransactionsLoadState.loading,
         );
 
-        // Switch active wallet to Wallet B (this rebuilds provider, returning idle state)
+        // Switch active wallet to Wallet B and begin observing B's isolated state.
         container.read(activeWalletRecordProvider.notifier).set(recordB);
+        final walletBId = container.read(activeWalletIdProvider);
+        keepControllerAlive(container, walletBId);
+        walletASubscription.close();
+        await container.pump();
 
-        // Allow microtasks
-        await Future<void>.value();
         expect(
-          container.read(transactionsControllerProvider).status,
+          container.read(transactionsControllerProvider(walletBId)).status,
           TransactionsLoadState.idle,
         );
 
@@ -189,7 +209,9 @@ void main() {
         await future;
 
         // State must remain idle for Wallet B
-        final finalState = container.read(transactionsControllerProvider);
+        final finalState = container.read(
+          transactionsControllerProvider(walletBId),
+        );
         expect(finalState.status, TransactionsLoadState.idle);
         expect(finalState.transactions, isEmpty);
       },
@@ -204,25 +226,32 @@ void main() {
         final wallet2 = FakeWallet();
 
         final container = createContainer([
-          transactionsRepositoryProvider.overrideWithValue(
-            FakeTransactionsRepository(transactions: [createTx('tx-a', 10000)]),
-          ),
+          transactionsRepositoryProvider.overrideWith((ref) {
+            ref.watch(activeWalletProvider);
+            return FakeTransactionsRepository(
+              transactions: [createTx('tx-a', 10000)],
+            );
+          }),
         ]);
 
         // Set initial wallet record and FFI Wallet instance
         container.read(activeWalletRecordProvider.notifier).set(recordA);
         container.read(activeWalletProvider.notifier).set(wallet1);
+        final walletAId = container.read(activeWalletIdProvider);
+        keepControllerAlive(container, walletAId);
 
         // Load transactions
         await container
-            .read(transactionsControllerProvider.notifier)
+            .read(transactionsControllerProvider(walletAId).notifier)
             .loadTransactions();
         expect(
-          container.read(transactionsControllerProvider).status,
+          container.read(transactionsControllerProvider(walletAId)).status,
           TransactionsLoadState.success,
         );
         expect(
-          container.read(transactionsControllerProvider).transactions,
+          container
+              .read(transactionsControllerProvider(walletAId))
+              .transactions,
           isNotEmpty,
         );
 
@@ -231,11 +260,13 @@ void main() {
 
         // State must not reset
         expect(
-          container.read(transactionsControllerProvider).status,
+          container.read(transactionsControllerProvider(walletAId)).status,
           TransactionsLoadState.success,
         );
         expect(
-          container.read(transactionsControllerProvider).transactions,
+          container
+              .read(transactionsControllerProvider(walletAId))
+              .transactions,
           isNotEmpty,
         );
       },
@@ -274,17 +305,7 @@ void main() {
         // 2. Switch wallet to B
         container.read(activeWalletRecordProvider.notifier).set(recordB);
 
-        // 3. Read detail for key (walletId: 'wallet-a', txid: 'tx-123') again.
-        // Because activeWalletId is now 'wallet-b', reading key 'wallet-a' should return null (stale/not matching active wallet).
-        final detailAAfterSwitch = await container.read(
-          transactionDetailsProvider((
-            walletId: 'wallet-a',
-            txid: 'tx-123',
-          )).future,
-        );
-        expect(detailAAfterSwitch, isNull);
-
-        // 4. Read detail for key (walletId: 'wallet-b', txid: 'tx-123')
+        // 3. Read the same txid through wallet B's isolated cache key.
         final detailB = await container.read(
           transactionDetailsProvider((
             walletId: 'wallet-b',
