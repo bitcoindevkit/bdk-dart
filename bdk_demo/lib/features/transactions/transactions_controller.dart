@@ -1,5 +1,6 @@
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
+import 'package:bdk_demo/providers/blockchain_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,11 +20,10 @@ class TransactionsState {
   });
 
   const TransactionsState.idle()
-    : this(
-        status: TransactionsLoadState.idle,
-        transactions: const [],
-        statusMessage: 'Load the active wallet transaction history.',
-      );
+      : status = TransactionsLoadState.idle,
+        transactions = const [],
+        statusMessage = 'Ready to load transactions.',
+        errorMessage = null;
 
   TransactionsState copyWith({
     TransactionsLoadState? status,
@@ -35,7 +35,7 @@ class TransactionsState {
       status: status ?? this.status,
       transactions: transactions ?? this.transactions,
       statusMessage: statusMessage ?? this.statusMessage,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }
@@ -50,12 +50,9 @@ final transactionDetailsProvider = FutureProvider.autoDispose
       ref,
       arg,
     ) {
-      if (arg.walletId == null) {
-        return Future.value(null);
-      }
-      final repository = ref.watch(transactionsRepositoryProvider);
-      return repository.loadTransactionByTxid(arg.txid);
-    });
+  final repository = ref.watch(transactionsRepositoryProvider);
+  return repository.loadTransactionByTxid(arg.txid);
+});
 
 class TransactionsController extends Notifier<TransactionsState> {
   TransactionsController(this.walletId);
@@ -75,6 +72,13 @@ class TransactionsController extends Notifier<TransactionsState> {
 
     ref.listen(activeWalletProvider, (previous, next) {
       if (next != null) {
+        final isSuccess = state.status == TransactionsLoadState.success;
+        loadTransactions(isBackgroundRefresh: isSuccess);
+      }
+    });
+
+    ref.listen(syncStatusProvider, (previous, next) {
+      if (next == SyncStatus.synced) {
         final isSuccess = state.status == TransactionsLoadState.success;
         loadTransactions(isBackgroundRefresh: isSuccess);
       }
