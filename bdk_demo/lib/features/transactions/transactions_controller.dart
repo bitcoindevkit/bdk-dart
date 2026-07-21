@@ -1,5 +1,6 @@
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
+import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum TransactionsLoadState { idle, loading, success, error, noWallet }
@@ -71,10 +72,20 @@ class TransactionsController extends Notifier<TransactionsState> {
             'Create or load a wallet before viewing transaction history.',
       );
     }
+
+    ref.listen(activeWalletProvider, (previous, next) {
+      if (next != null) {
+        final isSuccess = state.status == TransactionsLoadState.success;
+        loadTransactions(isBackgroundRefresh: isSuccess);
+      }
+    });
+
+    Future.microtask(() => loadTransactions());
+
     return const TransactionsState.idle();
   }
 
-  Future<void> loadTransactions() async {
+  Future<void> loadTransactions({bool isBackgroundRefresh = false}) async {
     if (walletId == null) {
       state = const TransactionsState(
         status: TransactionsLoadState.noWallet,
@@ -85,12 +96,14 @@ class TransactionsController extends Notifier<TransactionsState> {
       return;
     }
 
-    state = state.copyWith(
-      status: TransactionsLoadState.loading,
-      transactions: const [],
-      statusMessage: 'Loading transaction history...',
-      errorMessage: null,
-    );
+    if (!isBackgroundRefresh) {
+      state = state.copyWith(
+        status: TransactionsLoadState.loading,
+        transactions: const [],
+        statusMessage: 'Loading transaction history...',
+        errorMessage: null,
+      );
+    }
 
     try {
       final transactions = await ref
@@ -116,7 +129,7 @@ class TransactionsController extends Notifier<TransactionsState> {
 
       state = state.copyWith(
         status: TransactionsLoadState.error,
-        transactions: const [],
+        transactions: isBackgroundRefresh ? state.transactions : const [],
         statusMessage: 'Transaction history could not be loaded.',
         errorMessage: _readableError(error),
       );

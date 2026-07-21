@@ -200,7 +200,7 @@ void main() {
 
         expect(
           container.read(transactionsControllerProvider(walletBId)).status,
-          TransactionsLoadState.idle,
+          TransactionsLoadState.loading,
         );
 
         // Complete async request for Wallet A
@@ -208,11 +208,11 @@ void main() {
 
         await future;
 
-        // State must remain idle for Wallet B
+        // State must remain loading for Wallet B
         final finalState = container.read(
           transactionsControllerProvider(walletBId),
         );
-        expect(finalState.status, TransactionsLoadState.idle);
+        expect(finalState.status, TransactionsLoadState.loading);
         expect(finalState.transactions, isEmpty);
       },
     );
