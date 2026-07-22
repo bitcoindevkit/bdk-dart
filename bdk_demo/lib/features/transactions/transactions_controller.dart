@@ -1,6 +1,5 @@
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
-import 'package:bdk_demo/providers/blockchain_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,22 +19,26 @@ class TransactionsState {
   });
 
   const TransactionsState.idle()
-      : status = TransactionsLoadState.idle,
-        transactions = const [],
-        statusMessage = 'Ready to load transactions.',
-        errorMessage = null;
+    : status = TransactionsLoadState.idle,
+      transactions = const [],
+      statusMessage = 'Ready to load transactions.',
+      errorMessage = null;
+
+  static const _unset = Object();
 
   TransactionsState copyWith({
     TransactionsLoadState? status,
     List<TransactionHistoryItem>? transactions,
     String? statusMessage,
-    String? errorMessage,
+    Object? errorMessage = _unset,
   }) {
     return TransactionsState(
       status: status ?? this.status,
       transactions: transactions ?? this.transactions,
       statusMessage: statusMessage ?? this.statusMessage,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: identical(errorMessage, _unset)
+          ? this.errorMessage
+          : errorMessage as String?,
     );
   }
 }
@@ -50,14 +53,15 @@ final transactionDetailsProvider = FutureProvider.autoDispose
       ref,
       arg,
     ) {
-  final repository = ref.watch(transactionsRepositoryProvider);
-  return repository.loadTransactionByTxid(arg.txid);
-});
+      final repository = ref.watch(transactionsRepositoryProvider);
+      return repository.loadTransactionByTxid(arg.txid);
+    });
 
 class TransactionsController extends Notifier<TransactionsState> {
   TransactionsController(this.walletId);
 
   final String? walletId;
+  bool _isLoading = false;
 
   @override
   TransactionsState build() {
@@ -72,13 +76,6 @@ class TransactionsController extends Notifier<TransactionsState> {
 
     ref.listen(activeWalletProvider, (previous, next) {
       if (next != null) {
-        final isSuccess = state.status == TransactionsLoadState.success;
-        loadTransactions(isBackgroundRefresh: isSuccess);
-      }
-    });
-
-    ref.listen(syncStatusProvider, (previous, next) {
-      if (next == SyncStatus.synced) {
         final isSuccess = state.status == TransactionsLoadState.success;
         loadTransactions(isBackgroundRefresh: isSuccess);
       }
@@ -99,6 +96,11 @@ class TransactionsController extends Notifier<TransactionsState> {
       );
       return;
     }
+
+    if (_isLoading) {
+      return;
+    }
+    _isLoading = true;
 
     if (!isBackgroundRefresh) {
       state = state.copyWith(
@@ -131,12 +133,24 @@ class TransactionsController extends Notifier<TransactionsState> {
         return;
       }
 
+      if (isBackgroundRefresh &&
+          state.status == TransactionsLoadState.success) {
+        state = state.copyWith(
+          status: TransactionsLoadState.success,
+          transactions: state.transactions,
+          errorMessage: _readableError(error),
+        );
+        return;
+      }
+
       state = state.copyWith(
         status: TransactionsLoadState.error,
-        transactions: isBackgroundRefresh ? state.transactions : const [],
+        transactions: const [],
         statusMessage: 'Transaction history could not be loaded.',
         errorMessage: _readableError(error),
       );
+    } finally {
+      _isLoading = false;
     }
   }
 

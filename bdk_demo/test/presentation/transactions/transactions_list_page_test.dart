@@ -115,7 +115,9 @@ Future<void> _pumpTransactionsFlow(
 }
 
 void main() {
-  testWidgets('automatically loads and renders wallet transactions', (tester) async {
+  testWidgets('automatically loads and renders wallet transactions', (
+    tester,
+  ) async {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(
@@ -131,54 +133,60 @@ void main() {
     expect(find.text('pending'), findsOneWidget);
   });
 
-  testWidgets('seamlessly preserves/refreshes state on navigation away and back', (tester) async {
-    final router = GoRouter(
-      initialLocation: '/transactions',
-      routes: [
-        GoRoute(
-          path: '/transactions',
-          name: 'transactionHistory',
-          builder: (context, state) => const TransactionsListPage(),
-        ),
-        GoRoute(
-          path: '/other',
-          name: 'other',
-          builder: (context, state) => const Scaffold(body: Text('Other Page')),
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          transactionsRepositoryProvider.overrideWithValue(
-            FakeTransactionsRepository(transactions: transactionHistoryItems),
+  testWidgets(
+    'seamlessly preserves/refreshes state on navigation away and back',
+    (tester) async {
+      final router = GoRouter(
+        initialLocation: '/transactions',
+        routes: [
+          GoRoute(
+            path: '/transactions',
+            name: 'transactionHistory',
+            builder: (context, state) => const TransactionsListPage(),
           ),
-          activeWalletIdProvider.overrideWithValue('wallet-a'),
+          GoRoute(
+            path: '/other',
+            name: 'other',
+            builder: (context, state) =>
+                const Scaffold(body: Text('Other Page')),
+          ),
         ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
 
-    // 1. Verify initially loaded
-    expect(find.text('+42000 sat'), findsOneWidget);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            transactionsRepositoryProvider.overrideWithValue(
+              FakeTransactionsRepository(transactions: transactionHistoryItems),
+            ),
+            activeWalletIdProvider.overrideWithValue('wallet-a'),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // 2. Navigate away
-    router.go('/other');
-    await tester.pumpAndSettle();
-    expect(find.text('+42000 sat'), findsNothing);
-    expect(find.text('Other Page'), findsOneWidget);
+      // 1. Verify initially loaded
+      expect(find.text('+42000 sat'), findsOneWidget);
 
-    // 3. Navigate back
-    router.go('/transactions');
-    await tester.pumpAndSettle();
+      // 2. Navigate away
+      router.go('/other');
+      await tester.pumpAndSettle();
+      expect(find.text('+42000 sat'), findsNothing);
+      expect(find.text('Other Page'), findsOneWidget);
 
-    // 4. Verify automatically loaded again (no reload tap required)
-    expect(find.text('+42000 sat'), findsOneWidget);
-  });
+      // 3. Navigate back
+      router.go('/transactions');
+      await tester.pumpAndSettle();
 
-  testWidgets('shows empty state when no transactions are returned', (tester) async {
+      // 4. Verify automatically loaded again (no reload tap required)
+      expect(find.text('+42000 sat'), findsOneWidget);
+    },
+  );
+
+  testWidgets('shows empty state when no transactions are returned', (
+    tester,
+  ) async {
     await _pumpTransactionsFlow(
       tester,
       repository: FakeTransactionsRepository(transactions: const []),
@@ -213,227 +221,237 @@ void main() {
     );
   });
 
-  testWidgets('no active wallet shows the no-wallet state and disables load button', (tester) async {
-    await _pumpTransactionsFlow(
-      tester,
-      repository: FakeTransactionsRepository(transactions: const []),
-      hasActiveWallet: false,
-    );
+  testWidgets(
+    'no active wallet shows the no-wallet state and disables load button',
+    (tester) async {
+      await _pumpTransactionsFlow(
+        tester,
+        repository: FakeTransactionsRepository(transactions: const []),
+        hasActiveWallet: false,
+      );
 
-    expect(find.text('No active wallet'), findsOneWidget);
-    expect(
-      find.text(
-        'Create or load a wallet before viewing transaction history.',
-      ),
-      findsOneWidget,
-    );
+      expect(find.text('No active wallet'), findsOneWidget);
+      expect(
+        find.text(
+          'Create or load a wallet before viewing transaction history.',
+        ),
+        findsOneWidget,
+      );
 
-    final buttonFinder = find.widgetWithText(
-      FilledButton,
-      'Load Transaction History',
-    );
-    expect(tester.widget<FilledButton>(buttonFinder).onPressed, isNull);
-  });
+      final buttonFinder = find.widgetWithText(
+        FilledButton,
+        'Load Transaction History',
+      );
+      expect(tester.widget<FilledButton>(buttonFinder).onPressed, isNull);
+    },
+  );
 
-  testWidgets('switching logical active wallet ID from A to B clears A\'s transaction list and loads B\'s automatically', (tester) async {
-    late final ProviderContainer container;
+  testWidgets(
+    'switching logical active wallet ID from A to B clears A\'s transaction list and loads B\'s automatically',
+    (tester) async {
+      late final ProviderContainer container;
 
-    final recordA = WalletRecord(
-      id: 'wallet-a',
-      name: 'Wallet A',
-      network: WalletNetwork.testnet,
-      scriptType: ScriptType.p2wpkh,
-    );
+      final recordA = WalletRecord(
+        id: 'wallet-a',
+        name: 'Wallet A',
+        network: WalletNetwork.testnet,
+        scriptType: ScriptType.p2wpkh,
+      );
 
-    final recordB = WalletRecord(
-      id: 'wallet-b',
-      name: 'Wallet B',
-      network: WalletNetwork.testnet,
-      scriptType: ScriptType.p2wpkh,
-    );
+      final recordB = WalletRecord(
+        id: 'wallet-b',
+        name: 'Wallet B',
+        network: WalletNetwork.testnet,
+        scriptType: ScriptType.p2wpkh,
+      );
 
-    final txsA = [
-      TransactionHistoryItem(
-        txid: 'tx-a',
+      final txsA = [
+        TransactionHistoryItem(
+          txid: 'tx-a',
+          sent: 0,
+          received: 10000,
+          pending: false,
+          blockHeight: 100,
+          confirmationTime: DateTime.now(),
+        ),
+      ];
+
+      final txsB = [
+        TransactionHistoryItem(
+          txid: 'tx-b',
+          sent: 0,
+          received: 20000,
+          pending: false,
+          blockHeight: 101,
+          confirmationTime: DateTime.now(),
+        ),
+      ];
+
+      container = ProviderContainer(
+        overrides: [
+          transactionsRepositoryProvider.overrideWith((ref) {
+            final activeId = ref.watch(activeWalletIdProvider);
+            return FakeTransactionsRepository(
+              transactions: activeId == 'wallet-a' ? txsA : txsB,
+            );
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      container.read(activeWalletRecordProvider.notifier).set(recordA);
+
+      await _pumpTransactionsFlow(
+        tester,
+        repository: FakeTransactionsRepository(transactions: const []),
+        container: container,
+      );
+
+      // Verify A's transactions are rendered
+      expect(find.text('+10000 sat'), findsOneWidget);
+      expect(find.textContaining('tx-a'), findsOneWidget);
+
+      // Switch logical active wallet ID from A to B
+      container.read(activeWalletRecordProvider.notifier).set(recordB);
+      await tester.pumpAndSettle();
+
+      // Verify A's rows are gone, and B's rows loaded automatically without build-time exceptions
+      expect(find.text('+10000 sat'), findsNothing);
+      expect(find.textContaining('tx-a'), findsNothing);
+      expect(find.text('+20000 sat'), findsOneWidget);
+      expect(find.textContaining('tx-b'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'pending transaction updates to confirmed automatically after wallet sync without manual reload',
+    (tester) async {
+      late final ProviderContainer container;
+
+      final record = WalletRecord(
+        id: 'wallet-a',
+        name: 'Wallet A',
+        network: WalletNetwork.testnet,
+        scriptType: ScriptType.p2wpkh,
+      );
+
+      final txPending = TransactionHistoryItem(
+        txid: 'tx-1',
+        sent: 0,
+        received: 10000,
+        pending: true,
+        blockHeight: null,
+        confirmationTime: null,
+      );
+
+      final txConfirmed = TransactionHistoryItem(
+        txid: 'tx-1',
         sent: 0,
         received: 10000,
         pending: false,
-        blockHeight: 100,
+        blockHeight: 200,
         confirmationTime: DateTime.now(),
-      ),
-    ];
+      );
 
-    final txsB = [
-      TransactionHistoryItem(
-        txid: 'tx-b',
-        sent: 0,
-        received: 20000,
-        pending: false,
-        blockHeight: 101,
-        confirmationTime: DateTime.now(),
-      ),
-    ];
+      final repo = MutableTransactionsRepository([txPending]);
 
-    container = ProviderContainer(
-      overrides: [
-        transactionsRepositoryProvider.overrideWith((ref) {
-          final activeId = ref.watch(activeWalletIdProvider);
-          return FakeTransactionsRepository(
-            transactions: activeId == 'wallet-a' ? txsA : txsB,
-          );
-        }),
-      ],
-    );
-    addTearDown(container.dispose);
+      container = ProviderContainer(
+        overrides: [transactionsRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
 
-    container.read(activeWalletRecordProvider.notifier).set(recordA);
+      container.read(activeWalletRecordProvider.notifier).set(record);
+      final walletA = FakeWallet();
+      container.read(activeWalletProvider.notifier).set(walletA);
 
-    await _pumpTransactionsFlow(
-      tester,
-      repository: FakeTransactionsRepository(transactions: const []),
-      container: container,
-    );
+      await _pumpTransactionsFlow(
+        tester,
+        repository: FakeTransactionsRepository(transactions: const []),
+        container: container,
+      );
 
-    // Verify A's transactions are rendered
-    expect(find.text('+10000 sat'), findsOneWidget);
-    expect(find.textContaining('tx-a'), findsOneWidget);
+      // Confirm UI displays: Awaiting confirmation
+      expect(find.text('Awaiting confirmation'), findsOneWidget);
+      expect(find.text('Block 200'), findsNothing);
 
-    // Switch logical active wallet ID from A to B
-    container.read(activeWalletRecordProvider.notifier).set(recordB);
-    await tester.pumpAndSettle();
+      // Simulate a successful wallet sync (replace wallet instance and update mock data)
+      repo.transactions = [txConfirmed];
+      final walletB = FakeWallet();
+      container.read(activeWalletProvider.notifier).set(walletB);
 
-    // Verify A's rows are gone, and B's rows loaded automatically without build-time exceptions
-    expect(find.text('+10000 sat'), findsNothing);
-    expect(find.textContaining('tx-a'), findsNothing);
-    expect(find.text('+20000 sat'), findsOneWidget);
-    expect(find.textContaining('tx-b'), findsOneWidget);
-  });
+      await tester.pumpAndSettle();
 
-  testWidgets('pending transaction updates to confirmed automatically after wallet sync without manual reload', (tester) async {
-    late final ProviderContainer container;
+      // Confirm Awaiting confirmation is gone, and confirmed state shows block height
+      expect(find.text('Awaiting confirmation'), findsNothing);
+      expect(find.text('Block 200'), findsOneWidget);
+    },
+  );
 
-    final record = WalletRecord(
-      id: 'wallet-a',
-      name: 'Wallet A',
-      network: WalletNetwork.testnet,
-      scriptType: ScriptType.p2wpkh,
-    );
+  testWidgets(
+    'stale async results from previous wallet A do not overwrite wallet B state',
+    (tester) async {
+      late final ProviderContainer container;
 
-    final txPending = TransactionHistoryItem(
-      txid: 'tx-1',
-      sent: 0,
-      received: 10000,
-      pending: true,
-      blockHeight: null,
-      confirmationTime: null,
-    );
+      final recordA = WalletRecord(
+        id: 'wallet-a',
+        name: 'Wallet A',
+        network: WalletNetwork.testnet,
+        scriptType: ScriptType.p2wpkh,
+      );
 
-    final txConfirmed = TransactionHistoryItem(
-      txid: 'tx-1',
-      sent: 0,
-      received: 10000,
-      pending: false,
-      blockHeight: 200,
-      confirmationTime: DateTime.now(),
-    );
+      final recordB = WalletRecord(
+        id: 'wallet-b',
+        name: 'Wallet B',
+        network: WalletNetwork.testnet,
+        scriptType: ScriptType.p2wpkh,
+      );
 
-    final repo = MutableTransactionsRepository([txPending]);
+      final completerA = Completer<List<TransactionHistoryItem>>();
+      final completerB = Completer<List<TransactionHistoryItem>>();
 
-    container = ProviderContainer(
-      overrides: [
-        transactionsRepositoryProvider.overrideWithValue(repo),
-      ],
-    );
-    addTearDown(container.dispose);
+      container = ProviderContainer(
+        overrides: [
+          transactionsRepositoryProvider.overrideWith((ref) {
+            final activeId = ref.watch(activeWalletIdProvider);
+            if (activeId == 'wallet-a') {
+              return DelayedTransactionsRepository(completerA.future);
+            } else {
+              return DelayedTransactionsRepository(completerB.future);
+            }
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    container.read(activeWalletRecordProvider.notifier).set(record);
-    final walletA = FakeWallet();
-    container.read(activeWalletProvider.notifier).set(walletA);
+      container.read(activeWalletRecordProvider.notifier).set(recordA);
 
-    await _pumpTransactionsFlow(
-      tester,
-      repository: FakeTransactionsRepository(transactions: const []),
-      container: container,
-    );
+      await _pumpTransactionsFlow(
+        tester,
+        repository: FakeTransactionsRepository(transactions: const []),
+        container: container,
+        settle: false,
+      );
 
-    // Confirm UI displays: Awaiting confirmation
-    expect(find.text('Awaiting confirmation'), findsOneWidget);
-    expect(find.text('Block 200'), findsNothing);
+      // Verify wallet A is loading
+      expect(find.text('Loading transaction history...'), findsOneWidget);
 
-    // Simulate a successful wallet sync (replace wallet instance and update mock data)
-    repo.transactions = [txConfirmed];
-    final walletB = FakeWallet();
-    container.read(activeWalletProvider.notifier).set(walletB);
+      // Switch active wallet to B
+      container.read(activeWalletRecordProvider.notifier).set(recordB);
+      await tester.pump();
 
-    await tester.pumpAndSettle();
+      // Complete A's future
+      completerA.complete([
+        TransactionHistoryItem(
+          txid: 'tx-a',
+          sent: 0,
+          received: 10000,
+          pending: false,
+        ),
+      ]);
+      await tester.pump();
 
-    // Confirm Awaiting confirmation is gone, and confirmed state shows block height
-    expect(find.text('Awaiting confirmation'), findsNothing);
-    expect(find.text('Block 200'), findsOneWidget);
-  });
-
-  testWidgets('stale async results from previous wallet A do not overwrite wallet B state', (tester) async {
-    late final ProviderContainer container;
-
-    final recordA = WalletRecord(
-      id: 'wallet-a',
-      name: 'Wallet A',
-      network: WalletNetwork.testnet,
-      scriptType: ScriptType.p2wpkh,
-    );
-
-    final recordB = WalletRecord(
-      id: 'wallet-b',
-      name: 'Wallet B',
-      network: WalletNetwork.testnet,
-      scriptType: ScriptType.p2wpkh,
-    );
-
-    final completerA = Completer<List<TransactionHistoryItem>>();
-    final completerB = Completer<List<TransactionHistoryItem>>();
-
-    container = ProviderContainer(
-      overrides: [
-        transactionsRepositoryProvider.overrideWith((ref) {
-          final activeId = ref.watch(activeWalletIdProvider);
-          if (activeId == 'wallet-a') {
-            return DelayedTransactionsRepository(completerA.future);
-          } else {
-            return DelayedTransactionsRepository(completerB.future);
-          }
-        }),
-      ],
-    );
-    addTearDown(container.dispose);
-
-    container.read(activeWalletRecordProvider.notifier).set(recordA);
-
-    await _pumpTransactionsFlow(
-      tester,
-      repository: FakeTransactionsRepository(transactions: const []),
-      container: container,
-      settle: false,
-    );
-
-    // Verify wallet A is loading
-    expect(find.text('Loading transaction history...'), findsOneWidget);
-
-    // Switch active wallet to B
-    container.read(activeWalletRecordProvider.notifier).set(recordB);
-    await tester.pump();
-
-    // Complete A's future
-    completerA.complete([
-      TransactionHistoryItem(
-        txid: 'tx-a',
-        sent: 0,
-        received: 10000,
-        pending: false,
-      )
-    ]);
-    await tester.pump();
-
-    // Wallet B's state shouldn't render A's transaction
-    expect(find.text('+10000 sat'), findsNothing);
-  });
+      // Wallet B's state shouldn't render A's transaction
+      expect(find.text('+10000 sat'), findsNothing);
+    },
+  );
 }
