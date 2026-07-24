@@ -30,6 +30,10 @@ bindings and the native library:
 bash ./scripts/generate_bindings.sh
 ```
 
+Dart API docs are injected after generation by `scripts/inject_dartdocs.dart`.
+Edit `scripts/dartdoc/entries.yaml` to change documentation, not `lib/bdk.dart`
+directly. Re-run `bash ./scripts/generate_bindings.sh` after changing doc content.
+
 ## Checks
 
 These shortcuts require `just`; `just ci` runs the full local format, analysis,

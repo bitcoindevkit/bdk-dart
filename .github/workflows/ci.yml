@@ -42,6 +42,9 @@ jobs:
       - name: Ensure generated bindings exist
         run: test -f lib/bdk.dart
 
+      - name: Verify dartdoc injection
+        run: dart scripts/inject_dartdocs.dart --check
+
       - name: Pub get
         run: dart pub get
 

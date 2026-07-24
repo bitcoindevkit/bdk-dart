@@ -24,6 +24,11 @@ docs:
   dart doc
 
 [group("Dart")]
+[doc("Verify dartdoc comments are present in generated bindings.")]
+verify-docs:
+  dart scripts/inject_dartdocs.dart --check
+
+[group("Dart")]
 [doc("Run all tests, optionally filtering by expression.")]
 test *ARGS:
   dart test {{ if ARGS == "" { "" } else { ARGS } }}
