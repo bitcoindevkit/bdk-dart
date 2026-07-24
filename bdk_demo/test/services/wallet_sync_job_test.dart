@@ -51,6 +51,7 @@ _createSqliteWalletFixture(WalletNetwork walletNetwork) async {
     dbPath: dbPath,
   );
   wallet.dispose();
+  persister.dispose();
 
   return (
     dbPath: dbPath,
@@ -294,6 +295,7 @@ void main() {
           lookahead: AppConstants.walletLookahead,
         );
         addTearDown(wallet.dispose);
+        addTearDown(persister.dispose);
 
         expect(
           () => persistWalletSqliteWithReopenVerify(
@@ -341,6 +343,7 @@ void main() {
         lookahead: AppConstants.walletLookahead,
       );
       addTearDown(wallet.dispose);
+      addTearDown(persister.dispose);
 
       await persistWalletSqliteWithReopenVerify(
         wallet: wallet,

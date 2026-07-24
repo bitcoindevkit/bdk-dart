@@ -340,13 +340,16 @@ class WalletService {
 
       try {
         final persister = Persister.newSqlite(path: dbPath);
-        final wallet = _walletLoadRunner(
-          descriptor: descriptor,
-          changeDescriptor: changeDescriptor,
-          persister: persister,
-          lookahead: AppConstants.walletLookahead,
-        );
-        return wallet;
+        try {
+          return _walletLoadRunner(
+            descriptor: descriptor,
+            changeDescriptor: changeDescriptor,
+            persister: persister,
+            lookahead: AppConstants.walletLookahead,
+          );
+        } finally {
+          persister.dispose();
+        }
       } catch (error) {
         throw StateError(
           'Failed to load existing SQLite wallet at "$dbPath". '
@@ -539,9 +542,11 @@ class WalletService {
       );
     } catch (_) {
       _walletDisposer(wallet);
+      persister.dispose();
       await WalletStoragePaths.deleteWalletData(walletId);
       rethrow;
     }
+    persister.dispose();
     return wallet;
   }
 
@@ -610,12 +615,27 @@ class WalletService {
         changeDescriptor,
         fallbackDbPath,
       );
-      await WalletStoragePaths.replaceWalletDataWithFallback(walletId);
-      return wallet;
     } catch (_) {
       _walletDisposer(wallet);
+      fallbackPersister.dispose();
       await WalletStoragePaths.deleteFallbackWalletData(walletId);
       rethrow;
+    }
+
+    _walletDisposer(wallet);
+    fallbackPersister.dispose();
+    await WalletStoragePaths.replaceWalletDataWithFallback(walletId);
+    final dbPath = await WalletStoragePaths.sqlitePathForWallet(walletId);
+    final persister = Persister.newSqlite(path: dbPath);
+    try {
+      return _walletLoadRunner(
+        descriptor: descriptor,
+        changeDescriptor: changeDescriptor,
+        persister: persister,
+        lookahead: AppConstants.walletLookahead,
+      );
+    } finally {
+      persister.dispose();
     }
   }
 
@@ -670,9 +690,10 @@ class WalletService {
     );
 
     Wallet? wallet;
+    Persister? persister;
     try {
       final dbPath = await WalletStoragePaths.sqlitePathForWallet(record.id);
-      final persister = Persister.newSqlite(path: dbPath);
+      persister = Persister.newSqlite(path: dbPath);
       wallet = Wallet(
         descriptor: descriptor,
         changeDescriptor: changeDescriptor,
@@ -694,8 +715,12 @@ class WalletService {
       if (wallet != null) {
         _walletDisposer(wallet);
       }
+      persister?.dispose();
+      persister = null;
       await WalletStoragePaths.deleteWalletData(record.id);
       rethrow;
+    } finally {
+      persister?.dispose();
     }
 
     return (record, wallet);
