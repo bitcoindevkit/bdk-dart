@@ -1,9 +1,34 @@
 import 'package:bdk_dart/bdk.dart';
+import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/services/blockchain_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('BlockchainService.createClientForEndpoint', () {
+    test('uses the provided Electrum endpoint configuration', () {
+      const selectedEndpoint = EndpointConfig(
+        clientType: ClientType.electrum,
+        url: 'ssl://testnet.aranguren.org:51002',
+      );
+
+      final client = BlockchainService.createClientForEndpoint(
+        selectedEndpoint,
+        electrumFactory: (url) => _FakeBlockchainClient(
+          backend: BlockchainBackend.electrum,
+          url: url,
+        ),
+        esploraFactory: (url) => throw StateError('Unexpected Esplora factory'),
+      );
+
+      expect(client.backend, BlockchainBackend.electrum);
+      expect(
+        (client as _FakeBlockchainClient).url,
+        'ssl://testnet.aranguren.org:51002',
+      );
+    });
+  });
+
   group('BlockchainService.createClient', () {
     test('signet routes through the Electrum factory', () {
       final client = BlockchainService.createClient(

@@ -132,8 +132,17 @@ abstract final class BlockchainService {
     WalletNetwork network, {
     EsploraBlockchainClientFactory? esploraFactory,
     ElectrumBlockchainClientFactory? electrumFactory,
+  }) => createClientForEndpoint(
+    defaultEndpoints[network]!,
+    esploraFactory: esploraFactory,
+    electrumFactory: electrumFactory,
+  );
+
+  static BlockchainClient createClientForEndpoint(
+    EndpointConfig config, {
+    EsploraBlockchainClientFactory? esploraFactory,
+    ElectrumBlockchainClientFactory? electrumFactory,
   }) {
-    final config = defaultEndpoints[network]!;
     return switch (config.clientType) {
       ClientType.esplora =>
         esploraFactory?.call(config.url) ??

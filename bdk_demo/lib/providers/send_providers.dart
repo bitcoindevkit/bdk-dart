@@ -1,4 +1,5 @@
 import 'package:bdk_dart/bdk.dart';
+import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/network_endpoint_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
@@ -7,10 +8,10 @@ import 'package:bdk_demo/services/fee_estimates_job.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef BlockchainClientFactory =
-    BlockchainClient Function(WalletNetwork network);
+    BlockchainClient Function(EndpointConfig endpoint);
 
 final blockchainClientFactoryProvider = Provider<BlockchainClientFactory>(
-  (ref) => BlockchainService.createClient,
+  (ref) => BlockchainService.createClientForEndpoint,
 );
 
 final feeEstimatesJobRunnerProvider = Provider<FeeEstimatesJobRunner>(

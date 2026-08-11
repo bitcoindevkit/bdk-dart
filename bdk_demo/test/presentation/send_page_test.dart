@@ -1,4 +1,5 @@
 import 'package:bdk_dart/bdk.dart' hide Key;
+import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/features/send/send_page.dart';
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
@@ -45,6 +46,7 @@ void main() {
   Future<ProviderContainer> createContainer({
     Map<int, double> feeEstimates = const {1: 2.2, 3: 1.4, 6: 1.0},
     bool seedActiveWallet = true,
+    String? selectedEndpointUrl,
     SendTransactionDraftBuilder? draftBuilder,
     BlockchainClientFactory? blockchainClientFactory,
     TransactionsRepository? transactionsRepository,
@@ -52,6 +54,12 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     final storage = StorageService(prefs: prefs);
+    if (selectedEndpointUrl != null) {
+      await storage.setSelectedEndpointUrl(
+        WalletNetwork.testnet,
+        selectedEndpointUrl,
+      );
+    }
     final container = ProviderContainer(
       overrides: [
         storageServiceProvider.overrideWithValue(storage),
@@ -435,6 +443,31 @@ void main() {
 
     final state = container.read(transactionsControllerProvider('send-wallet'));
     expect(state.transactions.single.txid, 'broadcast-tx');
+  });
+
+  testWidgets('broadcast uses the selected network endpoint', (tester) async {
+    const selectedUrl = 'ssl://testnet.aranguren.org:51002';
+    final fake = _SendFlowFake();
+    EndpointConfig? broadcastEndpoint;
+    final container = await createContainer(
+      selectedEndpointUrl: selectedUrl,
+      draftBuilder: fake.build,
+      blockchainClientFactory: (endpoint) {
+        broadcastEndpoint = endpoint;
+        return _FakeBlockchainClient();
+      },
+    );
+
+    await pumpSendPageWithRouter(tester, container);
+    await fillSendForm(tester);
+    await tapReview(tester);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Confirm'));
+    await tester.pumpAndSettle();
+
+    expect(broadcastEndpoint?.clientType, ClientType.electrum);
+    expect(broadcastEndpoint?.url, selectedUrl);
+    expect(fake.broadcastCount, 1);
   });
 
   testWidgets('build failure shows friendly snackbar and stays on SendPage', (
