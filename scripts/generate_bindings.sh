@@ -30,9 +30,9 @@ fi
 # Navigate to the native directory to build the rust code using Cargo.toml
 cd "$NATIVE_DIR"
 echo "Building bdk-dart-ffi..."
-cargo build --profile dev
+cargo build --locked --profile dev
 
 # Generate Dart bindings using local uniffi-bindgen wrapper
-cargo run --profile dev --bin uniffi-bindgen -- generate --library --language dart --out-dir "$BDK_DART_DIR/lib/" "$NATIVE_DIR/target/debug/$LIBNAME"
+cargo run --locked --profile dev --bin uniffi-bindgen -- generate --library --language dart --out-dir "$BDK_DART_DIR/lib/" "$NATIVE_DIR/target/debug/$LIBNAME"
 
 echo "Bindings generated successfully!"

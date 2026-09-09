@@ -11,7 +11,7 @@ Future<void> main(List<String> args) async {
     // config explicitly instead of relying on Cargo's working-directory lookup.
     await RustBuilder(
       assetName: 'uniffi:bdk_dart_ffi',
-      extraCargoBuildArgs: ['--config', cargoConfigPath],
+      extraCargoBuildArgs: ['--locked', '--config', cargoConfigPath],
     ).run(input: input, output: output);
   });
 }
