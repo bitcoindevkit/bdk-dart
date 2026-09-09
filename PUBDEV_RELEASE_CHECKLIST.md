@@ -56,6 +56,12 @@ cd bdk_demo && flutter pub get && flutter analyze
 
 - [ ] `README.md` is up to date for install and usage.
 - [ ] Refresh the README's **Upstream versions** table from `native/Cargo.lock`, including the BDK Dart version and upstream release-notes link.
+
+CI checks this section against the native manifest and lockfile on pull requests
+and branch pushes. Tagged releases run the same CI check before publication.
+Stale or missing versions or an outdated upstream release-notes link fail the check;
+the README is not updated automatically. To check locally from the repository root,
+run `python3 scripts/check_readme_versions.py` (Python 3.11 or newer).
 - [ ] `SUPPORTED_TARGETS.md` is up to date.
 - [ ] Changelog/release notes are prepared.
 - [ ] Release tag/version plan is confirmed with maintainers.
