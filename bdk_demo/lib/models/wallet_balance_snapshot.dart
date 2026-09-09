@@ -16,4 +16,6 @@ class WalletBalanceSnapshot {
   final int confirmedSat;
   final int trustedSpendableSat;
   final int totalSat;
+
+  int get pendingSat => trustedPendingSat + untrustedPendingSat;
 }

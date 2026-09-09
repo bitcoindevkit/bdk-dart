@@ -1,4 +1,4 @@
-import 'package:bdk_demo/features/transactions/models/demo_tx_details.dart';
+import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
 import 'package:bdk_demo/features/transactions/transactions_repository.dart';
 
 class FakeTransactionsRepository implements TransactionsRepository {
@@ -7,11 +7,11 @@ class FakeTransactionsRepository implements TransactionsRepository {
     this.throwOnLoad = false,
   });
 
-  final List<DemoTxDetails> transactions;
+  final List<TransactionHistoryItem> transactions;
   final bool throwOnLoad;
 
   @override
-  Future<List<DemoTxDetails>> loadTransactions() async {
+  Future<List<TransactionHistoryItem>> loadTransactions() async {
     if (throwOnLoad) {
       throw Exception('forced transaction load failure');
     }
@@ -19,7 +19,7 @@ class FakeTransactionsRepository implements TransactionsRepository {
   }
 
   @override
-  Future<DemoTxDetails?> loadTransactionByTxid(String txid) async {
+  Future<TransactionHistoryItem?> loadTransactionByTxid(String txid) async {
     final items = await loadTransactions();
     for (final transaction in items) {
       if (transaction.txid == txid) return transaction;

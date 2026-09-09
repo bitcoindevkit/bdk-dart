@@ -1,9 +1,12 @@
 import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/router/app_router.dart';
+import 'package:bdk_demo/core/theme/app_theme.dart';
 import 'package:bdk_demo/core/utils/formatters.dart';
 import 'package:bdk_demo/features/home/network_endpoint_bottom_sheet.dart';
 import 'package:bdk_demo/features/shared/widgets/secondary_app_bar.dart';
 import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
+import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
+import 'package:bdk_demo/features/transactions/transactions_controller.dart';
 import 'package:bdk_demo/models/currency_unit.dart';
 import 'package:bdk_demo/models/wallet_balance_snapshot.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
@@ -58,6 +61,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     final syncProgress = ref.watch(syncProgressProvider);
     final isOnline = ref.watch(isOnlineProvider);
 
+    final guardedSnapshot = _matchingSnapshot(snapshot, record?.id);
+    final pendingSat = guardedSnapshot?.pendingSat ?? 0;
+
     return Scaffold(
       appBar: const SecondaryAppBar(title: 'Home'),
       body: SafeArea(
@@ -78,7 +84,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     _WalletHeader(record: record),
                     const SizedBox(height: 16),
                     _BalanceCard(
-                      snapshot: _matchingSnapshot(snapshot, record.id),
+                      snapshot: guardedSnapshot,
                       syncStatus: syncStatus,
                       currencyUnit: _currencyUnit,
                       onToggleUnit: () {
@@ -97,6 +103,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ],
                     const SizedBox(height: 16),
                     _ActionRow(isOnline: isOnline),
+                    if (pendingSat > 0) ...[
+                      const SizedBox(height: 16),
+                      _PendingActivityCard(
+                        pendingSat: pendingSat,
+                        walletId: record.id,
+                        currencyUnit: _currencyUnit,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -150,9 +164,9 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   WalletBalanceSnapshot? _matchingSnapshot(
     WalletBalanceSnapshot? snapshot,
-    String walletId,
+    String? walletId,
   ) {
-    if (snapshot?.walletId != walletId) return null;
+    if (walletId == null || snapshot?.walletId != walletId) return null;
     return snapshot;
   }
 
@@ -227,17 +241,23 @@ class _BalanceCard extends StatelessWidget {
   final CurrencyUnit currencyUnit;
   final VoidCallback onToggleUnit;
 
+  String? get _subtitle {
+    final snapshot = this.snapshot;
+    if (snapshot == null) {
+      return syncStatus == SyncStatus.syncing
+          ? 'Syncing wallet...'
+          : 'Balance will update after sync.';
+    }
+    if (snapshot.totalSat == snapshot.trustedSpendableSat) return null;
+    return 'Total incl. pending: '
+        '${Formatters.formatBalance(snapshot.totalSat, currencyUnit)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final totalSat = snapshot?.totalSat ?? 0;
     final trustedSpendableSat = snapshot?.trustedSpendableSat ?? 0;
-    final hasSnapshot = snapshot != null;
-    final subtitle = hasSnapshot
-        ? 'Trusted spendable: ${Formatters.formatBalance(trustedSpendableSat, currencyUnit)}'
-        : syncStatus == SyncStatus.syncing
-        ? 'Syncing wallet...'
-        : 'Balance will update after sync.';
+    final subtitle = _subtitle;
 
     return Card(
       child: InkWell(
@@ -269,18 +289,20 @@ class _BalanceCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                Formatters.formatBalance(totalSat, currencyUnit),
+                Formatters.formatBalance(trustedSpendableSat, currencyUnit),
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                subtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(170),
+              if (subtitle != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  subtitle,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withAlpha(170),
+                  ),
                 ),
-              ),
+              ],
               const SizedBox(height: 12),
               Text(
                 'Tap balance to toggle units',
@@ -597,6 +619,157 @@ class _ActionRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _PendingActivityCard extends ConsumerWidget {
+  const _PendingActivityCard({
+    required this.pendingSat,
+    required this.walletId,
+    required this.currencyUnit,
+  });
+
+  final int pendingSat;
+  final String walletId;
+  final CurrencyUnit currencyUnit;
+
+  static const _maxRows = 3;
+
+  void _openTransactionDetail(
+    BuildContext context,
+    TransactionHistoryItem transaction,
+  ) {
+    context.pushNamed(
+      'transactionDetail',
+      pathParameters: {'txid': transaction.txid},
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final state = ref.watch(transactionsControllerProvider(walletId));
+    final pendingTxs = state.transactions
+        .where((transaction) => transaction.pending)
+        .toList(growable: false);
+    final visibleTxs = pendingTxs.take(_maxRows).toList(growable: false);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Pending',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Text(
+                  Formatters.formatBalance(pendingSat, currencyUnit),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: theme.colorScheme.secondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Awaiting confirmation',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(170),
+              ),
+            ),
+            if (visibleTxs.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              for (var index = 0; index < visibleTxs.length; index++) ...[
+                _PendingTransactionRow(
+                  transaction: visibleTxs[index],
+                  onTap: () =>
+                      _openTransactionDetail(context, visibleTxs[index]),
+                ),
+                if (index < visibleTxs.length - 1) const SizedBox(height: 12),
+              ],
+            ],
+            if (pendingTxs.length > _maxRows) ...[
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => context.push(AppRoutes.transactionHistory),
+                child: Text('View all (${pendingTxs.length})'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PendingTransactionRow extends StatelessWidget {
+  const _PendingTransactionRow({
+    required this.transaction,
+    required this.onTap,
+  });
+
+  final TransactionHistoryItem transaction;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final amount = transaction.netAmount;
+    final amountLabel =
+        '${amount >= 0 ? '+' : '-'}${Formatters.formatBalance(amount.abs(), CurrencyUnit.satoshi)}';
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Ink(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: theme.colorScheme.outlineVariant),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      amountLabel,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      transaction.shortTxid,
+                      style: AppTheme.monoStyle.copyWith(
+                        fontSize: 13,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              WalletStatusChip(status: transaction.statusLabel),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

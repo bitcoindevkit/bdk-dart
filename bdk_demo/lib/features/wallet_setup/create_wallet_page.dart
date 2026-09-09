@@ -61,7 +61,7 @@ class _CreateWalletPageState extends ConsumerState<CreateWalletPage> {
       ref.read(walletRecordsProvider.notifier).refresh();
 
       _showSnackBar('Wallet created');
-      context.go(AppRoutes.home);
+      context.replace(AppRoutes.home);
     } on ArgumentError {
       if (!mounted) return;
       _showSnackBar('Invalid wallet name');

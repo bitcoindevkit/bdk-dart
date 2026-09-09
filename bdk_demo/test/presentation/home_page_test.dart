@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:bdk_dart/bdk.dart';
 import 'package:bdk_demo/core/utils/wallet_storage_paths.dart';
 import 'package:bdk_demo/features/home/home_page.dart';
+import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
+import 'package:bdk_demo/features/transactions/transactions_repository.dart';
+import 'package:bdk_demo/models/wallet_balance_snapshot.dart';
 import 'package:bdk_demo/models/wallet_record.dart';
 import 'package:bdk_demo/providers/blockchain_providers.dart';
 import 'package:bdk_demo/providers/connectivity_provider.dart';
@@ -19,6 +22,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+
+import '../helpers/fakes/fake_transactions_repository.dart';
 
 const _testExtendedPrivKey =
     'tprv8ZgxMBicQKsPf2qfrEygW6fdYseJDDrVnDv26PH5BHdvSuG6ecCbHqLVof9yZcMoM31z9ur3tTYbSnr1WBqbGX97CbXcmp5H6qeMpyvx35B';
@@ -45,6 +50,19 @@ Future<WalletSyncResult> _noopSyncRunner(WalletSyncRequest request) async {
   return WalletSyncResult.success(
     walletId: request.walletId,
     performedFullScan: true,
+  );
+}
+
+TransactionHistoryItem _pendingTx({
+  required String txid,
+  int sent = 0,
+  int received = 0,
+}) {
+  return TransactionHistoryItem(
+    txid: txid,
+    sent: sent,
+    received: received,
+    pending: true,
   );
 }
 
@@ -177,6 +195,29 @@ void main() {
         .applyFromWallet(wallet, walletId);
   }
 
+  void seedSnapshot(
+    ProviderContainer container, {
+    required String walletId,
+    int confirmed = 0,
+    int trustedPending = 0,
+    int untrustedPending = 0,
+    int immature = 0,
+  }) {
+    container
+        .read(balanceSnapshotProvider.notifier)
+        .applySnapshot(
+          WalletBalanceSnapshot(
+            walletId: walletId,
+            immatureSat: immature,
+            trustedPendingSat: trustedPending,
+            untrustedPendingSat: untrustedPending,
+            confirmedSat: confirmed,
+            trustedSpendableSat: confirmed + trustedPending,
+            totalSat: confirmed + trustedPending + untrustedPending + immature,
+          ),
+        );
+  }
+
   test('fake sync runner is invoked by SyncController', () async {
     var syncCalls = 0;
     final container = await createContainer(
@@ -195,7 +236,7 @@ void main() {
     expect(syncCalls, 1);
   });
 
-  testWidgets('renders total balance in BTC mode and toggles to sats', (
+  testWidgets('renders spendable balance in BTC mode and toggles to sats', (
     tester,
   ) async {
     final container = await createContainer();
@@ -704,6 +745,140 @@ void main() {
     await flushAutoSync(tester);
 
     expect(syncCalls, 0);
+  });
+
+  testWidgets('keeps hero at zero and shows pending card for '
+      'untrusted-pending-only snapshot', (tester) async {
+    final container = await createContainer(
+      overrides: [
+        transactionsRepositoryProvider.overrideWithValue(
+          FakeTransactionsRepository(
+            transactions: [
+              _pendingTx(txid: 'feedfacefeedfacefeedface0001', received: 25000),
+            ],
+          ),
+        ),
+      ],
+    );
+    final (record, _) = await seedActiveWallet(container);
+    seedSnapshot(container, walletId: record.id, untrustedPending: 25000);
+
+    await pumpHomePage(tester, container);
+    await tester.pump();
+
+    expect(find.text('0.00000000'), findsOneWidget);
+    expect(find.text('Total incl. pending: 0.00025000'), findsOneWidget);
+    expect(find.text('Pending'), findsOneWidget);
+    expect(find.text('0.00025000'), findsOneWidget);
+    expect(find.text('Awaiting confirmation'), findsOneWidget);
+    expect(find.text('+25000 sat'), findsOneWidget);
+    expect(find.text('pending'), findsOneWidget);
+  });
+
+  testWidgets('hides pending card when snapshot has no pending funds', (
+    tester,
+  ) async {
+    final container = await createContainer();
+    final (record, _) = await seedActiveWallet(container);
+    seedSnapshot(container, walletId: record.id, confirmed: 50000);
+
+    await pumpHomePage(tester, container);
+
+    expect(find.text('0.00050000'), findsOneWidget);
+    expect(find.text('Pending'), findsNothing);
+    expect(find.text('Awaiting confirmation'), findsNothing);
+    expect(find.textContaining('Total incl. pending'), findsNothing);
+  });
+
+  testWidgets('caps pending rows at three with a view-all link', (
+    tester,
+  ) async {
+    final container = await createContainer(
+      overrides: [
+        transactionsRepositoryProvider.overrideWithValue(
+          FakeTransactionsRepository(
+            transactions: [
+              _pendingTx(txid: 'feedfacefeedfacefeedface0001', received: 1000),
+              _pendingTx(txid: 'feedfacefeedfacefeedface0002', received: 2000),
+              _pendingTx(txid: 'feedfacefeedfacefeedface0003', received: 3000),
+              _pendingTx(txid: 'feedfacefeedfacefeedface0004', received: 4000),
+            ],
+          ),
+        ),
+      ],
+    );
+    final (record, _) = await seedActiveWallet(container);
+    seedSnapshot(container, walletId: record.id, untrustedPending: 10000);
+
+    await pumpHomePage(tester, container);
+    await tester.pump();
+
+    expect(find.text('+1000 sat'), findsOneWidget);
+    expect(find.text('+2000 sat'), findsOneWidget);
+    expect(find.text('+3000 sat'), findsOneWidget);
+    expect(find.text('+4000 sat'), findsNothing);
+    expect(find.text('View all (4)'), findsOneWidget);
+  });
+
+  testWidgets('pending card clears after confirmation and sync', (
+    tester,
+  ) async {
+    final container = await createContainer(
+      overrides: [
+        transactionsRepositoryProvider.overrideWithValue(
+          FakeTransactionsRepository(
+            transactions: [
+              _pendingTx(txid: 'feedfacefeedfacefeedface0001', received: 25000),
+            ],
+          ),
+        ),
+      ],
+    );
+    final (record, _) = await seedActiveWallet(container);
+    seedSnapshot(container, walletId: record.id, untrustedPending: 25000);
+
+    await pumpHomePage(tester, container);
+    await tester.pump();
+
+    expect(find.text('Pending'), findsOneWidget);
+
+    container.read(activeWalletProvider.notifier).set(_createTestWallet());
+    seedSnapshot(container, walletId: record.id, confirmed: 25000);
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Pending'), findsNothing);
+    expect(find.text('0.00025000'), findsOneWidget);
+  });
+
+  testWidgets('pending header follows the currency unit toggle', (
+    tester,
+  ) async {
+    final container = await createContainer(
+      overrides: [
+        transactionsRepositoryProvider.overrideWithValue(
+          FakeTransactionsRepository(
+            transactions: [
+              _pendingTx(txid: 'feedfacefeedfacefeedface0001', received: 25000),
+            ],
+          ),
+        ),
+      ],
+    );
+    final (record, _) = await seedActiveWallet(container);
+    seedSnapshot(container, walletId: record.id, untrustedPending: 25000);
+
+    await pumpHomePage(tester, container);
+    await tester.pump();
+
+    expect(find.text('0.00025000'), findsOneWidget);
+
+    await tester.tap(find.text('0.00000000'));
+    await tester.pump();
+
+    expect(find.text('0 sat'), findsOneWidget);
+    expect(find.text('25000 sat'), findsOneWidget);
+    expect(find.text('+25000 sat'), findsOneWidget);
   });
 }
 

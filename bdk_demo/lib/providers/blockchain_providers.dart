@@ -161,6 +161,9 @@ class BalanceSnapshotNotifier extends Notifier<WalletBalanceSnapshot?> {
 
   void clear() => state = null;
 
+  @visibleForTesting
+  void applySnapshot(WalletBalanceSnapshot snapshot) => state = snapshot;
+
   void applyFromWallet(Wallet wallet, String walletId) {
     final b = wallet.balance();
     state = WalletBalanceSnapshot(
