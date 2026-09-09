@@ -2,6 +2,11 @@
 
 All notable changes to `bdk_dart` will be documented in this file.
 
+## 1.0.0-rc.4
+
+- Update the native dependency to `bdk-ffi` `v3.1.0` and regenerate the Dart bindings.
+- Enforce locked native dependencies and check generated binding drift in CI.
+
 ## 1.0.0-rc.3
 
 - Make native library builds reproducible by tracking `native/Cargo.lock`, shipping it in the pub.dev archive, and pinning release builds to a single Rust codegen unit.
