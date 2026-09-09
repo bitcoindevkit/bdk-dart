@@ -1,0 +1,54 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pub-dev-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify release tag matches package version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import pathlib
+          import re
+
+          pubspec = pathlib.Path('pubspec.yaml').read_text()
+          match = re.search(r'^version:\s*(\S+)\s*$', pubspec, re.MULTILINE)
+          if match is None:
+              raise SystemExit('Could not read package version from pubspec.yaml')
+          expected = f'v{match.group(1)}'
+          actual = os.environ['RELEASE_TAG']
+          if actual != expected:
+              raise SystemExit(f'Tag {actual} does not match package version {expected}')
+          print(f'Publishing candidate: {actual}')
+          PY
+
+  validate:
+    needs: release-version
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: validate
+    permissions:
+      contents: read
+      id-token: write
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+    with:
+      environment: pub.dev
