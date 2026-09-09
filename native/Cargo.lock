@@ -148,8 +148,8 @@ dependencies = [
 
 [[package]]
 name = "bdk-ffi"
-version = "3.1.0-alpha.0"
-source = "git+https://github.com/bitcoindevkit/bdk-ffi.git?rev=17c48b8b52ba81cdc58531e75ad1165be0cc25d9#17c48b8b52ba81cdc58531e75ad1165be0cc25d9"
+version = "3.1.0"
+source = "git+https://github.com/bitcoindevkit/bdk-ffi.git?tag=v3.1.0#5fa4898a4dc6d1c3df12f2676a662149eff500ff"
 dependencies = [
  "bdk_electrum",
  "bdk_esplora",
@@ -215,9 +215,9 @@ dependencies = [
 
 [[package]]
 name = "bdk_kyoto"
-version = "0.17.0"
+version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "346c1d502ee4613cf2201db9c3b93a2317772d8eaa372114f34bf5f374be94fd"
+checksum = "8af2d4c542f83e4d20afd49f61b2b5075b24f7d684deb1a3a7652b1fa4105ae8"
 dependencies = [
  "bdk_wallet",
  "bip157",
@@ -225,9 +225,9 @@ dependencies = [
 
 [[package]]
 name = "bdk_wallet"
-version = "3.0.0"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67f3c4f9526d22374fca5b7ff1d6bf8d921ab56db2dac8df66a2c5561b31d4ef"
+checksum = "1284fb23acc3e3022673712b55f4d5ce7e38aadc2c49bbef830dc3935f0a3289"
 dependencies = [
  "bdk_chain",
  "bip39",
