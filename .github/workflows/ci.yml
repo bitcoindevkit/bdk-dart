@@ -42,6 +42,9 @@ jobs:
       - name: Ensure generated bindings exist
         run: test -f lib/bdk.dart
 
+      - name: Check generated binding drift
+        run: git diff --exit-code -- lib/bdk.dart
+
       - name: Pub get
         run: dart pub get
 
