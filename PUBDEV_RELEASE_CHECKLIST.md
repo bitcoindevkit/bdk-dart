@@ -55,6 +55,7 @@ cd bdk_demo && flutter pub get && flutter analyze
 ## 4. Release prep
 
 - [ ] `README.md` is up to date for install and usage.
+- [ ] Refresh the README's **Upstream versions** table from `native/Cargo.lock`, including the BDK Dart version and upstream release-notes link.
 - [ ] `SUPPORTED_TARGETS.md` is up to date.
 - [ ] Changelog/release notes are prepared.
 - [ ] Release tag/version plan is confirmed with maintainers.

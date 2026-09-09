@@ -5,6 +5,23 @@ The repo contains the sources for generating UniFFI-based bindings (`lib/bdk.dar
 `libbdk_dart_ffi` native library, so Dart and Flutter apps can work with descriptor-based wallets,
 key management utilities, and blockchain backends from BDK.
 
+## Upstream versions
+
+`bdk_dart` **1.0.0-rc.4** uses the following versions, pinned in
+[`native/Cargo.toml`](native/Cargo.toml) and [`native/Cargo.lock`](native/Cargo.lock):
+
+| Dependency | Version |
+| --- | --- |
+| `bdk-ffi` | 3.1.0 |
+| `bdk_wallet` | 3.1.0 |
+| `bdk_electrum` | 0.24.0 |
+| `bdk_esplora` | 0.22.2 |
+| `bdk_kyoto` | 0.17.1 |
+| `uniffi` | 0.31.2 |
+
+See the [BDK FFI v3.1.0 release notes](https://github.com/bitcoindevkit/bdk-ffi/blob/v3.1.0/CHANGELOG.md)
+for upstream changes. For an older BDK Dart release, consult the lockfile at that release's Git tag.
+
 ## Repository layout
 
 | Path                           | Purpose                                                                                                                           |
