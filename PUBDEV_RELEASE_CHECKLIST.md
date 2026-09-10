@@ -62,6 +62,15 @@ and branch pushes. Tagged releases run the same CI check before publication.
 Stale or missing versions or an outdated upstream release-notes link fail the check;
 the README is not updated automatically. To check locally from the repository root,
 run `python3 scripts/check_readme_versions.py` (Python 3.11 or newer).
+
+Development branches may pin `bdk-ffi` by `rev`. In that case, replace the upstream
+release-notes link in the README section with `[BDK FFI development commit](https://github.com/bitcoindevkit/bdk-ffi/commit/<full-commit>)`,
+using the resolved commit after `#` in its lockfile source. Keep the version table
+in sync with the lockfile. Tagged releases require a `tag` pin and the matching
+release-notes link. To check release rules locally, run
+`GITHUB_REF=refs/tags/v1.0.0-rc.4 python3 scripts/check_readme_versions.py`
+(substitute the intended release tag).
+
 - [ ] `SUPPORTED_TARGETS.md` is up to date.
 - [ ] Changelog/release notes are prepared.
 - [ ] Release tag/version plan is confirmed with maintainers.
