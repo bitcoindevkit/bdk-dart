@@ -5,7 +5,6 @@ import 'package:bdk_demo/features/shared/widgets/wallet_ui_helpers.dart';
 import 'package:bdk_demo/features/transactions/transactions_controller.dart';
 import 'package:bdk_demo/providers/blockchain_providers.dart';
 import 'package:bdk_demo/providers/connectivity_provider.dart';
-import 'package:bdk_demo/providers/network_endpoint_providers.dart';
 import 'package:bdk_demo/providers/send_providers.dart';
 import 'package:bdk_demo/providers/wallet_providers.dart';
 import 'package:flutter/material.dart';
@@ -344,8 +343,9 @@ class _SendPageState extends ConsumerState<SendPage> {
     if (confirmed != true || !mounted) return;
 
     setState(() => _isBroadcasting = true);
-    final endpoint = ref.read(endpointConfigProvider(record.network));
-    final client = ref.read(blockchainClientFactoryProvider).call(endpoint);
+    final client = ref
+        .read(blockchainClientFactoryProvider)
+        .call(record.network);
     try {
       await draft.broadcast(client);
       if (!mounted) return;

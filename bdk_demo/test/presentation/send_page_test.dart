@@ -1,5 +1,4 @@
 import 'package:bdk_dart/bdk.dart' hide Key;
-import 'package:bdk_demo/core/constants/app_constants.dart';
 import 'package:bdk_demo/core/router/app_router.dart';
 import 'package:bdk_demo/features/send/send_page.dart';
 import 'package:bdk_demo/features/transactions/models/transaction_history_item.dart';
@@ -46,7 +45,6 @@ void main() {
   Future<ProviderContainer> createContainer({
     Map<int, double> feeEstimates = const {1: 2.2, 3: 1.4, 6: 1.0},
     bool seedActiveWallet = true,
-    String? selectedEndpointUrl,
     SendTransactionDraftBuilder? draftBuilder,
     BlockchainClientFactory? blockchainClientFactory,
     TransactionsRepository? transactionsRepository,
@@ -54,12 +52,6 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     final storage = StorageService(prefs: prefs);
-    if (selectedEndpointUrl != null) {
-      await storage.setSelectedEndpointUrl(
-        WalletNetwork.testnet,
-        selectedEndpointUrl,
-      );
-    }
     final container = ProviderContainer(
       overrides: [
         storageServiceProvider.overrideWithValue(storage),
@@ -445,15 +437,15 @@ void main() {
     expect(state.transactions.single.txid, 'broadcast-tx');
   });
 
-  testWidgets('broadcast uses the selected network endpoint', (tester) async {
-    const selectedUrl = 'ssl://testnet.aranguren.org:51002';
+  testWidgets('broadcast requests a client for the active wallet network', (
+    tester,
+  ) async {
     final fake = _SendFlowFake();
-    EndpointConfig? broadcastEndpoint;
+    WalletNetwork? broadcastNetwork;
     final container = await createContainer(
-      selectedEndpointUrl: selectedUrl,
       draftBuilder: fake.build,
-      blockchainClientFactory: (endpoint) {
-        broadcastEndpoint = endpoint;
+      blockchainClientFactory: (network) {
+        broadcastNetwork = network;
         return _FakeBlockchainClient();
       },
     );
@@ -465,8 +457,7 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Confirm'));
     await tester.pumpAndSettle();
 
-    expect(broadcastEndpoint?.clientType, ClientType.electrum);
-    expect(broadcastEndpoint?.url, selectedUrl);
+    expect(broadcastNetwork, WalletNetwork.testnet);
     expect(fake.broadcastCount, 1);
   });
 

@@ -8,10 +8,13 @@ import 'package:bdk_demo/services/fee_estimates_job.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef BlockchainClientFactory =
-    BlockchainClient Function(EndpointConfig endpoint);
+    BlockchainClient Function(WalletNetwork network);
 
 final blockchainClientFactoryProvider = Provider<BlockchainClientFactory>(
-  (ref) => BlockchainService.createClientForEndpoint,
+  (ref) => (network) {
+    final endpoint = ref.read(endpointConfigProvider(network));
+    return BlockchainService.createClientForEndpoint(endpoint);
+  },
 );
 
 final feeEstimatesJobRunnerProvider = Provider<FeeEstimatesJobRunner>(
