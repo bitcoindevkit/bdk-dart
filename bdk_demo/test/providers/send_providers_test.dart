@@ -10,9 +10,7 @@ void main() {
     final endpointError = StateError('endpoint resolved');
     final container = ProviderContainer(
       overrides: [
-        endpointConfigProvider(
-          WalletNetwork.regtest,
-        ).overrideWith((ref) {
+        endpointConfigProvider(WalletNetwork.regtest).overrideWith((ref) {
           endpointResolved = true;
           throw endpointError;
         }),
