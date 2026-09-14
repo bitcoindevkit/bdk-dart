@@ -120,14 +120,6 @@ final class ElectrumBlockchainClient implements BlockchainClient {
 }
 
 abstract final class BlockchainService {
-  static BlockchainBackend backendForNetwork(WalletNetwork network) {
-    final config = defaultEndpoints[network]!;
-    return switch (config.clientType) {
-      ClientType.esplora => BlockchainBackend.esplora,
-      ClientType.electrum => BlockchainBackend.electrum,
-    };
-  }
-
   static BlockchainClient createClient(
     WalletNetwork network, {
     EsploraBlockchainClientFactory? esploraFactory,

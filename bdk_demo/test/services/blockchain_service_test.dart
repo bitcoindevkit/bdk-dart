@@ -72,29 +72,6 @@ void main() {
     });
   });
 
-  group('BlockchainService.backendForNetwork', () {
-    test('signet maps to Electrum', () {
-      expect(
-        BlockchainService.backendForNetwork(WalletNetwork.signet),
-        BlockchainBackend.electrum,
-      );
-    });
-
-    test('testnet maps to Electrum', () {
-      expect(
-        BlockchainService.backendForNetwork(WalletNetwork.testnet),
-        BlockchainBackend.electrum,
-      );
-    });
-
-    test('regtest maps to Esplora', () {
-      expect(
-        BlockchainService.backendForNetwork(WalletNetwork.regtest),
-        BlockchainBackend.esplora,
-      );
-    });
-  });
-
   group('BlockchainFeeNormalizer', () {
     test('electrum conversion scales BTC/kvB to sat/vB', () {
       expect(
