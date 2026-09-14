@@ -437,6 +437,30 @@ void main() {
     expect(state.transactions.single.txid, 'broadcast-tx');
   });
 
+  testWidgets('broadcast requests a client for the active wallet network', (
+    tester,
+  ) async {
+    final fake = _SendFlowFake();
+    WalletNetwork? broadcastNetwork;
+    final container = await createContainer(
+      draftBuilder: fake.build,
+      blockchainClientFactory: (network) {
+        broadcastNetwork = network;
+        return _FakeBlockchainClient();
+      },
+    );
+
+    await pumpSendPageWithRouter(tester, container);
+    await fillSendForm(tester);
+    await tapReview(tester);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Confirm'));
+    await tester.pumpAndSettle();
+
+    expect(broadcastNetwork, WalletNetwork.testnet);
+    expect(fake.broadcastCount, 1);
+  });
+
   testWidgets('build failure shows friendly snackbar and stays on SendPage', (
     tester,
   ) async {
