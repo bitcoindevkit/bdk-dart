@@ -152,7 +152,9 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
 
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
