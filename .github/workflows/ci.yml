@@ -121,16 +121,6 @@ jobs:
         with:
           sdk: "3.10.0"
 
-      - name: Verify pub archive includes native Cargo config
-        shell: bash
-        run: |
-          publish_output="$(dart pub publish --dry-run --skip-validation --verbose 2>&1)"
-          printf '%s\n' "$publish_output"
-          if ! grep -Fqx "    | $PWD/native/cargo-config.toml" <<< "$publish_output"; then
-            echo "native/cargo-config.toml is missing from the pub archive"
-            exit 1
-          fi
-
       - name: Pub get (bdk_demo)
         working-directory: bdk_demo
         run: flutter pub get
@@ -209,8 +199,7 @@ jobs:
             --manifest-path native/Cargo.toml \
             --package bdk_dart_ffi \
             --target "${{ matrix.rust_target }}" \
-            --target-dir /tmp/bdk-dart-android-target \
-            --config native/cargo-config.toml
+            --target-dir /tmp/bdk-dart-android-target
 
       - name: Verify NDK 27 native library alignment
         run: dart scripts/check_android_elf_alignment.dart /tmp/bdk-dart-android-target/${{ matrix.rust_target }}/release/libbdk_dart_ffi.so

@@ -66,7 +66,6 @@ dart pub publish --dry-run
 ```
 
 - [ ] Dry run passes with no unexpected warnings/errors.
-- [ ] Dry run package contents include `native/cargo-config.toml`.
 
 ## 6. Publish and verify
 
