@@ -4,11 +4,12 @@ import 'package:native_toolchain_rust/native_toolchain_rust.dart';
 Future<void> main(List<String> args) async {
   await build(args, (input, output) async {
     final cargoConfigPath = input.packageRoot
-        .resolve('native/.cargo/config.toml')
+        .resolve('native/cargo-config.toml')
         .toFilePath();
 
     // Native Assets invokes Cargo from the package root, so pass the crate-local
     // config explicitly instead of relying on Cargo's working-directory lookup.
+    // Its non-hidden path ensures pub includes it in package archives.
     await RustBuilder(
       assetName: 'uniffi:bdk_dart_ffi',
       extraCargoBuildArgs: ['--locked', '--config', cargoConfigPath],

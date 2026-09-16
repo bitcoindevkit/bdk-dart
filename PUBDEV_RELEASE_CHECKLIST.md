@@ -66,6 +66,7 @@ dart pub publish --dry-run
 ```
 
 - [ ] Dry run passes with no unexpected warnings/errors.
+- [ ] Dry run package contents include `native/cargo-config.toml`.
 
 ## 6. Publish and verify
 
@@ -75,7 +76,7 @@ dart pub publish --dry-run
 - [ ] Confirm the publishing job's dry run and upload succeed. If a run fails, inspect its logs and pub.dev before retrying; do not move an existing release tag or attempt to overwrite a published version.
 - [ ] Verify package page renders correctly on pub.dev.
 - [ ] Verify version and metadata fields are correct.
-- [ ] Perform a clean install test from pub.dev in a sample project.
+- [ ] In a fresh sample project, pin the exact published version from pub.dev and trigger a Native Assets build.
 - [ ] Announce release with release notes.
 
 ### Manual fallback
