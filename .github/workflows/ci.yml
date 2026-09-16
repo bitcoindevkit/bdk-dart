@@ -124,9 +124,9 @@ jobs:
       - name: Verify pub archive includes native Cargo config
         shell: bash
         run: |
-          publish_output="$(dart pub publish --dry-run --skip-validation 2>&1)"
+          publish_output="$(dart pub publish --dry-run --skip-validation --verbose 2>&1)"
           printf '%s\n' "$publish_output"
-          if [[ "$publish_output" != *"cargo-config.toml"* ]]; then
+          if ! grep -Fqx "    | $PWD/native/cargo-config.toml" <<< "$publish_output"; then
             echo "native/cargo-config.toml is missing from the pub archive"
             exit 1
           fi

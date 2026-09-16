@@ -37,3 +37,6 @@ It is the source of truth for what is currently validated versus planned.
 
 - CI coverage above refers to the current workflow at `.github/workflows/ci.yml`.
 - CI-validated mobile targets are currently smoke builds (`android-smoke`, `ios-smoke`), not full runtime integration test jobs.
+- Native Assets passes `native/cargo-config.toml` to Cargo automatically. Manual Android Cargo builds must pass
+  `--config cargo-config.toml` from `native/` (or `--config native/cargo-config.toml` from the repository root) to
+  preserve 16 KiB ELF alignment.
