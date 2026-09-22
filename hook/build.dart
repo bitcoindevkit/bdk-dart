@@ -3,15 +3,11 @@ import 'package:native_toolchain_rust/native_toolchain_rust.dart';
 
 Future<void> main(List<String> args) async {
   await build(args, (input, output) async {
-    final cargoConfigPath = input.packageRoot
-        .resolve('native/.cargo/config.toml')
-        .toFilePath();
-
-    // Native Assets invokes Cargo from the package root, so pass the crate-local
-    // config explicitly instead of relying on Cargo's working-directory lookup.
+    // Android 16 KiB page alignment is handled by native/build.rs, so no extra
+    // Cargo configuration needs to be shipped or passed here.
     await RustBuilder(
       assetName: 'uniffi:bdk_dart_ffi',
-      extraCargoBuildArgs: ['--locked', '--config', cargoConfigPath],
+      extraCargoBuildArgs: ['--locked'],
     ).run(input: input, output: output);
   });
 }

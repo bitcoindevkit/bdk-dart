@@ -153,6 +153,8 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: ""
 
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
@@ -199,8 +201,7 @@ jobs:
             --manifest-path native/Cargo.toml \
             --package bdk_dart_ffi \
             --target "${{ matrix.rust_target }}" \
-            --target-dir /tmp/bdk-dart-android-target \
-            --config native/.cargo/config.toml
+            --target-dir /tmp/bdk-dart-android-target
 
       - name: Verify NDK 27 native library alignment
         run: dart scripts/check_android_elf_alignment.dart /tmp/bdk-dart-android-target/${{ matrix.rust_target }}/release/libbdk_dart_ffi.so

@@ -5,6 +5,7 @@ version = "1.0.0-rc.4"
 homepage = "https://bitcoindevkit.org"
 repository = "https://github.com/bitcoindevkit/bdk-dart"
 edition = "2021"
+build = "build.rs"
 license = "MIT OR Apache-2.0"
 publish = false
 
@@ -21,12 +22,6 @@ bdk-ffi = { package = "bdk-ffi", git = "https://github.com/bitcoindevkit/bdk-ffi
 uniffi = { version = "=0.31.2", features = ["cli"] }
 uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.1+v0.31.2" }
 camino = "1.2"
-
-[build-dependencies]
-uniffi = { version = "=0.31.2", features = ["build"] }
-uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.1+v0.31.2", features = [
-    "build",
-] }
 
 # Reproducible builds: force a single codegen unit. With the default (16),
 # rustc partitions each crate across parallel codegen units and the resulting

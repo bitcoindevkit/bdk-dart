@@ -37,3 +37,6 @@ It is the source of truth for what is currently validated versus planned.
 
 - CI coverage above refers to the current workflow at `.github/workflows/ci.yml`.
 - CI-validated mobile targets are currently smoke builds (`android-smoke`, `ios-smoke`), not full runtime integration test jobs.
+- `native/build.rs` adds the 16 KiB ELF page-alignment linker flags whenever the Cargo target OS is Android, so
+  Native Assets, CI, and manual `cargo build --target <android-triple>` runs all produce correctly aligned libraries
+  without extra Cargo configuration.
