@@ -10,7 +10,10 @@ typedef BlockchainClientFactory =
     BlockchainClient Function(WalletNetwork network);
 
 final blockchainClientFactoryProvider = Provider<BlockchainClientFactory>(
-  (ref) => BlockchainService.createClient,
+  (ref) => (network) {
+    final endpoint = ref.read(endpointConfigProvider(network));
+    return BlockchainService.createClientForEndpoint(endpoint);
+  },
 );
 
 final feeEstimatesJobRunnerProvider = Provider<FeeEstimatesJobRunner>(
