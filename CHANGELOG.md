@@ -4,6 +4,7 @@ All notable changes to `bdk_dart` will be documented in this file.
 
 ## 1.0.0-rc.4
 
+- Require `hooks` 2 and `native_toolchain_rust` 1.0.7 so apps already on hooks 2 can depend on this package.
 - Update the native dependency to `bdk-ffi` `v3.1.0` and regenerate the Dart bindings.
 - Enforce locked native dependencies and check generated binding drift in CI.
 
