@@ -4,8 +4,8 @@ Keep PRs focused and include the smallest checks that cover the change.
 
 ## Setup
 
-Install Dart 3.10 or newer and Rust stable. Install Flutter stable when working
-on `bdk_demo` or mobile targets.
+Install Dart 3.10 or newer (CI uses 3.13.4) and Rust stable. Install Flutter
+stable when working on `bdk_demo` or mobile targets.
 
 From the repository root:
 
