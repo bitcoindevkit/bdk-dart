@@ -1,5 +1,5 @@
 name: bdk_dart
-description: Dart bindings for bdk-ffi, built on the Bitcoin Dev Kit.
+description: Dart and Flutter bindings for the Bitcoin Dev Kit, for descriptor wallets, keys, and Electrum or Esplora sync.
 version: 1.0.0-rc.4
 homepage: https://github.com/bitcoindevkit/bdk-dart
 repository: https://github.com/bitcoindevkit/bdk-dart
