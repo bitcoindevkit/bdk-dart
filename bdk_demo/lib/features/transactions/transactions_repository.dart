@@ -148,7 +148,8 @@ class BdkWalletTransactionSource implements TransactionHistorySource {
       if (position is bdk.ConfirmedChainPosition) {
         mappedPosition = ConfirmedTransactionPosition(
           blockHeight: position.confirmationBlockTime.blockId.height,
-          confirmationTime: position.confirmationBlockTime.confirmationTime,
+          confirmationTime: position.confirmationBlockTime.confirmationTime
+              .toIntChecked(),
         );
       } else if (position is bdk.UnconfirmedChainPosition) {
         mappedPosition = const UnconfirmedTransactionPosition();
@@ -158,8 +159,8 @@ class BdkWalletTransactionSource implements TransactionHistorySource {
 
       return TransactionHistoryRecord(
         txid: txidText,
-        sent: sentSat,
-        received: receivedSat,
+        sent: sentSat.toIntChecked(),
+        received: receivedSat.toIntChecked(),
         position: mappedPosition,
       );
     } finally {

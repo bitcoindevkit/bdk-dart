@@ -75,7 +75,7 @@ void main() {
         lookahead: defaultLookahead,
       );
 
-      expect(wallet.balance().total.toSat(), equals(0));
+      expect(wallet.balance().total.toSat(), equals(BigInt.zero));
     });
   });
 }

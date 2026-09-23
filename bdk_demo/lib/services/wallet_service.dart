@@ -748,7 +748,7 @@ class WalletService {
       BadWordCountBip39Exception(wordCount: final wordCount) =>
         'Recovery phrase must be 12 or 24 words (got $wordCount).',
       UnknownWordBip39Exception(index: final index) =>
-        'Recovery phrase contains an unknown word at position ${index + 1}.',
+        'Recovery phrase contains an unknown word at position ${index + BigInt.one}.',
       InvalidChecksumBip39Exception() =>
         'Recovery phrase checksum is invalid. Please double-check the phrase.',
       _ =>
