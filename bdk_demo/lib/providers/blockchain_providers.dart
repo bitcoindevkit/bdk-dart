@@ -165,12 +165,12 @@ class BalanceSnapshotNotifier extends Notifier<WalletBalanceSnapshot?> {
     final b = wallet.balance();
     state = WalletBalanceSnapshot(
       walletId: walletId,
-      immatureSat: b.immature.toSat(),
-      trustedPendingSat: b.trustedPending.toSat(),
-      untrustedPendingSat: b.untrustedPending.toSat(),
-      confirmedSat: b.confirmed.toSat(),
-      trustedSpendableSat: b.trustedSpendable.toSat(),
-      totalSat: b.total.toSat(),
+      immatureSat: b.immature.toSat().toIntChecked(),
+      trustedPendingSat: b.trustedPending.toSat().toIntChecked(),
+      untrustedPendingSat: b.untrustedPending.toSat().toIntChecked(),
+      confirmedSat: b.confirmed.toSat().toIntChecked(),
+      trustedSpendableSat: b.trustedSpendable.toSat().toIntChecked(),
+      totalSat: b.total.toSat().toIntChecked(),
     );
   }
 }

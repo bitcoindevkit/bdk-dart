@@ -117,7 +117,7 @@ void main() {
           balance.trustedSpendable.dispose();
           balance.total.dispose();
 
-          expect(balanceSat, equals(0));
+          expect(balanceSat, equals(BigInt.zero));
           expect(
             reopenedWallet.nextDerivationIndex(
               keychain: KeychainKind.external_,

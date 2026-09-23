@@ -51,7 +51,7 @@ final sendTransactionDraftBuilderProvider =
           feeRateSatPerVb,
         );
         return SendTransactionDraft(
-          feeSat: psbt.fee(),
+          feeSat: psbt.fee().toIntChecked(),
           broadcast: (client) async => (await walletService.signAndBroadcast(
             record,
             wallet,

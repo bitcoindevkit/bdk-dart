@@ -20,7 +20,7 @@ path = "uniffi-bindgen.rs"
 [dependencies]
 bdk-ffi = { package = "bdk-ffi", git = "https://github.com/bitcoindevkit/bdk-ffi.git", tag = "v3.1.0" }
 uniffi = { version = "=0.31.2", features = ["cli"] }
-uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.1+v0.31.2" }
+uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", rev = "ac0fdfaf0feede3be97e654473701474ef57d03c" }
 camino = "1.2"
 
 # Reproducible builds: force a single codegen unit. With the default (16),

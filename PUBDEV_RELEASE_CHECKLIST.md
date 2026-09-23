@@ -34,7 +34,8 @@ See [Dart's automated publishing documentation](https://dart.dev/tools/pub/autom
 ## 2. Source and generated bindings
 
 - [ ] Native and bindings changes are finalized.
-- [ ] `lib/bdk.dart` is regenerated if needed.
+- [ ] `native/Cargo.toml` pins a released UniFFI-Dart tag, not a PR commit.
+- [ ] `lib/bdk.dart` and `lib/uniffi_runtime.dart` are regenerated if needed.
 - [ ] `scripts/generate_bindings.sh` succeeds on a clean checkout.
 
 ## 3. Local quality gates
