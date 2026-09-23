@@ -114,160 +114,152 @@ void _exerciseWalletReadSurface(Wallet wallet) {
 
 void main() {
   group('Workflow surface canary', () {
-    test(
-      'electrum sync path exercises broad wallet surface',
-      () {
-        final disposers = <Disposer>[];
-        final sqlitePath = _createTempSqlitePath(
-          'bdk_dart_surface_canary_electrum_',
+    test('electrum sync path exercises broad wallet surface', () {
+      final disposers = <Disposer>[];
+      final sqlitePath = _createTempSqlitePath(
+        'bdk_dart_surface_canary_electrum_',
+      );
+
+      try {
+        final descriptor = buildBip84Descriptor(Network.testnet);
+        addDisposer(disposers, descriptor.dispose);
+
+        final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
+        addDisposer(disposers, changeDescriptor.dispose);
+
+        final persister = Persister.newSqlite(path: sqlitePath);
+        addDisposer(disposers, persister.dispose);
+
+        final wallet = Wallet(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          network: Network.testnet,
+          persister: persister,
+          lookahead: defaultLookahead,
         );
+        addDisposer(disposers, wallet.dispose);
 
-        try {
-          final descriptor = buildBip84Descriptor(Network.testnet);
-          addDisposer(disposers, descriptor.dispose);
+        wallet.revealNextAddress(keychain: KeychainKind.external_);
+        wallet.persist(persister: persister);
+        final checkpointBeforeSync = wallet.latestCheckpoint().height;
 
-          final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
-          addDisposer(disposers, changeDescriptor.dispose);
+        final requestBuilder = wallet.startSyncWithRevealedSpks();
+        addDisposer(disposers, requestBuilder.dispose);
+        final request = requestBuilder.build();
+        addDisposer(disposers, request.dispose);
 
-          final persister = Persister.newSqlite(path: sqlitePath);
-          addDisposer(disposers, persister.dispose);
+        final client = buildElectrumClientFromEnv();
+        addDisposer(disposers, client.dispose);
+        client.ping();
 
-          final wallet = Wallet(
-            descriptor: descriptor,
-            changeDescriptor: changeDescriptor,
-            network: Network.testnet,
-            persister: persister,
-            lookahead: defaultLookahead,
-          );
-          addDisposer(disposers, wallet.dispose);
-
-          wallet.revealNextAddress(keychain: KeychainKind.external_);
-          wallet.persist(persister: persister);
-          final checkpointBeforeSync = wallet.latestCheckpoint().height;
-
-          final requestBuilder = wallet.startSyncWithRevealedSpks();
-          addDisposer(disposers, requestBuilder.dispose);
-          final request = requestBuilder.build();
-          addDisposer(disposers, request.dispose);
-
-          final client = buildElectrumClientFromEnv();
-          addDisposer(disposers, client.dispose);
-          client.ping();
-
-          final update = client.sync_(
-            request: request,
-            batchSize: 100,
-            fetchPrevTxouts: true,
-          );
-          addDisposer(disposers, update.dispose);
-
-          final events = wallet.applyUpdateEvents(update: update);
-          _exerciseWalletEventSurface(events);
-          _exerciseWalletReadSurface(wallet);
-
-          wallet.persist(persister: persister);
-          final txCountBeforeReload = wallet.transactions().length;
-
-          final reloadedPersister = Persister.newSqlite(path: sqlitePath);
-          addDisposer(disposers, reloadedPersister.dispose);
-          final reloadedWallet = Wallet.load(
-            descriptor: descriptor,
-            changeDescriptor: changeDescriptor,
-            persister: reloadedPersister,
-            lookahead: defaultLookahead,
-          );
-          addDisposer(disposers, reloadedWallet.dispose);
-
-          expect(
-            reloadedWallet.latestCheckpoint().height,
-            greaterThanOrEqualTo(checkpointBeforeSync),
-          );
-          _exerciseWalletReadSurface(reloadedWallet);
-          expect(
-            reloadedWallet.transactions().length,
-            equals(txCountBeforeReload),
-          );
-        } finally {
-          disposeAll(disposers);
-        }
-      },
-      skip: integrationSkipReason(requiredEnv: [electrumUrlEnv]),
-    );
-
-    test(
-      'esplora sync path exercises broad wallet surface',
-      () {
-        final disposers = <Disposer>[];
-        final sqlitePath = _createTempSqlitePath(
-          'bdk_dart_surface_canary_esplora_',
+        final update = client.sync_(
+          request: request,
+          batchSize: 100,
+          fetchPrevTxouts: true,
         );
+        addDisposer(disposers, update.dispose);
 
-        try {
-          final descriptor = buildBip84Descriptor(Network.testnet);
-          addDisposer(disposers, descriptor.dispose);
+        final events = wallet.applyUpdateEvents(update: update);
+        _exerciseWalletEventSurface(events);
+        _exerciseWalletReadSurface(wallet);
 
-          final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
-          addDisposer(disposers, changeDescriptor.dispose);
+        wallet.persist(persister: persister);
+        final txCountBeforeReload = wallet.transactions().length;
 
-          final persister = Persister.newSqlite(path: sqlitePath);
-          addDisposer(disposers, persister.dispose);
+        final reloadedPersister = Persister.newSqlite(path: sqlitePath);
+        addDisposer(disposers, reloadedPersister.dispose);
+        final reloadedWallet = Wallet.load(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          persister: reloadedPersister,
+          lookahead: defaultLookahead,
+        );
+        addDisposer(disposers, reloadedWallet.dispose);
 
-          final wallet = Wallet(
-            descriptor: descriptor,
-            changeDescriptor: changeDescriptor,
-            network: Network.testnet,
-            persister: persister,
-            lookahead: defaultLookahead,
-          );
-          addDisposer(disposers, wallet.dispose);
+        expect(
+          reloadedWallet.latestCheckpoint().height,
+          greaterThanOrEqualTo(checkpointBeforeSync),
+        );
+        _exerciseWalletReadSurface(reloadedWallet);
+        expect(
+          reloadedWallet.transactions().length,
+          equals(txCountBeforeReload),
+        );
+      } finally {
+        disposeAll(disposers);
+      }
+    }, skip: integrationSkipReason(requiredEnv: [electrumUrlEnv]));
 
-          wallet.revealNextAddress(keychain: KeychainKind.external_);
-          wallet.persist(persister: persister);
-          final checkpointBeforeSync = wallet.latestCheckpoint().height;
+    test('esplora sync path exercises broad wallet surface', () {
+      final disposers = <Disposer>[];
+      final sqlitePath = _createTempSqlitePath(
+        'bdk_dart_surface_canary_esplora_',
+      );
 
-          final requestBuilder = wallet.startSyncWithRevealedSpks();
-          addDisposer(disposers, requestBuilder.dispose);
-          final request = requestBuilder.build();
-          addDisposer(disposers, request.dispose);
+      try {
+        final descriptor = buildBip84Descriptor(Network.testnet);
+        addDisposer(disposers, descriptor.dispose);
 
-          final client = buildEsploraClientFromEnv();
-          addDisposer(disposers, client.dispose);
-          expect(client.getHeight(), greaterThan(0));
+        final changeDescriptor = buildBip84ChangeDescriptor(Network.testnet);
+        addDisposer(disposers, changeDescriptor.dispose);
 
-          final update = client.sync_(request: request, parallelRequests: 4);
-          addDisposer(disposers, update.dispose);
+        final persister = Persister.newSqlite(path: sqlitePath);
+        addDisposer(disposers, persister.dispose);
 
-          final events = wallet.applyUpdateEvents(update: update);
-          _exerciseWalletEventSurface(events);
-          _exerciseWalletReadSurface(wallet);
+        final wallet = Wallet(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          network: Network.testnet,
+          persister: persister,
+          lookahead: defaultLookahead,
+        );
+        addDisposer(disposers, wallet.dispose);
 
-          wallet.persist(persister: persister);
-          final txCountBeforeReload = wallet.transactions().length;
+        wallet.revealNextAddress(keychain: KeychainKind.external_);
+        wallet.persist(persister: persister);
+        final checkpointBeforeSync = wallet.latestCheckpoint().height;
 
-          final reloadedPersister = Persister.newSqlite(path: sqlitePath);
-          addDisposer(disposers, reloadedPersister.dispose);
-          final reloadedWallet = Wallet.load(
-            descriptor: descriptor,
-            changeDescriptor: changeDescriptor,
-            persister: reloadedPersister,
-            lookahead: defaultLookahead,
-          );
-          addDisposer(disposers, reloadedWallet.dispose);
+        final requestBuilder = wallet.startSyncWithRevealedSpks();
+        addDisposer(disposers, requestBuilder.dispose);
+        final request = requestBuilder.build();
+        addDisposer(disposers, request.dispose);
 
-          expect(
-            reloadedWallet.latestCheckpoint().height,
-            greaterThanOrEqualTo(checkpointBeforeSync),
-          );
-          _exerciseWalletReadSurface(reloadedWallet);
-          expect(
-            reloadedWallet.transactions().length,
-            equals(txCountBeforeReload),
-          );
-        } finally {
-          disposeAll(disposers);
-        }
-      },
-      skip: integrationSkipReason(requiredEnv: [esploraUrlEnv]),
-    );
+        final client = buildEsploraClientFromEnv();
+        addDisposer(disposers, client.dispose);
+        expect(client.getHeight(), greaterThan(0));
+
+        final update = client.sync_(request: request, parallelRequests: 4);
+        addDisposer(disposers, update.dispose);
+
+        final events = wallet.applyUpdateEvents(update: update);
+        _exerciseWalletEventSurface(events);
+        _exerciseWalletReadSurface(wallet);
+
+        wallet.persist(persister: persister);
+        final txCountBeforeReload = wallet.transactions().length;
+
+        final reloadedPersister = Persister.newSqlite(path: sqlitePath);
+        addDisposer(disposers, reloadedPersister.dispose);
+        final reloadedWallet = Wallet.load(
+          descriptor: descriptor,
+          changeDescriptor: changeDescriptor,
+          persister: reloadedPersister,
+          lookahead: defaultLookahead,
+        );
+        addDisposer(disposers, reloadedWallet.dispose);
+
+        expect(
+          reloadedWallet.latestCheckpoint().height,
+          greaterThanOrEqualTo(checkpointBeforeSync),
+        );
+        _exerciseWalletReadSurface(reloadedWallet);
+        expect(
+          reloadedWallet.transactions().length,
+          equals(txCountBeforeReload),
+        );
+      } finally {
+        disposeAll(disposers);
+      }
+    }, skip: integrationSkipReason(requiredEnv: [esploraUrlEnv]));
   });
 }
