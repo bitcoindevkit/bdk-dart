@@ -2,6 +2,12 @@
 
 All notable changes to `bdk_dart` will be documented in this file.
 
+## 1.0.0
+
+- Publish the first stable `bdk_dart` release.
+- Add transaction history loading to the Flutter demo.
+- Apply Android 16 KiB page-alignment flags from the native build for Native Assets and direct Cargo builds.
+
 ## 1.0.0-rc.4
 
 - Require `hooks` 2 and `native_toolchain_rust` 1.0.7 so apps already on hooks 2 can depend on this package.
