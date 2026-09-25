@@ -94,7 +94,7 @@ class _RecoverWalletPageState extends ConsumerState<RecoverWalletPage>
 
       _activateRecoveredWallet(record, wallet);
       _showSnackBar('Wallet recovered');
-      context.go(AppRoutes.home);
+      context.replace(AppRoutes.home);
     } on ArgumentError catch (error) {
       if (!mounted) return;
       _showSnackBar(_argumentErrorMessage(error, 'Invalid recovery input'));
@@ -147,7 +147,7 @@ class _RecoverWalletPageState extends ConsumerState<RecoverWalletPage>
 
       _activateRecoveredWallet(record, wallet);
       _showSnackBar('Wallet recovered');
-      context.go(AppRoutes.home);
+      context.replace(AppRoutes.home);
     } on DescriptorException {
       if (!mounted) return;
       _showSnackBar('Invalid descriptor. Please check both descriptors.');
