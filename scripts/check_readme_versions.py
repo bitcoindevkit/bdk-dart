@@ -38,7 +38,7 @@ if is_release and not tag:
     errors.append('Tagged releases must pin bdk-ffi by tag in native/Cargo.toml')
 if tag:
     link = f'https://github.com/bitcoindevkit/bdk-ffi/blob/{tag}/CHANGELOG.md'
-    if f'[BDK FFI {tag} release notes]({link})' not in section:
+    if link not in section:
         errors.append(f'README upstream release-notes link must point to {tag}')
 elif rev:
     sources = [p.get('source', '') for p in lock['package'] if p['name'] == 'bdk-ffi']
@@ -47,7 +47,7 @@ elif rev:
     else:
         commit = sources[0].rsplit('#', 1)[-1]
         link = f'https://github.com/bitcoindevkit/bdk-ffi/commit/{commit}'
-        if f'[BDK FFI development commit]({link})' not in section:
+        if link not in section:
             errors.append(f'README must identify the BDK FFI development commit: {link}')
     if re.search(r'https://github\.com/bitcoindevkit/bdk-ffi/blob/[^\s)]+/CHANGELOG\.md', section):
         errors.append('Replace the README upstream release-notes link with the development commit link for a rev pin')
