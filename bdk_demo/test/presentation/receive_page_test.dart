@@ -133,7 +133,7 @@ void main() {
         child: const MaterialApp(home: ReceivePage()),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
   }
 
   Future<void> generateAddressFromButton(WidgetTester tester) async {
