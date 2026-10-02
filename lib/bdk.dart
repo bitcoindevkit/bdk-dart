@@ -37714,7 +37714,7 @@ void _checkApiChecksums() {
       20038) {
     throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
   }
-  if (uniffi_bdkffi_checksum_method_descriptorpublickey_derive() != 37291) {
+  if (uniffi_bdkffi_checksum_method_descriptorpublickey_derive() != 3641) {
     throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
   }
   if (uniffi_bdkffi_checksum_method_descriptorpublickey_extend() != 26024) {
@@ -37735,14 +37735,14 @@ void _checkApiChecksums() {
   if (uniffi_bdkffi_checksum_method_descriptorsecretkey_as_public() != 58317) {
     throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
   }
-  if (uniffi_bdkffi_checksum_method_descriptorsecretkey_derive() != 52719) {
+  if (uniffi_bdkffi_checksum_method_descriptorsecretkey_derive() != 41462) {
     throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
   }
   if (uniffi_bdkffi_checksum_method_descriptorsecretkey_extend() != 5227) {
     throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
   }
   if (uniffi_bdkffi_checksum_method_descriptorsecretkey_secret_bytes() !=
-      39358) {
+      23927) {
     throw UniffiInternalError.panicked("UniFFI API checksum mismatch");
   }
   if (uniffi_bdkffi_checksum_method_cbfbuilder_build() != 30647) {
