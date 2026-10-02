@@ -2,6 +2,14 @@
 
 All notable changes to `bdk_dart` will be documented in this file.
 
+## Unreleased
+
+- **BREAKING**: Rust `u64` results and stored values now use Dart `BigInt`;
+  generated inputs accept either `int` or `BigInt`. Update arithmetic,
+  comparisons, collection types, and callbacks when adopting these bindings.
+- Pin [UniFFI-Dart PR #188](https://github.com/Uniffi-Dart/uniffi-dart/pull/188)
+  for full-range `u64` support and regenerate the bindings.
+
 ## 1.0.0
 
 - Publish the first stable `bdk_dart` release.

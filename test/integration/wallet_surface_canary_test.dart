@@ -65,7 +65,7 @@ void _exerciseWalletReadSurface(Wallet wallet) {
   checkpoint.hash.toString();
 
   final balance = wallet.balance();
-  expect(balance.total.toSat(), greaterThanOrEqualTo(0));
+  expect(balance.total.toSat(), greaterThanOrEqualTo(BigInt.zero));
 
   final network = wallet.network();
   expect(network, isNotNull);

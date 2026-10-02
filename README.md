@@ -1,8 +1,9 @@
 # bdk-dart
 
 Dart bindings for the [Bitcoin Dev Kit (BDK)](https://bitcoindevkit.org/) wallet library.
-The repo contains the sources for generating UniFFI-based bindings (`lib/bdk.dart`) and the
-`libbdk_dart_ffi` native library, so Dart and Flutter apps can work with descriptor-based wallets,
+The repo contains the sources for generating UniFFI-based bindings
+(`lib/bdk.dart` and `lib/uniffi_runtime.dart`) and the `libbdk_dart_ffi` native
+library, so Dart and Flutter apps can work with descriptor-based wallets,
 key management utilities, and blockchain backends from BDK.
 
 ## Repository layout
@@ -72,7 +73,9 @@ If you have the Rust toolchain installed, the native library will be automatical
 As a user of the package, you don't need to worry about building the native library or bindings yourself.
 Only if you want to contribute to the bindings or modify the native code yourself, you can follow the instructions in [development](#development) below.
 The first build can take several minutes depending on your machine and network (subsequent builds are faster).
-We pin git dependencies to immutable refs for reproducibility. `bdk-ffi` and `uniffi-dart` both track upstream release tags.
+We pin git dependencies to immutable refs for reproducibility. The `bigint`
+migration branch temporarily pins [UniFFI-Dart PR #188](https://github.com/Uniffi-Dart/uniffi-dart/pull/188)
+by commit; replace it with an upstream release tag before publishing `bdk_dart`.
 
 ## Development
 
@@ -90,8 +93,9 @@ For release operations, see [PUBDEV_RELEASE_CHECKLIST.md](PUBDEV_RELEASE_CHECKLI
 
 ### Testing
 
-Once you have generated `lib/bdk.dart` and the native library locally you can execute the
-Dart test suite, which covers wallet creation, persistence, offline behavior, and descriptor APIs:
+Once you have generated `lib/bdk.dart`, `lib/uniffi_runtime.dart`, and the
+native library locally you can execute the Dart test suite, which covers wallet
+creation, persistence, offline behavior, and descriptor APIs:
 
 ```bash
 dart test

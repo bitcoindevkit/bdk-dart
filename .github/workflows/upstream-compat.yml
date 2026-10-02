@@ -59,8 +59,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if ! git diff --exit-code -- lib/bdk.dart; then
+          if ! git diff --exit-code -- lib/bdk.dart lib/uniffi_runtime.dart; then
             echo "Bindings changed against upstream bdk-ffi HEAD." >&2
-            git --no-pager diff --stat -- lib/bdk.dart || true
+            git --no-pager diff --stat -- lib/bdk.dart lib/uniffi_runtime.dart || true
             exit 1
           fi

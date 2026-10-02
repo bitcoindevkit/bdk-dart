@@ -46,7 +46,7 @@ void main() {
 
     test('starts with zero balance before sync', () {
       final wallet = _buildTestWallet();
-      expect(wallet.balance().total.toSat(), equals(0));
+      expect(wallet.balance().total.toSat(), equals(BigInt.zero));
     });
 
     test(
