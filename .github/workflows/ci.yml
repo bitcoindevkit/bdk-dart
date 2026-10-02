@@ -28,7 +28,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: "3.10.0"
+          sdk: "3.13.4"
 
       - name: Install lipo (macOS)
         if: matrix.os == 'macos-latest'
@@ -84,7 +84,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: "3.10.0"
+          sdk: "3.13.4"
 
       - name: Pub get
         run: dart pub get
@@ -119,7 +119,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: "3.10.0"
+          sdk: "3.13.4"
 
       - name: Pub get (bdk_demo)
         working-directory: bdk_demo
@@ -159,7 +159,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: "3.10.0"
+          sdk: "3.13.4"
 
       - name: Pub get
         run: dart pub get
@@ -228,7 +228,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: "3.10.0"
+          sdk: "3.13.4"
 
       - name: Pub get (bdk_demo)
         working-directory: bdk_demo
