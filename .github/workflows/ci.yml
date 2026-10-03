@@ -67,6 +67,53 @@ jobs:
         working-directory: bdk_demo
         run: flutter test
 
+  integration-tests:
+    runs-on: ubuntu-latest
+    services:
+      regtest:
+        image: ghcr.io/thunderbiscuit/podman-regtest-infinity-pro:0.4.0
+        ports:
+          - 18443:18443
+          - 18444:18444
+          - 3002:3002
+          - 60401:60401
+        options: >-
+          --health-cmd "test $(bitcoin-cli -regtest -rpcuser=regtest -rpcpassword=password getblockcount) -gt 100"
+          --health-interval 3s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      BDK_DART_RUN_INTEGRATION: "1"
+      BDK_DART_ELECTRUM_URL: "tcp://127.0.0.1:60401"
+      BDK_DART_ESPLORA_URL: "http://127.0.0.1:3002"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "3.10.0"
+
+      - name: Generate bindings and native library
+        run: |
+          chmod +x scripts/generate_bindings.sh
+          ./scripts/generate_bindings.sh
+
+      - name: Pub get
+        run: dart pub get
+
+      - name: Run integration tests
+        run: dart test --tags regtest
+
   windows-smoke:
     runs-on: windows-latest
 
