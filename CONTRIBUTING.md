@@ -4,8 +4,10 @@ Keep PRs focused and include the smallest checks that cover the change.
 
 ## Setup
 
-Install Dart 3.10 or newer and Rust stable. Install Flutter stable when working
-on `bdk_demo` or mobile targets.
+Install Dart 3.13.4 for local development and formatting. `dart format` output
+differs between 3.10 and 3.13, and CI checks formatting on 3.13.4. The published
+package still allows Dart `^3.10.0` (`pubspec.yaml`). Install Rust stable, and
+Flutter stable when working on `bdk_demo` or mobile targets.
 
 From the repository root:
 
