@@ -148,8 +148,8 @@ dependencies = [
 
 [[package]]
 name = "bdk-ffi"
-version = "3.1.0"
-source = "git+https://github.com/bitcoindevkit/bdk-ffi.git?tag=v3.1.0#5fa4898a4dc6d1c3df12f2676a662149eff500ff"
+version = "3.1.1"
+source = "git+https://github.com/bitcoindevkit/bdk-ffi.git?tag=v3.1.1#1c5f4863c6a53cc9d063d34c4e13c91fea5c58de"
 dependencies = [
  "bdk_electrum",
  "bdk_esplora",

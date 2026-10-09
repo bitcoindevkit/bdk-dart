@@ -18,7 +18,7 @@ name = "uniffi-bindgen"
 path = "uniffi-bindgen.rs"
 
 [dependencies]
-bdk-ffi = { package = "bdk-ffi", git = "https://github.com/bitcoindevkit/bdk-ffi.git", tag = "v3.1.0" }
+bdk-ffi = { package = "bdk-ffi", git = "https://github.com/bitcoindevkit/bdk-ffi.git", tag = "v3.1.1" }
 uniffi = { version = "=0.31.2", features = ["cli"] }
 uniffi-dart = { git = "https://github.com/Uniffi-Dart/uniffi-dart", tag = "v0.2.1+v0.31.2" }
 camino = "1.2"
