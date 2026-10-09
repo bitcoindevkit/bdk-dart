@@ -22,9 +22,10 @@ flutter pub get
 
 ## Bindings
 
-The generated Dart bindings live in `lib/bdk.dart`. Do not edit that file by hand.
-When changing native Rust inputs or the pinned `bdk-ffi` dependency, regenerate
-bindings and the native library:
+The generated Dart bindings live in `lib/bdk.dart` and
+`lib/uniffi_runtime.dart`. Do not edit those files by hand. When changing native
+Rust inputs, the pinned `bdk-ffi` dependency, or the UniFFI-Dart generator,
+regenerate bindings and the native library:
 
 ```bash
 bash ./scripts/generate_bindings.sh

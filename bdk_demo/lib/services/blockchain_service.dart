@@ -52,7 +52,7 @@ abstract final class BlockchainFeeNormalizer {
   }
 
   static int tipHeightFromElectrumSubscribe(HeaderNotification notification) =>
-      notification.height;
+      notification.height.toIntChecked();
 }
 
 abstract interface class BlockchainClient {
