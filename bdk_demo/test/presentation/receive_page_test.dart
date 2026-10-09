@@ -173,6 +173,9 @@ void main() {
     expect(find.text('No receive address yet'), findsOneWidget);
     expect(find.text('Generate New Address'), findsOneWidget);
     expect(find.byType(PrettyQrView), findsNothing);
+
+    container.dispose();
+    await tester.pump();
   });
 
   testWidgets('generates and renders receive address details', (tester) async {
