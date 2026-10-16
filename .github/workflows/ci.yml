@@ -81,19 +81,31 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup Dart
-        uses: dart-lang/setup-dart@v1
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          sdk: "3.10.0"
+          channel: stable
 
       - name: Pub get
         run: dart pub get
 
+      - name: Pub get (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter pub get
+
       - name: Analyze
         run: dart analyze --fatal-infos --fatal-warnings lib test example
 
+      - name: Analyze (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter analyze
+
       - name: Run tests
         run: dart test
+
+      - name: Run tests (bdk_demo)
+        working-directory: bdk_demo
+        run: flutter test
 
   android-smoke:
     runs-on: ubuntu-latest
