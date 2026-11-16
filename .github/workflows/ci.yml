@@ -8,6 +8,15 @@ on:
     branches: [main]
 
 jobs:
+  readme-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify README upstream versions
+        run: python3 scripts/check_readme_versions.py
+
   build-and-test:
     strategy:
       matrix:
