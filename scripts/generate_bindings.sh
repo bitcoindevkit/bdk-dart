@@ -33,6 +33,6 @@ echo "Building bdk-dart-ffi..."
 cargo build --locked --profile dev
 
 # Generate Dart bindings using local uniffi-bindgen wrapper
-cargo run --locked --profile dev --bin uniffi-bindgen -- generate --library --language dart --out-dir "$BDK_DART_DIR/lib/" "$NATIVE_DIR/target/debug/$LIBNAME"
+cargo run --locked --profile dev --features uniffi-bindgen --bin uniffi-bindgen -- generate --library --language dart --out-dir "$BDK_DART_DIR/lib/" "$NATIVE_DIR/target/debug/$LIBNAME"
 
 echo "Bindings generated successfully!"
