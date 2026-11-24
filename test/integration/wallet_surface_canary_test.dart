@@ -53,6 +53,14 @@ void _exerciseWalletEventSurface(List<WalletEvent> events) {
       }
     } else if (event is TxDroppedWalletEvent) {
       expect(event.tx.computeTxid().toString(), equals(event.txid.toString()));
+    } else if (event is TxRejectedWalletEvent) {
+      expect(event.tx.computeTxid().toString(), equals(event.txid.toString()));
+      final inputIndex = switch (event.reason) {
+        InvalidInputTxRejectedReason(:final inputIndex) => inputIndex,
+        MissingPrevoutsTxRejectedReason(:final inputIndex) => inputIndex,
+        _ => fail('Unhandled rejection reason: ${event.reason.runtimeType}'),
+      };
+      expect(inputIndex, inInclusiveRange(0, event.tx.input().length - 1));
     } else {
       fail('Unhandled wallet event variant: ${event.runtimeType}');
     }

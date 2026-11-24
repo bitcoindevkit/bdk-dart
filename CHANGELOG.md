@@ -2,6 +2,11 @@
 
 All notable changes to `bdk_dart` will be documented in this file.
 
+## 1.1.0
+
+- Update the native dependency to `bdk-ffi` `v3.2.0` and regenerate the Dart bindings.
+- See the [upstream release notes](https://github.com/bitcoindevkit/bdk-ffi/blob/v3.2.0/CHANGELOG.md#v320) for API and behavior changes.
+
 ## 1.0.1
 
 - Update the native dependency to `bdk-ffi` `v3.1.1` and regenerate the Dart bindings.
