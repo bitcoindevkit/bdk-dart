@@ -44,7 +44,7 @@ BlockchainClient _createBlockchainClient(
 }) {
   return switch (endpoint.clientType) {
     ClientType.esplora => EsploraBlockchainClient(
-      EsploraClient(url: endpoint.url, proxy: null),
+      EsploraClient(url: endpoint.url, proxy: null, timeout: null),
     ),
     ClientType.electrum => ElectrumBlockchainClient(
       ElectrumClient(

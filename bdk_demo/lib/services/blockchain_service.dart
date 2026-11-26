@@ -139,7 +139,7 @@ abstract final class BlockchainService {
       ClientType.esplora =>
         esploraFactory?.call(config.url) ??
             EsploraBlockchainClient(
-              EsploraClient(url: config.url, proxy: null),
+              EsploraClient(url: config.url, proxy: null, timeout: null),
             ),
       ClientType.electrum =>
         electrumFactory?.call(config.url) ??
